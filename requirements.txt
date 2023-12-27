@@ -1,6 +1,6 @@
 
-poppler=22.12.0
-poppler-data=0.4.12
+poppler==22.12.0
+poppler-data==0.4.12
 boto3==1.29.3
 botocore==1.32.3
 
