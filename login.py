@@ -103,8 +103,8 @@ def login():
 
 def login_fast():
     if st.session_state.username == '':
-        user ="fabioi"
-        pwd = "dada3131"
+        user = '###'
+        pwd = '###'
         pwd = make_hashes(pwd)
         u_data = get_user(user)
         st.session_state.username = u_data["username"]

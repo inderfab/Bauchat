@@ -61,4 +61,4 @@ def conf_session_state():
     if "chat_references" not in st.session_state:
         st.session_state.chat_references = None
 
-    login.login_fast()
+    #login.login_fast()
