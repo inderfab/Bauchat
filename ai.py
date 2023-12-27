@@ -1,4 +1,4 @@
-from PyPDF2 import PdfReader, PdfWriter
+from pypdf import PdfReader, PdfWriter
 import streamlit as st
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -7,13 +7,11 @@ import pickle
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.docstore.document import Document
 from langchain.vectorstores import FAISS
-from langchain.chat_models import ChatOpenAI
 from langchain.chains.question_answering import load_qa_chain
 from langchain.callbacks import get_openai_callback
 import os
 import openai
 import store
-import boto3
 import io
 import time
 
