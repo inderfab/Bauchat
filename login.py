@@ -1,7 +1,6 @@
 import streamlit as st
 import re
 import hashlib
-import archiv.sql as sql
 from streamlit_extras.switch_page_button import switch_page
 from deta import Deta
 import dotenv
