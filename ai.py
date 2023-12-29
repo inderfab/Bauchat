@@ -163,14 +163,14 @@ def pickle_store(stream=None, collection=None):
                 stores_path = store.store_location(new_collection=collection)
                 save_loc = os.path.join(stores_path,title)
                 metadata = {"collection":collection,"save_loc":save_loc,"title":title}
-                st.write("Meta: ",metadata)
-                #documents = pdf_to_doc(s, metadata)
-                #create_Store(documents)
+                documents = pdf_to_doc(s, metadata)
+                create_Store(documents)
 
 
 @st.cache_data
 def store_temp(stream=None, collection=None):
-    metadata = {"collection":collection}
+    title = stream.name.strip(".pdf")
+    metadata = {"collection":collection, "title":title}
     #st.write(stream)
     documents = pdf_to_doc(stream, metadata)
     Vectorstore_Temp = create_Store(documents)
