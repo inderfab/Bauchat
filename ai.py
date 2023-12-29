@@ -26,8 +26,7 @@ def pdf_preprocess(stream, metadata):
     text_pages = []
     full_text = ""
     reader = PdfReader(stream)
-    name = metadata["title"]
-
+    
     for i, page in enumerate(reader.pages,start=1):
         meta = {'page':i} | metadata
         text_page = page.extract_text()
