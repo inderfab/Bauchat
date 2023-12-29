@@ -19,8 +19,10 @@ configuration.conf_session_state()
 
 st.set_page_config(page_title = page_title,initial_sidebar_state=st.session_state.sidebar_state,layout="wide") #
 
+configuration.conf_menu()
+
 # titel_text = "BauCHAT"
-# if st.session_state.username != '':
+# if st.session_state.username != 'temp':
 #     titel_text += ' im Gespräch mit ' + st.session_state.username
 # st.subheader(titel_text)
 
@@ -33,7 +35,7 @@ st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichn
 
 
 stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", type='pdf',accept_multiple_files=True, label_visibility="hidden")
-if st.session_state.username == '':
+if st.session_state.username == 'temp':
     up_col1, up_col2 = st.columns([1,4])
     with up_col1:
         zu_anmeldung = st.button("Anmelden / Registrieren")
@@ -43,10 +45,10 @@ if st.session_state.username == '':
     if zu_anmeldung:
         switch_page("konto")
 
-if st.session_state.username != '' and len(stream) > 15:
+if st.session_state.username != 'temp' and len(stream) > 15:
     stream = stream[:15]
     st.write("Die erste 15 Dokumente wurden zwischengespeichert")
-elif st.session_state.username == '' and len(stream) >= 1:
+elif st.session_state.username == 'temp' and len(stream) >= 1:
     stream = stream[0]
     #st.write("Das erste Dokument wurden zwischengespeichert")
 
@@ -54,7 +56,7 @@ elif st.session_state.username == '' and len(stream) >= 1:
 if stream != []:
     st.session_state["loader_state"] = False
     
-    if st.session_state.username != '':
+    if st.session_state.username != 'temp':
         with st.expander("Sammlung erstellen", expanded=st.session_state["speicher_expander"]):
             with st.form(key="Update Collections"):
                 sc1, sc2, sc3 = st.columns([2,2,1])
@@ -91,8 +93,8 @@ if stream != []:
         st.session_state["temp_upload"] = True 
         st.session_state["Temp_Stream"] = stream
         st.write("Ihr hochgeladenes Dokument wurde zwischengespeichert, auf laden klicken um mit dem dokument zu chatten")
-            #ai.pickle_store(stream=stream, collection=collection )
-            #st.session_state["option5value"] = True
+        #ai.pickle_store(stream=stream, collection=collection )
+        st.session_state["option5value"] = True
             
             
 
@@ -155,7 +157,7 @@ with col4:
                 docs_to_load.append(f"{path}{unternehmen[0]}/{k}/")
 
 with col5:
-    if st.session_state.username != '':
+    if st.session_state.username != 'temp':
         sammlung_checkbox = "Eigene Sammlungen"
     else:
         sammlung_checkbox = "Hochgeladenes Dokument"
@@ -163,7 +165,7 @@ with col5:
     option_5 = None 
 
     opt_5 = st.checkbox(sammlung_checkbox,value=st.session_state["option5value"])
-    if opt_5 == True and st.session_state.username != '':
+    if opt_5 == True and st.session_state.username != 'temp':
         option_5 = True
         st.session_state["u_folders"] = None
         store.load_data_user()
@@ -174,7 +176,7 @@ with col5:
             for c in user_choice:
                 docs_to_load.append(f"{st.session_state['u_path']}/{c}/")
 
-    if opt_5 == True and st.session_state.username == '':
+    if opt_5 == True and st.session_state.username == 'temp':
         if st.session_state['u_path'] == None:
             st.write(st.session_state['u_path'])
         docs_to_load.append(f"{st.session_state['u_path']}/")

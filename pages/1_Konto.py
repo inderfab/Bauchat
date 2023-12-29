@@ -9,10 +9,11 @@ add_logo("gallery/bauchat_logo.png", height=100)
 
 configuration.conf_session_state()
 
-if st.session_state.username == '':
+if st.session_state.username == 'temp':
     login.login()
     login.registration()
     login.forget_pwd()
+
 else:
     st.write("Benutzername: ", st.session_state.username )
     date = time.strftime("%Y-%m")

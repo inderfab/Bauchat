@@ -20,7 +20,7 @@ def pdf2jpg_from_s3(references, k):
     
     img_col, src_col = st.columns([3,1])
     with src_col:
-        img_src = st.radio("Die vier relevantesten Quellen", keys)
+        img_src = st.radio(f"Die {k} relevantesten Quellen", keys)
     
     with img_col:
         display_PDF_IMG(keys[img_src])

@@ -8,7 +8,7 @@ def conf_session_state():
     if 'sidebar_state' not in st.session_state:
         st.session_state.sidebar_state = 'expanded'
     if "username" not in st.session_state:
-        st.session_state.username = ''
+        st.session_state.username = 'temp'
     if "loader_state" not in st.session_state:
         st.session_state["loader_state"] = True
     if "speicher_expander" not in st.session_state:   
@@ -56,9 +56,23 @@ def conf_session_state():
     #Chat
     if "messages" not in st.session_state:
         st.session_state.messages = []
+    if "long_answer" not in st.session_state:
+            st.session_state.long_answer = False
     if "token_change" not in st.session_state:
         st.session_state.token_change = False
+    if "token_usage" not in st.session_state:
+        st.session_state.token_usage = 0
     if "chat_references" not in st.session_state:
         st.session_state.chat_references = None
 
     #login.login_fast()
+        
+
+def conf_menu():
+    hide_streamlit_style = """
+                <style>
+                #MainMenu {visibility: hidden;}
+                footer {visibility: hidden;}
+                </style>
+                """
+    st.markdown(hide_streamlit_style, unsafe_allow_html=True)

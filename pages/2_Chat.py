@@ -16,7 +16,7 @@ add_logo("gallery/bauchat_logo.png", height=100)
 configuration.conf_session_state()
 
 #titel_text = "BauCHAT"
-#if st.session_state.username != '':
+#if st.session_state.username != 'temp':
 #    titel_text += ' im Gespräch mit ' + st.session_state.username
 #st.subheader(titel_text)
 
@@ -37,18 +37,22 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
         
     if st.session_state["temp_upload"] == True:
         Vectorstore_Temp = ai.store_temp(st.session_state["Temp_Stream"])
-        if VectorStore != None:
-            VectorStore = ai.combine_Stores([VectorStore,Vectorstore_Temp])
-        else:
-            VectorStore = Vectorstore_Temp
+        #if VectorStore != None:
+        #    VectorStore = ai.combine_Stores([VectorStore,Vectorstore_Temp])
+        #else:
+        #    VectorStore = Vectorstore_Temp$
+        VectorStore = Vectorstore_Temp
+
 
     query = st.chat_input("Stellen Sie hier Ihre Frage")
-    k = 4
+    k = 6
 
     chat_col, pdf_col = st.tabs(["Mit den Dokumenten chatten", "Quellen anzeigen"])
     with chat_col:
         #st.subheader("Stelle Sie ihre Frage an die Dokumente:")
-        
+        if st.checkbox(label="Ausführliche Antwort", value=False):
+            st.session_state.long_answer = True
+                 
         for message in st.session_state.messages:
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])

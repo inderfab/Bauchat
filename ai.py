@@ -14,6 +14,8 @@ import openai
 import store
 import io
 import time
+import tiktoken
+import login
 
 import dotenv
 dotenv.load_dotenv()
@@ -83,13 +85,27 @@ def clean_text(text):
     return clean_text
 
 
-def create_Store(docs):
+def embedd_FAISS(docs):
     embeddings = OpenAIEmbeddings()
+    encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
+    num_tokens = 0
+    docs = docs["document"]
+    for doc in docs:
+        num_tokens += len(encoding.encode(doc))
+
+    st.session_state.token_usage += num_tokens
+
+    VectorStore = FAISS.from_documents(docs, embedding=embeddings)
+    return VectorStore
+
+
+def create_Store(docs):
 
     save_loc = docs["document"][0].metadata["save_loc"]
 
-    if st.session_state["Storage"] == "S3" and st.session_state.username != '':
-        VectorStore = FAISS.from_documents(docs["document"], embedding=embeddings)
+    if st.session_state["Storage"] == "S3" and st.session_state.username != 'temp':
+
+        VectorStore = embedd_FAISS(docs)
         
         pickle_full_text = pickle.dumps(docs["full_text"])
         store.s3_uploader(save_loc+".txt", pickle_full_text)
@@ -100,13 +116,11 @@ def create_Store(docs):
         for index in range(len(docs["pdf_reader"].pages)):
             pdf_page = pdf_page_to_buffer(docs["pdf_reader"], index)
             store.s3_uploader(save_loc + "-" + str(index+1) + ".pdf", pdf_page)
-
-
+        
         st.session_state["Files_Saved"] = True
 
-    if st.session_state["Storage"] == "S3" and st.session_state.username == '':
-        VectorStore = FAISS.from_documents(docs["document"], embedding=embeddings)
-                
+    if st.session_state["Storage"] == "S3" and st.session_state.username == "temp":
+        VectorStore = embedd_FAISS(docs)                
         st.session_state["Files_Saved"] = True
 
 
@@ -122,6 +136,7 @@ def create_Store(docs):
     #         f_doc.write(stream.getbuffer())
     #     st.session_state["Files_Saved"] = True
     
+    login.user_update_embedding_tokens(st.session_state.username)
     return VectorStore
 
 
@@ -167,7 +182,6 @@ def pickle_store(stream=None, collection=None):
                 create_Store(documents)
 
 
-@st.cache_data
 def store_temp(stream=None, collection=None):
     title = stream.name.strip(".pdf")
     metadata = {"collection":collection, "title":title}
@@ -189,7 +203,13 @@ def prompt(query, results, k=1):
     model = 'gpt-3.5-turbo'
     temperature=0.0
     kontext = "\n".join([text.page_content + " Quelle= " + text.metadata["title"] + " Seite= " + str(text.metadata["page"]) for i,text in enumerate(results)])
-    prompt = "Aufgabe: Frage mit Kontext beantworten. (Quelle und Seite) angeben. Kontext:{}Frage: {} Antwort:".format(kontext,query)
+    
+    if st.session_state.long_answer == False:
+        answerlength = "kurz in zwei bis drei Sätzen"
+    else:
+        answerlength = "ausführlich mit bis zu 10 Sätzen"
+    
+    prompt = f"Aufgabe: Frage {answerlength} mit einer oder mehreren Quellen beantworten, diese auch angeben (Quelle und Seite). Sie sind nach Relevanz sortiert. Quellen:{kontext}Frage: {query} Antwort:"
     response = openai.ChatCompletion.create(
         model=model,
         messages=[
@@ -204,7 +224,6 @@ def prompt(query, results, k=1):
 
 
 def bauchat_query(query, VectorStore, k=4):
-
     with st.chat_message("user"):
         st.write(query)
 

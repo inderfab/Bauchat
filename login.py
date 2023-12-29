@@ -47,6 +47,12 @@ def user_update_message_and_tokens(username, updates, usage):
     db.update({"history":history,"token_month":token_month,"token_total":token_total}, username)
 
 
+def user_update_embedding_tokens(username):
+    user_data = get_user(username)
+    usage = st.session_state.token_usage
+    update_user_tokens(user_data, usage)
+    
+
 def update_user_tokens(user_data, usage):
     token_update = usage["total_tokens"] #{"prompt_tokens":2357"completion_tokens":121"total_tokens":2478}
 
@@ -102,7 +108,7 @@ def login():
 
 
 def login_fast():
-    if st.session_state.username == '':
+    if st.session_state.username == 'temp':
         user = '###'
         pwd = '###'
         pwd = make_hashes(pwd)
@@ -159,13 +165,13 @@ def registration():
                     data = {"username":user, "vorname":vorname, "nachname":nachname, "email":email, 
                             "password":hashed_pwd, "password_reset":False,
                             "verifikation":False,"verification_code":verification_code,
-                            "history":[],"token_month":{},"token_total":0, "token_available":10000}
+                            "history":[],"token_month":{},"token_total":0, "token_available":20000,
+                            "full_access":False}
+                    
                     mail.send_registration(email, verification_code)
                     insert_user(data)
                     
 
-def user_reset_password(user):
-    pass
 
 def login_user(user,pwd):         
     pwd = make_hashes(pwd)
@@ -187,7 +193,7 @@ def login_user(user,pwd):
             st.session_state["u_data"] = u_data
             switch_page("startseite")
         else:
-            st.session_state.username = ''
+            st.session_state.username = 'temp'
             st.write("Falscher Benutzername oder Passwort")
     else:
         if u_data != None and u_data["password"] == pwd:

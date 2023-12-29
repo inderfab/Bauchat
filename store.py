@@ -34,7 +34,7 @@ def load_data_user():
     user = st.session_state.username
 
     
-    if user != '':
+    if user != 'temp':
         if st.session_state["u_path"] == None or st.session_state["u_folders"] == None:
             path = os.path.join(base+user)
             if st.session_state.Storage == "S3":
