@@ -26,7 +26,7 @@ def pdf_preprocess(stream, metadata):
     text_pages = []
     full_text = ""
     reader = PdfReader(stream)
-    
+
     for i, page in enumerate(reader.pages,start=1):
         meta = {'page':i} | metadata
         text_page = page.extract_text()
@@ -36,7 +36,7 @@ def pdf_preprocess(stream, metadata):
     return text_pages, reader, full_text
 
 
-def pdf_page_to_buffer(reader, title, index):
+def pdf_page_to_buffer(reader, index):
     output = PdfWriter()
     buffer = io.BytesIO()
     output.add_page(reader._get_page(index))
@@ -98,7 +98,7 @@ def create_Store(docs):
         store.s3_uploader(save_loc+".pkl", pickle_byte_obj)
 
         for index in range(len(docs["pdf_reader"].pages)):
-            pdf_page = pdf_page_to_buffer(docs["pdf_reader"], docs["title"], index)
+            pdf_page = pdf_page_to_buffer(docs["pdf_reader"], index)
             store.s3_uploader(save_loc + "-" + str(index+1) + ".pdf", pdf_page)
 
 
@@ -163,6 +163,7 @@ def pickle_store(stream=None, collection=None):
                 stores_path = store.store_location(new_collection=collection)
                 save_loc = os.path.join(stores_path,title)
                 metadata = {"collection":collection,"save_loc":save_loc,"title":title}
+                print(metadata)
                 documents = pdf_to_doc(s, metadata)
                 create_Store(documents)
 
