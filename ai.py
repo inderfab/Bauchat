@@ -163,7 +163,7 @@ def pickle_store(stream=None, collection=None):
                 stores_path = store.store_location(new_collection=collection)
                 save_loc = os.path.join(stores_path,title)
                 metadata = {"collection":collection,"save_loc":save_loc,"title":title}
-                print(metadata)
+                st.write("Meta: ",metadata)
                 documents = pdf_to_doc(s, metadata)
                 create_Store(documents)
 
