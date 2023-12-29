@@ -133,7 +133,8 @@ def combine_Stores(VectorStores):
         baseVS.merge_from(vs)
     return baseVS
 
-@st.cache_data
+
+#@st.cache_data
 def load_Store(paths):
     VectorStores = []
     
