@@ -31,7 +31,7 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
             st.write("Geladene Dokumente:")
             st.markdown(chat_docs)
         
-
+    if st.session_state.username != "temp":
         with st.spinner("Dokumente laden"):
             VectorStore = ai.load_Store(st.session_state["docs_to_load"])
         
@@ -43,32 +43,20 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
         #    VectorStore = Vectorstore_Temp$
         VectorStore = Vectorstore_Temp
 
+    if st.checkbox(label="Ausführliche Antwort", value=False):
+            st.session_state.long_answer = True
 
     query = st.chat_input("Stellen Sie hier Ihre Frage")
-    k = 6
 
-    chat_col, pdf_col = st.tabs(["Mit den Dokumenten chatten", "Quellen anzeigen"])
-    with chat_col:
-        #st.subheader("Stelle Sie ihre Frage an die Dokumente:")
-        if st.checkbox(label="Ausführliche Antwort", value=False):
-            st.session_state.long_answer = True
-                 
-        for message in st.session_state.messages:
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
+    if query:
+        message = ai.bauchat_query(query, VectorStore,k=4)
+        login.user_update_message_and_tokens(message)
 
-        
-        if query:
-            message, usage, references = ai.bauchat_query(query, VectorStore,k=4)
-            st.session_state.chat_references = references
-            login.user_update_message_and_tokens(st.session_state.username, message, usage)
-            
+    else:
+        st.write("Stellen Sie eine Frage an die Dokumente")
 
-    with pdf_col:
-        if st.session_state.chat_references != None:
-            display.pdf2jpg_from_s3(st.session_state.chat_references, k=k)
-        else:
-            st.write("Stellen Sie eine Frage an die Dokumente")
+    if st.session_state.messages != []:
+        display.chat_display(st.session_state.messages)
 
 else:
     st.write("Bitte wählen Sie eine Sammlung oder laden Sie eigene Dokumente hoch")

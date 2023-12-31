@@ -41,22 +41,23 @@ def load_data_user():
                 try:
                     folders = s3_get_subfolders(path)
                     st.session_state["u_folders"] = folders
-                    st.session_state["u_data_exists"] = True
+                    #st.session_state["u_data_exists"] = True
                 except:
-                    load_data_temp()
-            elif st.session_state.Storage == "Local":
-                try:
-                    folders = get_subfolders(path)
-                    st.session_state["u_folders"] = folders
-                    st.session_state["u_data_exists"] = True
-                except:
-                    load_data_temp()
+                    st.session_state["u_folders"] = None
+                    #load_data_temp()
+
+            # if st.session_state.Storage == "Local":
+            #     try:
+            #         folders = get_subfolders(path)
+            #         st.session_state["u_folders"] = folders
+            #         st.session_state["u_data_exists"] = True
+            #     except:
+            #         load_data_temp()
         
             
             st.session_state["u_path"] = path
-    else:
-        load_data_temp()
-    #return path, folders
+    #else:
+    #    load_data_temp()
 
 
 def load_data_temp():
@@ -69,7 +70,7 @@ def load_data_temp():
         path = os.path.join(path,timenow)
 
         st.session_state["u_path"] = str(path)
-        st.session_state["u_folders"] = timenow
+        #st.session_state["u_folders"] = timenow
     
 
 def store_location(new_collection=None):

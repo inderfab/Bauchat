@@ -64,7 +64,7 @@ if stream != []:
                 with sc1:
                     collection = st.text_input("Neue Sammlung anlegen:", max_chars=20, help="maximal 20 Buchstaben", value=None)
 
-                if st.session_state["u_folders"] != [] and st.session_state["u_data_exists"] == True:
+                if st.session_state["u_folders"] is not None:# and st.session_state["u_data_exists"] == True:
                     with sc2:
                         store.load_data_user()
                         update_col = st.selectbox('Sammlung aktualisieren',[n[0] for n in st.session_state["u_folders"][0][1]])
@@ -92,6 +92,7 @@ if stream != []:
         #with st.spinner("Dokumente zwischenspeichern"):
         st.session_state["temp_upload"] = True 
         st.session_state["Temp_Stream"] = stream
+        st.session_state["Temp_Stream_IMG"] = stream.read()
         st.write("Ihr hochgeladenes Dokument wurde zwischengespeichert, auf laden klicken um mit dem dokument zu chatten")
         #ai.pickle_store(stream=stream, collection=collection )
         st.session_state["option5value"] = True
@@ -166,20 +167,23 @@ with col5:
 
     opt_5 = st.checkbox(sammlung_checkbox,value=st.session_state["option5value"])
     if opt_5 == True and st.session_state.username != 'temp':
-        option_5 = True
+        
         st.session_state["u_folders"] = None
         store.load_data_user()
-        user_liste = [n[0] for n in st.session_state["u_folders"][0][1]]
+        
+        if st.session_state["u_folders"] is not None:
+            option_5 = True
 
-        user_choice = st.multiselect('Sammlungen',user_liste, default=st.session_state["user_choice_default"])
-        if user_choice != []:
-            for c in user_choice:
-                docs_to_load.append(f"{st.session_state['u_path']}/{c}/")
 
-    if opt_5 == True and st.session_state.username == 'temp':
-        if st.session_state['u_path'] == None:
-            st.write(st.session_state['u_path'])
-        docs_to_load.append(f"{st.session_state['u_path']}/")
+        if st.session_state["u_folders"] is not None:
+            user_liste = [n[0] for n in st.session_state["u_folders"][0][1]]
+
+            user_choice = st.multiselect('Sammlungen',user_liste, default=st.session_state["user_choice_default"])
+            if user_choice != []:
+                for c in user_choice:
+                    docs_to_load.append(f"{st.session_state['u_path']}/{c}/")
+
+    if opt_5 == True and st.session_state.username == 'temp' and stream:
         option_5 = True
        
 

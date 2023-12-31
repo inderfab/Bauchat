@@ -35,16 +35,16 @@ def update_user(username, updates):
     return db.update(updates, username)
 
 
-def user_update_message_and_tokens(username, updates, usage):
+def user_update_message_and_tokens(updates):
     """If the item is updated, returns None. Otherwise, an exception is raised"""
-    user_data = get_user(username)
+    user_data = get_user(st.session_state.username)
 
     history = user_data["history"]
     history.insert(0,updates)
 
-    token_month, token_total = update_user_tokens(user_data, usage)
+    token_month, token_total = update_user_tokens(user_data, updates["usage"])
     st.session_state.token_change = True
-    db.update({"history":history,"token_month":token_month,"token_total":token_total}, username)
+    db.update({"history":history,"token_month":token_month,"token_total":token_total}, st.session_state.username)
 
 
 def user_update_embedding_tokens(username):
@@ -74,7 +74,6 @@ def update_user_tokens(user_data, usage):
     return token_month, token_total
 
 
-
 def delete_user(username):
     """Always returns None, even if the key does not exist"""
     return db.delete(username)
@@ -94,11 +93,6 @@ def reset_pw(user):
 
 
 def login():
-    #with st.expander(label="Login",expanded=True):
-    if "user_welcome" not in st.session_state:
-        st.session_state.user_welcome = "Sie sind nicht eingeloggt"
-    #st.write(st.session_state.user_welcome)
-
     user = st.text_input("Benutzername", key = "user_login")
     pwd = st.text_input("Passwort",type='password',key = "pwd")
     if st.button("Anmelden"):
@@ -114,8 +108,7 @@ def login_fast():
         pwd = make_hashes(pwd)
         u_data = get_user(user)
         st.session_state.username = u_data["username"]
-        st.session_state["u_data"] = u_data
-        
+        st.session_state["u_data"] = u_data    
 
 
 def forget_pwd():      

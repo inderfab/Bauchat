@@ -40,15 +40,16 @@ def conf_session_state():
         st.session_state["Files_Saved"] = False
     if "Temp_Stream" not in st.session_state:
         st.session_state["Temp_Stream"] = None
-
+    if "Temp_Stream_IMG" not in st.session_state:
+        st.session_state["Temp_Stream_IMG"] = None
 
     # User-Folder
     if "u_path" not in st.session_state:
         st.session_state["u_path"] = None
     if "u_folder" not in st.session_state:
         st.session_state["u_folders"] = None
-    if "u_data_exists" not in st.session_state:
-        st.session_state["u_data_exists"] = False
+    #if "u_data_exists" not in st.session_state:
+    #    st.session_state["u_data_exists"] = False
     if "u_data" not in st.session_state:
         st.session_state["u_data"] = None
 
@@ -73,6 +74,7 @@ def conf_menu():
                 <style>
                 #MainMenu {visibility: hidden;}
                 footer {visibility: hidden;}
+                #GithubIcon {visibility: hidden;}
                 </style>
                 """
     st.markdown(hide_streamlit_style, unsafe_allow_html=True)

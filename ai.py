@@ -88,12 +88,11 @@ def clean_text(text):
 def embedd_FAISS(docs):
     embeddings = OpenAIEmbeddings()
     encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
-    num_tokens = 0
+    #num_tokens = 0
     docs = docs["document"]
-    for doc in docs:
-        num_tokens += len(encoding.encode(doc))
-
-    st.session_state.token_usage += num_tokens
+    #for doc in docs:
+    #    num_tokens += len(encoding.encode(doc))
+    #st.session_state.token_usage += num_tokens
 
     VectorStore = FAISS.from_documents(docs, embedding=embeddings)
     return VectorStore
@@ -101,10 +100,10 @@ def embedd_FAISS(docs):
 
 def create_Store(docs):
 
-    save_loc = docs["document"][0].metadata["save_loc"]
+    
 
     if st.session_state["Storage"] == "S3" and st.session_state.username != 'temp':
-
+        save_loc = docs["document"][0].metadata["save_loc"]
         VectorStore = embedd_FAISS(docs)
         
         pickle_full_text = pickle.dumps(docs["full_text"])
@@ -136,7 +135,7 @@ def create_Store(docs):
     #         f_doc.write(stream.getbuffer())
     #     st.session_state["Files_Saved"] = True
     
-    login.user_update_embedding_tokens(st.session_state.username)
+    #login.user_update_embedding_tokens(st.session_state.username)
     return VectorStore
 
 
@@ -223,28 +222,31 @@ def prompt(query, results, k=1):
     return answer, usage
 
 
-def bauchat_query(query, VectorStore, k=4):
-    with st.chat_message("user"):
-        st.write(query)
 
+def bauchat_query(query, VectorStore, k=4):
+ 
     with st.spinner("Dokumente durchsuchen"):
-        result = search(VectorStore,query,k=k)
+        result = search(VectorStore,query,k=k+2)
     answer, usage = prompt(query, result, k=k)
 
     references_list = []
     for res in result:
-        references = {"title":res.metadata["title"],  "page":res.metadata["page"], "save_loc":res.metadata["save_loc"] }
+        try:
+            save_loc = res.metadata["save_loc"]
+        except:
+            save_loc = 'temp'
+ 
+        references = {"title":res.metadata["title"],  "page":res.metadata["page"], "save_loc":save_loc }
         references_list.append(references)
 
+
     date = time.strftime("%Y-%m")
+    id = time.strftime("%Y-%m-%d-%m-%H-%M-%S")
     m_user = {"role": "user", "content": query, "date":date}
     m_ai = {"role": "ai", "content": answer, "references":references_list}
 
-    st.session_state.messages.append(m_user)
-    st.session_state.messages.append(m_ai)
-    
-    with st.chat_message("ai"):
-        st.write(answer)
+    message_dict = {"user":m_user, "ai": m_ai, "references":references_list, "usage":usage, "id":id}
+    st.session_state.messages.append(message_dict)
 
-    return [m_user, m_ai], usage, references_list
+    return message_dict
 

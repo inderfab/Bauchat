@@ -4,6 +4,7 @@ from streamlit_extras.switch_page_button import switch_page
 from streamlit_extras.app_logo import add_logo 
 import configuration
 import time
+import display
 
 add_logo("gallery/bauchat_logo.png", height=100)
 
@@ -32,11 +33,4 @@ else:
     st.progress(value= token_verfügbar1,text= "Verfügbare Token diesen Monat: " + str(token_verfügbar2))
     
     if st.session_state["u_data"]["history"] != []:
-        with st.expander(label="Verlauf",expanded=True):
-            for message in st.session_state["u_data"]["history"]:
-                with st.chat_message(message[0]["role"]):
-                    st.markdown(message[0]["content"] + " (" + message[0]["date"] +")")
-                with st.chat_message(message[1]["role"]):
-                    st.markdown(message[1]["content"])
-
-
+        display.chat_display(st.session_state["u_data"]["history"])

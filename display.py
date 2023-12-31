@@ -10,7 +10,9 @@ import store
 import base64
 
 
-def pdf2jpg_from_s3(references, k):
+def pdf_display(references, id):
+    #generates tab with Radio Button to choose page to display
+
     keys = {}
     for i, ref in enumerate(references):
         pagenr = ref["page"]
@@ -20,64 +22,69 @@ def pdf2jpg_from_s3(references, k):
     
     img_col, src_col = st.columns([3,1])
     with src_col:
-        img_src = st.radio(f"Die {k} relevantesten Quellen", keys)
+        img_src = st.radio(label="Relevante Quellen", options=keys, key=id)
     
     with img_col:
-        display_PDF_IMG(keys[img_src])
-        #display_PDF_HTML(key)
+        if st.session_state.username != 'temp':
+            pdf_s3_to_img(keys[img_src])
+        else:
+            pdf_to_img(id)
+        #display_PDF_HTML_S3(key)
+
 
 
 @st.cache_data
-def display_PDF_IMG(key):
+def pdf_s3_to_img(key):
+    #Downloads PDF Page from AWS S3 and outputs as IMG in st.image
     size = None
     file = store.read_s3_contents_with_buffer(key)
     img = pdf2image.convert_from_bytes(file,first_page= 0,last_page=1,size=size)
     st.image(img,use_column_width=True)    
     
 
-def display_PDF_HTML(key):
+@st.cache_data
+def pdf_s3_to_iframe(key):
+    #Downloads PDF Page from AWS S3 and outputs in iFrame as PDF
     file = store.read_s3_contents_with_buffer(key)
     base64_pdf = base64.b64encode(file).decode('utf-8')
 
-    pdf_display = F'<iframe src="data:application/pdf;base64,{base64_pdf}" view="fit" frameBorder="0" width="700" height="950" type="application/pdf"></iframe>'
+    pdf_iframe = F'<iframe src="data:application/pdf;base64,{base64_pdf}" view="fit" frameBorder="0" width="700" height="950" type="application/pdf"></iframe>'
 
-    st.markdown(pdf_display, unsafe_allow_html=True)
+    st.markdown(pdf_iframe, unsafe_allow_html=True)
 
 
-
-def PDF2JPG2(result,k=3):
+@st.cache_data
+def pdf_to_img(id):
+    #Displays the Stream.read() file
     size = None
-    use_column_width = "auto"
-    display_lst = []
-    Stream = []
+    file = st.session_state["Temp_Stream_IMG"]
+    img = pdf2image.convert_from_bytes(file)
+    st.image(img)    
 
 
-    for res in result:
-        for folder in st.session_state["docs_to_load"]:
-            file_path = os.path.join(folder,res.metadata['title'] + ".stream")
 
 
-    for res in result:
-        for folder in st.session_state["docs_to_load"]:
-            file_path = os.path.join(folder,res.metadata['title'] + ".stream")
-            
-            if os.path.exists(file_path):
-                with open(file_path,"rb") as fp:
-                    Stream = io.BufferedReader(fp)
-                    page = res.metadata["page"]
-                    title = res.metadata["title"]
-                    img = pdf2image.convert_from_bytes(Stream.read(),first_page= page,last_page=page,size=size)
-                    display_lst.append({"title":title,"seite":page,"bild":img})
-                    
-         
-    if display_lst != []:
-        cols = st.columns(k,gap="medium")
-        col = 0
-        for res in display_lst:
-            with cols[col]:          
-                st.write(res["title"])
-                st.write("Seite: " + str(res["seite"]))
-                st.image(res["bild"],use_column_width=use_column_width)
-            col += 1
+def chat_display(messages):
+    expand_newest_len = len(messages)
+    expand_newest = [False] * expand_newest_len
+    expand_newest[-1] = True
+
+    for i,message in enumerate(messages):
+
+        # m_user = {"role": "user", "content": query, "date":date}
+        # m_ai = {"role": "ai", "content": answer, "references":references_list}
+        # message_dict = {"user":m_user, "ai": m_ai, "references":references_list, "usage":usage}
         
 
+        with st.expander(label=message["user"]["content"], expanded=expand_newest[i]):
+
+            chat_tab, pdf_tab = st.tabs(["Chat", "Quellen"])
+            with chat_tab:
+                with st.chat_message("user"):
+                    st.write(message["user"]["content"])
+
+                with st.chat_message("ai"):
+                    st.write(message["ai"]["content"])
+
+            with pdf_tab:
+                pdf_display(references = message["references"], id = message["id"])
