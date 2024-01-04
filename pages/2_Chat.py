@@ -49,7 +49,7 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
     query = st.chat_input("Stellen Sie hier Ihre Frage")
 
     if query:
-        message = ai.bauchat_query(query, VectorStore,k=4)
+        message = ai.bauchat_query(query, VectorStore)
         db.user_update_message_and_tokens(message)
 
     else:

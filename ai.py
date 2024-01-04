@@ -232,9 +232,8 @@ def prompt(query, results, k=1):
 def bauchat_query(query, VectorStore, k=4):
  
     with st.spinner("Dokumente durchsuchen"):
-        result = search(VectorStore,query,k=k+2)
-    answer, usage = prompt(query, result, k=k)
-
+        result = search(VectorStore,query,k=10)
+    
     references_list = []
     for res in result:
         try:
@@ -245,6 +244,7 @@ def bauchat_query(query, VectorStore, k=4):
         references = {"title":res.metadata["title"],  "page":res.metadata["page"], "save_loc":save_loc }
         references_list.append(references)
 
+    answer, usage = prompt(query, result, k)
 
     date = time.strftime("%Y-%m")
     id = time.strftime("%Y-%m-%d-%m-%H-%M-%S")
