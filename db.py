@@ -12,27 +12,30 @@ import string
 
 dotenv.load_dotenv()
 deta = Deta(os.getenv('DETA_KEY'))
-db = deta.Base("bauchat_base")
+db_users = deta.Base("users")
+db_data = deta.Base("data")
+db_firma = deta.Base("firma")
+
 
 def insert_user(user_dict):
     """Returns the user on a successful user creation, otherwise raises and error"""
-    return db.put(data=user_dict, key= user_dict["username"])
+    return db_users.put(data=user_dict, key= user_dict["username"])
 
 
 def fetch_all_users():
     """Returns a dict of all users"""
-    res = db.fetch()
+    res = db_users.fetch()
     return res.items
 
 
 def get_user(username):
     """If not found, the function will return None"""
-    return db.get(username)
+    return db_users.get(username)
 
 
 def update_user(username, updates):
     """If the item is updated, returns None. Otherwise, an exception is raised"""
-    return db.update(updates, username)
+    return db_users.update(updates, username)
 
 
 def user_update_message_and_tokens(updates):
@@ -44,7 +47,7 @@ def user_update_message_and_tokens(updates):
 
     token_month, token_total = update_user_tokens(user_data, updates["usage"])
     st.session_state.token_change = True
-    db.update({"history":history,"token_month":token_month,"token_total":token_total}, st.session_state.username)
+    db_users.update({"history":history,"token_month":token_month,"token_total":token_total}, st.session_state.username)
 
 
 def user_update_embedding_tokens(username):
@@ -57,7 +60,6 @@ def update_user_tokens(user_data, usage):
     token_update = usage["total_tokens"] #{"prompt_tokens":2357"completion_tokens":121"total_tokens":2478}
 
     date = time.strftime("%Y-%m")
-
 
     # wenn es schon einträge gibt
     token_month = user_data["token_month"] #verlauf pro monat
@@ -76,7 +78,7 @@ def update_user_tokens(user_data, usage):
 
 def delete_user(username):
     """Always returns None, even if the key does not exist"""
-    return db.delete(username)
+    return db_users.delete(username)
 
 
 def make_hashes(password):
@@ -103,8 +105,8 @@ def login():
 
 def login_fast():
     if st.session_state.username == 'temp':
-        user = '###'
-        pwd = '###'
+        user = "fabio"
+        pwd = "dada3131"
         pwd = make_hashes(pwd)
         u_data = get_user(user)
         st.session_state.username = u_data["username"]
@@ -199,3 +201,88 @@ def login_user(user,pwd):
                 switch_page("startseite")
         else:
             st.write("Benutzername oder Passwort falsch")
+
+
+
+### Data DB
+
+def collections_data_db(key):
+    return db_data.get(key)
+
+
+def update_data_db(metadata):
+    key = st.session_state.username
+    if st.session_state["metadata_preloaded"] != None:
+        metadata.update(st.session_state["metadata_preloaded"])
+    data = db_data.get(key)
+    date = time.strftime("%Y-%m-%d")
+
+    file = {"titel": metadata["title"],
+                  "typ": metadata["type"],
+                  "up_date": date,
+                  "sprache": metadata.get("language",None),
+                  "herausgabedatum": metadata.get("printdate",None),
+                  "firma_id":metadata.get("firma_id",None),
+                  "link":metadata.get("link",None),
+                  }
+    
+    update = {"collection": metadata["collection"], 
+             "filenames" :[file
+                           ]}
+
+    existing_collection = False
+
+    if data is None:
+        #wird als Liste in DB geschrieben
+        return db_data.put({"collections":[update]}, key=key)
+    
+    else:
+        data = data["collections"]
+        for col in data:
+            if col["collection"] == metadata["collection"]:
+                filenames = col["filenames"]
+                filenames.append(file)
+                col["filenames"] = filenames
+                existing_collection = True
+                break
+        if existing_collection == True:
+            return db_data.update({"collections":data}, key=key)
+        else:
+            data.append(update)
+            return db_data.update({"collections":data}, key=key)
+    
+    #metadata von ai pickle store = {"collection":collection,"save_loc":save_loc,"title":title}
+
+
+def load_data_user():
+    base = "data_users/"
+    user = st.session_state.username
+    
+    if user != 'temp':
+        st.session_state["u_path"] = os.path.join(base+user)
+        st.session_state["u_folders"] = collections_data_db(user)
+
+
+@st.cache_data
+def load_data_preloaded(keys):
+    for key in keys:
+        st.session_state[key] = collections_data_db(key)
+    st.session_state["preload_data_loaded"] = True
+    st.session_state["preload_base"] = "data_preloaded/"
+
+
+### Firma DB
+
+def insert_firma(firma_dict):
+    """Returns the user on a successful user creation, otherwise raises and error"""
+    return db_firma.put(data=firma_dict)
+
+
+def get_firma(firma_id):
+    return db_data.get(firma_id)
+
+
+def fetch_all_firmas():
+    """Returns a dict of all users"""
+    res = db_firma.fetch()
+    return res.items

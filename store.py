@@ -8,6 +8,7 @@ import os
 import io
 import datetime
 import pickle
+import db
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
@@ -29,54 +30,20 @@ def load_data_preloaded():
     return path, folders
 
 
-def load_data_user():
-    base = "data_users/"
-    user = st.session_state.username
-
-    
-    if user != 'temp':
-        if st.session_state["u_path"] == None or st.session_state["u_folders"] == None:
-            path = os.path.join(base+user)
-            if st.session_state.Storage == "S3":
-                try:
-                    folders = s3_get_subfolders(path)
-                    st.session_state["u_folders"] = folders
-                    #st.session_state["u_data_exists"] = True
-                except:
-                    st.session_state["u_folders"] = None
-                    #load_data_temp()
-
-            # if st.session_state.Storage == "Local":
-            #     try:
-            #         folders = get_subfolders(path)
-            #         st.session_state["u_folders"] = folders
-            #         st.session_state["u_data_exists"] = True
-            #     except:
-            #         load_data_temp()
-        
-            
-            st.session_state["u_path"] = path
-    #else:
-    #    load_data_temp()
-
 
 def load_data_temp():
-    #print(st.session_state["u_path"], st.session_state["u_folders"])
-    if st.session_state["u_path"] == None or st.session_state["u_folders"] == None:
+    if st.session_state["u_folders"] == None: 
         
-        path = "data_temp/"
         timenow = datetime.datetime.now()
         timenow = timenow.strftime("%y-%m-%d_%H-%M-%S")
-        path = os.path.join(path,timenow)
 
-        st.session_state["u_path"] = str(path)
-        #st.session_state["u_folders"] = timenow
+        st.session_state["u_folders"] = timenow
     
 
 def store_location(new_collection=None):
-    load_data_user()
+    db.load_data_user()
 
-    if new_collection != None:
+    if new_collection is not None:
         user_path = st.session_state["u_path"] + "/" + new_collection + "/"
         st.session_state["u_path"] = user_path
     else:

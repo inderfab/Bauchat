@@ -1,5 +1,5 @@
 import streamlit as st
-import login
+import db
 from streamlit_extras.switch_page_button import switch_page
 from streamlit_extras.app_logo import add_logo 
 import configuration
@@ -11,16 +11,16 @@ add_logo("gallery/bauchat_logo.png", height=100)
 configuration.conf_session_state()
 
 if st.session_state.username == 'temp':
-    login.login()
-    login.registration()
-    login.forget_pwd()
+    db.login()
+    db.registration()
+    db.forget_pwd()
 
 else:
     st.write("Benutzername: ", st.session_state.username )
     date = time.strftime("%Y-%m")
     
     if st.session_state.token_change == True:
-        st.session_state["u_data"] = login.get_user(st.session_state.username)
+        st.session_state["u_data"] = db.get_user(st.session_state.username)
     
     try:
         token_month = st.session_state["u_data"]["token_month"][date]

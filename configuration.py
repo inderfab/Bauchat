@@ -1,6 +1,6 @@
 
 import streamlit as st
-import login
+import db
 
 def conf_session_state():
 
@@ -34,14 +34,15 @@ def conf_session_state():
 
 
     # Storage
-    if "Storage" not in st.session_state:
-        st.session_state["Storage"] = "S3"
     if "Files_Saved" not in st.session_state:
         st.session_state["Files_Saved"] = False
     if "Temp_Stream" not in st.session_state:
         st.session_state["Temp_Stream"] = None
     if "Temp_Stream_IMG" not in st.session_state:
         st.session_state["Temp_Stream_IMG"] = None
+    if "submitted" not in st.session_state:
+        st.session_state["submitted"] = None
+
 
     # User-Folder
     if "u_path" not in st.session_state:
@@ -52,6 +53,12 @@ def conf_session_state():
     #    st.session_state["u_data_exists"] = False
     if "u_data" not in st.session_state:
         st.session_state["u_data"] = None
+    if "collection" not in st.session_state:
+        st.session_state["collection"] = None
+    if "update_collection" not in st.session_state:
+        st.session_state["update_collection"] = None
+    if "preload_data_loaded" not in st.session_state:
+        st.session_state["preload_data_loaded"] = False
 
 
     #Chat
@@ -66,8 +73,8 @@ def conf_session_state():
     if "chat_references" not in st.session_state:
         st.session_state.chat_references = None
 
-    #login.login_fast()
-        
+    #db.login_fast()
+
 
 def conf_menu():
     hide_streamlit_style = """

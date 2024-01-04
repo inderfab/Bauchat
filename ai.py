@@ -15,7 +15,7 @@ import store
 import io
 import time
 import tiktoken
-import login
+import db
 
 import dotenv
 dotenv.load_dotenv()
@@ -100,9 +100,7 @@ def embedd_FAISS(docs):
 
 def create_Store(docs):
 
-    
-
-    if st.session_state["Storage"] == "S3" and st.session_state.username != 'temp':
+    if st.session_state.username != 'temp':
         save_loc = docs["document"][0].metadata["save_loc"]
         VectorStore = embedd_FAISS(docs)
         
@@ -118,23 +116,10 @@ def create_Store(docs):
         
         st.session_state["Files_Saved"] = True
 
-    if st.session_state["Storage"] == "S3" and st.session_state.username == "temp":
+    if st.session_state.username == "temp":
         VectorStore = embedd_FAISS(docs)                
         st.session_state["Files_Saved"] = True
 
-
-    # if st.session_state["Storage"] == "Local":
-    #     if not os.path.exists(stores_path):
-    #         os.makedirs(stores_path)
-            
-    #     with open(f"{save_loc}.pkl","wb") as f:
-    #         VectorStore = FAISS.from_documents(docs["dokument"], embedding=embeddings)
-    #         pickle.dump(VectorStore,f)
-
-    #     with open(f"{save_loc}.stream","wb") as f_doc:
-    #         f_doc.write(stream.getbuffer())
-    #     st.session_state["Files_Saved"] = True
-    
     #login.user_update_embedding_tokens(st.session_state.username)
     return VectorStore
 
@@ -152,17 +137,17 @@ def load_Store(paths):
     VectorStores = []
     
     for p in paths:
-        if st.session_state["Storage"] == "S3":
-            files = store.s3_download_files(p)
-            VectorStores = files
+        #if st.session_state["Storage"] == "S3":
+        files = store.s3_download_files(p)
+        VectorStores = files
 
-        if st.session_state["Storage"] == "Local":
-            subfolders = sorted((f for f in os.listdir(p) if not f.startswith(".")), key=str.lower)
-            for s in subfolders:
-                if s.split(".")[-1] == "pkl":
-                    with open(f"{p}{s}","rb") as f:
-                        VectorStore = pickle.load(f)
-                        VectorStores.append(VectorStore)
+        # if st.session_state["Storage"] == "Local":
+        #     subfolders = sorted((f for f in os.listdir(p) if not f.startswith(".")), key=str.lower)
+        #     for s in subfolders:
+        #         if s.split(".")[-1] == "pkl":
+        #             with open(f"{p}{s}","rb") as f:
+        #                 VectorStore = pickle.load(f)
+        #                 VectorStores.append(VectorStore)
             
     VectorStore = combine_Stores(VectorStores)
 
@@ -176,9 +161,30 @@ def pickle_store(stream=None, collection=None):
                 title = s.name.strip(".pdf")
                 stores_path = store.store_location(new_collection=collection)
                 save_loc = os.path.join(stores_path,title)
-                metadata = {"collection":collection,"save_loc":save_loc,"title":title}
+                metadata = {"collection":collection,"save_loc":save_loc,"title":title, "type":s.type }
                 documents = pdf_to_doc(s, metadata)
-                create_Store(documents)
+                #create_Store(documents)
+                db.update_data_db(metadata)
+
+
+def submit_upload(stream):
+    with st.spinner("Dokumente zwischenspeichern"):
+        if st.session_state["collection"] != None:
+            pickle_store(stream=stream, collection = st.session_state["collection"] )
+            st.session_state["user_choice_default"] = st.session_state["collection"]
+            st.session_state["option5value"] = True
+            
+        elif st.session_state["update_collection"] != None:
+            pickle_store(stream=stream, collection= st.session_state["update_collection"] )
+            st.session_state["user_choice_default"] = st.session_state["update_collection"]
+            st.session_state["option5value"] = True
+        
+        else:
+            st.write("Sammlung auswählen")
+
+        st.session_state["speicher_expander"] = False
+        st.session_state["update_collection"] = None
+        st.session_state["collection"] = None
 
 
 def store_temp(stream=None, collection=None):

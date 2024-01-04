@@ -7,7 +7,7 @@ from streamlit_extras.app_logo import add_logo
 import ai
 import display
 import configuration
-import login
+import db
 
 VectorStore = None
 
@@ -50,7 +50,7 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
 
     if query:
         message = ai.bauchat_query(query, VectorStore,k=4)
-        login.user_update_message_and_tokens(message)
+        db.user_update_message_and_tokens(message)
 
     else:
         st.write("Stellen Sie eine Frage an die Dokumente")
