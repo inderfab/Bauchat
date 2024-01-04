@@ -1,0 +1,4 @@
+PDF-Chat Application for Swiss Architects
+A Streamlit aplication lets user upload PDF Files or select collections of PDF (S3 Storage).
+The contents is embedded and can be queried with vector similiarity search (FAISS). 
+The k closest searched are then translated to a answer (ChatGPT) and the source PDF pages is displayed as image.
