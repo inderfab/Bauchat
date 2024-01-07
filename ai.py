@@ -16,6 +16,7 @@ import io
 import time
 import tiktoken
 import db
+import io
 
 import dotenv
 dotenv.load_dotenv()
@@ -28,6 +29,11 @@ def pdf_preprocess(stream, metadata):
     text_pages = []
     full_text = ""
     reader = PdfReader(stream)
+    
+    stream.seek(0)
+    stream_bytes_data = stream.getvalue()
+    file_size = len(stream_bytes_data)
+    st.session_state["bytes_update"] += file_size
 
     for i, page in enumerate(reader.pages,start=1):
         meta = {'page':i} | metadata
@@ -35,7 +41,7 @@ def pdf_preprocess(stream, metadata):
         text_pages.append(Document(page_content=text_page, metadata=meta))
         full_text += text_page
 
-    return text_pages, reader, full_text
+    return text_pages, reader, full_text, file_size
 
 
 def pdf_page_to_buffer(reader, index):
@@ -48,13 +54,15 @@ def pdf_page_to_buffer(reader, index):
 
 def pdf_to_doc(stream, metadata):
 
-    text_pages, reader, full_text = pdf_preprocess(stream, metadata)
+    text_pages, reader, full_text,file_size = pdf_preprocess(stream, metadata)
 
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size = 1500,
         chunk_overlap=200,
         length_function=len)
     
+    num_pages = len(reader.pages)
+
     texts = []
     text = [p.page_content for p in text_pages]
     for t in text:
@@ -69,7 +77,13 @@ def pdf_to_doc(stream, metadata):
         metas = meta_page
 
     document = text_splitter.create_documents(texts = texts, metadatas = metas)
-    return {"title":metadata["title"],"document":document, "pdf_reader":reader, "full_text":full_text}
+    return {"title":metadata["title"],
+            "document":document, 
+            "pdf_reader":reader, 
+            "full_text":full_text, 
+            "num_pages":num_pages, 
+            "file_size":file_size,
+            }
 
 
 def clean_text(text):
@@ -88,18 +102,19 @@ def clean_text(text):
 def embedd_FAISS(docs):
     embeddings = OpenAIEmbeddings()
     encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
-    #num_tokens = 0
+    num_tokens = 0
     docs = docs["document"]
-    #for doc in docs:
-    #    num_tokens += len(encoding.encode(doc))
-    #st.session_state.token_usage += num_tokens
+    for doc in docs:
+        num_tokens += len(encoding.encode(doc.page_content))
+    
+    if st.session_state["preload_active"] == False:
+        st.session_state.token_usage += num_tokens
 
     VectorStore = FAISS.from_documents(docs, embedding=embeddings)
     return VectorStore
 
 
 def create_Store(docs):
-
     if st.session_state.username != 'temp':
         save_loc = docs["document"][0].metadata["save_loc"]
         VectorStore = embedd_FAISS(docs)
@@ -120,7 +135,10 @@ def create_Store(docs):
         VectorStore = embedd_FAISS(docs)                
         st.session_state["Files_Saved"] = True
 
-    #login.user_update_embedding_tokens(st.session_state.username)
+    if st.session_state["preload_active"] == False:
+        db.user_update_embedding_tokens(st.session_state.username)
+        db.update_user_byte_size()
+    st.session_state["token_change"] = True
     return VectorStore
 
 
@@ -154,7 +172,7 @@ def load_Store(paths):
     return VectorStore #, Stream
 
 
-def pickle_store(stream=None, collection=None):
+def pickle_store(stream, collection=None):
     if st.session_state["Files_Saved"] == False:
         if  len(stream) >= 1:
             for s in stream:
@@ -163,7 +181,9 @@ def pickle_store(stream=None, collection=None):
                 save_loc = os.path.join(stores_path,title)
                 metadata = {"collection":collection,"save_loc":save_loc,"title":title, "type":s.type }
                 documents = pdf_to_doc(s, metadata)
-                #create_Store(documents)
+                metadata.update({"num_pages":documents["num_pages"], 
+                                 "file_size":documents["file_size"]})
+                create_Store(documents)
                 db.update_data_db(metadata)
 
 
@@ -230,7 +250,6 @@ def prompt(query, results, k=1):
 
 
 def bauchat_query(query, VectorStore, k=4):
- 
     with st.spinner("Dokumente durchsuchen"):
         result = search(VectorStore,query,k=10)
     

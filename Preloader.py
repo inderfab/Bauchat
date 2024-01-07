@@ -33,14 +33,18 @@ if "collection" not in st.session_state:
     st.session_state["collection"] = None
 if "update_collection" not in st.session_state:
     st.session_state["update_collection"] = None
-
-
+if "preload_key" not in st.session_state:
+    st.session_state["preload_key"] = None
+if "preload_active" not in st.session_state:
+    st.session_state["preload_active"] = True
+st.session_state["bytes_update"] = 0
 
 keys = ["baugesetz", "normen", "richtlinien", "produkte"]
 
 
 key = st.selectbox("key wählen", keys)
 st.session_state.username = key
+st.session_state["preload_key"] = key
 
 
 stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", type='pdf',accept_multiple_files=True, label_visibility="hidden")
@@ -52,14 +56,17 @@ with c1:
     sprache = st.text_input("Sprache")
     herausgabedatum = st.text_input("Herausgabedatum")
     st.write("Seite neu laden nach dem einfügen von neuen Firmen")
-    firma_id = st.selectbox(label="Firma wählen",options=[f["key"]+" | "+f["firma_name"] for f in st.session_state["firmas"]])
-    firma_id = firma_id.split(" | ")[0]
+    firma_id = st.selectbox(label="Firma wählen",options=[f["firma_name"]+" | "+f["key"] for f in st.session_state["firmas"]], index=None)
+    if firma_id is not None:
+        firma_id = firma_id.split(" | ")[1]
     link = st.text_input("link")
+    tags = st.text_input("tags")
 
     st.session_state["metadata_preloaded"] = {"language":sprache,
                                               "printdate":herausgabedatum,
                                               "firma_id":firma_id,
-                                              "link":link
+                                              "link":link,
+                                              "tags":[t.strip()for t in tags.split(",")]
                                               }
 
 with c2:
@@ -76,7 +83,7 @@ with c2:
     firma.update(contact)
 
     if st.button("Firma speichern"):
-        db.insert_firma(firma)
+        st.write(db.insert_firma(firma))
         st.session_state["firmas"] = db.fetch_all_firmas()
 
 

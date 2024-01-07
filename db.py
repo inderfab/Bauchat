@@ -10,6 +10,7 @@ from random import randint, sample
 import time
 import string
 
+
 dotenv.load_dotenv()
 deta = Deta(os.getenv('DETA_KEY'))
 db_users = deta.Base("users")
@@ -44,23 +45,24 @@ def user_update_message_and_tokens(updates):
 
     history = user_data["history"]
     history.insert(0,updates)
+    update = {"history":history}
 
-    token_month, token_total = update_user_tokens(user_data, updates["usage"])
-    st.session_state.token_change = True
-    db_users.update({"history":history,"token_month":token_month,"token_total":token_total}, st.session_state.username)
+    token = update_user_tokens(user_data, updates["usage"]["total_tokens"] ) #{"prompt_tokens":2357"completion_tokens":121"total_tokens":2478}
+    update.update(token)
+
+    db_users.update(update, st.session_state.username)
 
 
 def user_update_embedding_tokens(username):
     user_data = get_user(username)
     usage = st.session_state.token_usage
-    update_user_tokens(user_data, usage)
-    
+    st.session_state.token_usage = 0
+    token = update_user_tokens(user_data, usage)
+    db_users.update(token,username)
 
-def update_user_tokens(user_data, usage):
-    token_update = usage["total_tokens"] #{"prompt_tokens":2357"completion_tokens":121"total_tokens":2478}
 
+def update_user_tokens(user_data, token_update):
     date = time.strftime("%Y-%m")
-
     # wenn es schon einträge gibt
     token_month = user_data["token_month"] #verlauf pro monat
     if date in token_month:
@@ -70,10 +72,29 @@ def update_user_tokens(user_data, usage):
     else:
         token_month.update({date:token_update})
 
-    token_total = user_data["token_total"] 
-    token_total += token_update
+    token_total = user_data["token_total"] + token_update
    
-    return token_month, token_total
+    return {"token_month":token_month,"token_total":token_total}
+
+
+def update_user_byte_size():
+    if st.session_state["bytes_update"]!= 0:
+        filesize_update = st.session_state["bytes_update"]
+        user_data = get_user(st.session_state.username)
+        date = time.strftime("%Y-%m")
+        bytes_month = user_data["bytes_month"] #verlauf pro monat
+        if date in bytes_month:
+            existing_bytes_month = bytes_month[date]
+            existing_bytes_month += filesize_update
+            bytes_month.update({date:existing_bytes_month}) #verlauf addieren
+        else:
+            bytes_month.update({date:filesize_update})
+
+        bytes_total = user_data["bytes_total"] + filesize_update
+
+        db_users.update({"bytes_month":bytes_month,"bytes_total":bytes_total}, st.session_state.username)
+        st.session_state["bytes_update"] = 0
+
 
 
 def delete_user(username):
@@ -105,8 +126,8 @@ def login():
 
 def login_fast():
     if st.session_state.username == 'temp':
-        user = "fabio"
-        pwd = "dada3131"
+        user = "xx"
+        pwd = "xx"
         pwd = make_hashes(pwd)
         u_data = get_user(user)
         st.session_state.username = u_data["username"]
@@ -128,7 +149,7 @@ def forget_pwd():
 
         
 def registration():
-    with st.expander("Registrieren",expanded=False):
+    with st.expander("Registrieren",expanded=st.session_state["registration_expandend"]):
         with st.form(key = "registration", clear_on_submit=False):
             username_free = True
             email_filled = False
@@ -160,11 +181,16 @@ def registration():
                     data = {"username":user, "vorname":vorname, "nachname":nachname, "email":email, 
                             "password":hashed_pwd, "password_reset":False,
                             "verifikation":False,"verification_code":verification_code,
-                            "history":[],"token_month":{},"token_total":0, "token_available":20000,
-                            "full_access":False}
+                            "history":[],
+                            "token_month":{},"token_total":0, "token_available":100000,
+                            "full_access":False, 
+                            "bytes_month":{}, "bytes_total":0, "bytes_available":1000000000,
+                            "pages":0, 
+                            }
                     
                     mail.send_registration(email, verification_code)
                     insert_user(data)
+                    st.session_state["registration_expandend"] = False
                     
 
 
@@ -224,11 +250,15 @@ def update_data_db(metadata):
                   "herausgabedatum": metadata.get("printdate",None),
                   "firma_id":metadata.get("firma_id",None),
                   "link":metadata.get("link",None),
+                  "save_loc":metadata["save_loc"],
+                  "num_pages":metadata["num_pages"], 
+                  "file_size":metadata["file_size"],
                   }
     
     update = {"collection": metadata["collection"], 
-             "filenames" :[file
-                           ]}
+             "filenames" :[file],
+             "tags":metadata.get("tags")
+             }
 
     existing_collection = False
 
@@ -258,13 +288,18 @@ def load_data_user():
     base = "data_users/"
     user = st.session_state.username
     
-    if user != 'temp':
-        st.session_state["u_path"] = os.path.join(base+user)
+    if st.session_state["preload_key"] is not None:
+        st.session_state["u_path"] = st.session_state["preload_key"]
+
+    elif user != 'temp':
+        st.session_state["u_path"] = os.path.join(base,user)
         st.session_state["u_folders"] = collections_data_db(user)
+        
 
 
 @st.cache_data
-def load_data_preloaded(keys):
+def load_data_preloaded():
+    keys = ["baugesetz", "normen", "richtlinien", "produkte"]
     for key in keys:
         st.session_state[key] = collections_data_db(key)
     st.session_state["preload_data_loaded"] = True

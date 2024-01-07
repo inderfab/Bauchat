@@ -42,14 +42,13 @@ def load_data_temp():
 
 def store_location(new_collection=None):
     db.load_data_user()
-
     if new_collection is not None:
-        user_path = st.session_state["u_path"] + "/" + new_collection + "/"
-        st.session_state["u_path"] = user_path
+        path = st.session_state["u_path"] + "/" + new_collection + "/"
+        st.session_state["u_path"] = path
     else:
-        user_path = st.session_state["u_path"]
-    return user_path
-
+        path = st.session_state["u_path"]
+    return path
+   
 
 
 # ----- S3 Storage

@@ -36,5 +36,6 @@ streamlit-image-coordinates==0.1.6
 streamlit-keyup==0.2.0
 streamlit-toggle-switch==1.0.2
 streamlit-vertical-slider==1.0.2
+streamlit-autorefresh
 
 tiktoken==0.5.1

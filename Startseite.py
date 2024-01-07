@@ -102,33 +102,40 @@ st.write("Alle angewählten Verzeichnisse werden gleichzeitig durchsucht. Wähle
 col1, col2, col3, col4, col5 = st.columns(5)
 docs_to_load = []
 
-keys = ["baugesetz", "normen", "richtlinien", "produkte"]
-db.load_data_preloaded(keys)
+db.load_data_preloaded()
 db.load_data_user()
+
 
 if st.session_state["preload_data_loaded"] == True:
     with col1:
-        option_1 = st.checkbox("Baugesetz")
+        option_1 = st.checkbox("Baugesetz", value=False)
         if option_1 == True:
             kanton_liste = [n["collection"] for n in st.session_state["baugesetz"]["collections"]]
             kanton_titel = "Kanton und Gemeinde wählen"
             kanton_sel = selectbox(kanton_titel, kanton_liste)
-
-            if kanton_sel:
+            if kanton_sel is not None:
                 docs_to_load.append( os.path.join(st.session_state["preload_base"],kanton_sel,"") )
 
     with col2:
-        option_2 = st.checkbox("Normen")
+        option_2 = st.checkbox("Normen", value=False)
         if option_2 == True:
-            normen_liste = [n["collection"] for n in st.session_state["normen"]["collections"]]
-            normen_title = "Normen wählen"
-            norm_sel = st.multiselect(normen_title, normen_liste)
-            if norm_sel != []:
-                for u_sel in norm_sel:
-                    docs_to_load.append( os.path.join(st.session_state["preload_base"],"normen",u_sel,"") )
+            if st.session_state["u_data"] is not None:
+                if st.session_state["u_data"].get("full_access", None):
+                
+                    normen_liste = [n["collection"] for n in st.session_state["normen"]["collections"]]
+                    normen_title = "Normen wählen"
+                    norm_sel = st.multiselect(normen_title, normen_liste)
+                    if norm_sel != []:
+                        for u_sel in norm_sel:
+                            docs_to_load.append( os.path.join(st.session_state["preload_base"],"normen",u_sel,"") )
+                else:
+                    st.write("Normen sind aus rechtlichen Gründen zur Zeit noch nicht freigeschaltet")
+            else:
+                st.write("Normen sind aus rechtlichen Gründen zur Zeit noch nicht freigeschaltet")
+                
 
     with col3:
-        option_3 = st.checkbox("Richtlinien")
+        option_3 = st.checkbox("Richtlinien", value=False)
         if option_3 == True:
             richtlinie_liste = [n["collection"] for n in st.session_state["richtlinien"]["collections"]]
             richtlinie_title = "Richtlinien wählen"
@@ -139,7 +146,7 @@ if st.session_state["preload_data_loaded"] == True:
                     docs_to_load.append( os.path.join(st.session_state["preload_base"],"richtlinien",u_sel,"") )
 
     with col4:
-        option_4 = st.checkbox("Produkte")
+        option_4 = st.checkbox("Produkte", value=False)
         
         if option_4 == True:
             
@@ -175,7 +182,6 @@ with col5:
     if opt_5 == True and st.session_state.username == 'temp' and stream:
         option_5 = True
        
-
 if any([option_1,option_2,option_3,option_4,option_5]) or st.session_state["temp_upload"] == True:
     if st.button("Verzeichnisse jetzt laden",type="primary"):
         st.session_state["docs_to_load"] = docs_to_load

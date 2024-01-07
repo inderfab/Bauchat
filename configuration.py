@@ -19,6 +19,8 @@ def conf_session_state():
         st.session_state["show_chat"] = False
     if "sammlung_expanded" not in st.session_state:
         st.session_state["sammlung_expanded"] = True
+    if "registration_expandend" not in st.session_state:
+        st.session_state["registration_expandend"] = False
     if "docs_to_load" not in st.session_state:
         st.session_state["docs_to_load"] = []
     if "zuStartseite" not in st.session_state:
@@ -59,15 +61,22 @@ def conf_session_state():
         st.session_state["update_collection"] = None
     if "preload_data_loaded" not in st.session_state:
         st.session_state["preload_data_loaded"] = False
-
+    if "preload_key" not in st.session_state:
+        st.session_state["preload_key"] = None
+    if "metadata_preloaded" not in st.session_state:
+        st.session_state["metadata_preloaded"] = None
+    if "bytes_update" not in st.session_state:
+        st.session_state["bytes_update"] = 0   
+    if "token_change" not in st.session_state:
+        st.session_state["token_change"] = True   
+    if "preload_active" not in st.session_state:
+        st.session_state["preload_active"] = False
 
     #Chat
     if "messages" not in st.session_state:
         st.session_state.messages = []
     if "long_answer" not in st.session_state:
             st.session_state.long_answer = False
-    if "token_change" not in st.session_state:
-        st.session_state.token_change = False
     if "token_usage" not in st.session_state:
         st.session_state.token_usage = 0
     if "chat_references" not in st.session_state:
