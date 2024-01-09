@@ -31,14 +31,11 @@ st.session_state["data_user"] = None
 # st.subheader(titel_text)
 
 add_logo("gallery/bauchat_logo.png", height=100)
-# ---- LOADER ----
 
 
 st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
-#st.write("---")
 
 
-stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", type='pdf',accept_multiple_files=True, label_visibility="hidden")
 if st.session_state.username == 'temp':
     up_col1, up_col2 = st.columns([1,4])
     with up_col1:
@@ -48,6 +45,8 @@ if st.session_state.username == 'temp':
 
     if zu_anmeldung:
         switch_page("konto")
+
+stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", type='pdf',accept_multiple_files=True, label_visibility="hidden")
 
 if st.session_state.username != 'temp' and len(stream) > 15:
     stream = stream[:15]
@@ -59,7 +58,7 @@ elif st.session_state.username == 'temp' and len(stream) >= 1:
 
 if stream != []:
     st.session_state["speicher_expander"] = True
-    st.session_state["loader_state"] = False
+    #st.session_state["loader_state"] = False
     
     if st.session_state.username != 'temp':
         with st.expander("Sammlung erstellen", expanded=st.session_state["speicher_expander"]):
@@ -114,7 +113,7 @@ if st.session_state["preload_data_loaded"] == True:
             kanton_titel = "Kanton und Gemeinde wählen"
             kanton_sel = selectbox(kanton_titel, kanton_liste)
             if kanton_sel is not None:
-                docs_to_load.append( os.path.join(st.session_state["preload_base"],kanton_sel,"") )
+                docs_to_load.append( os.path.join(kanton_sel,"") )
 
     with col2:
         option_2 = st.checkbox("Normen", value=False)
@@ -127,7 +126,7 @@ if st.session_state["preload_data_loaded"] == True:
                     norm_sel = st.multiselect(normen_title, normen_liste)
                     if norm_sel != []:
                         for u_sel in norm_sel:
-                            docs_to_load.append( os.path.join(st.session_state["preload_base"],"normen",u_sel,"") )
+                            docs_to_load.append( os.path.join("normen",u_sel,"") )
                 else:
                     st.write("Normen sind aus rechtlichen Gründen zur Zeit noch nicht freigeschaltet")
             else:
@@ -143,7 +142,7 @@ if st.session_state["preload_data_loaded"] == True:
 
             if richtlinie_sel != []:
                 for u_sel in richtlinie_sel:
-                    docs_to_load.append( os.path.join(st.session_state["preload_base"],"richtlinien",u_sel,"") )
+                    docs_to_load.append( os.path.join("richtlinien",u_sel,"") )
 
     with col4:
         option_4 = st.checkbox("Produkte", value=False)
@@ -156,7 +155,7 @@ if st.session_state["preload_data_loaded"] == True:
 
             if unternehmen_sel != []:
                 for u_sel in unternehmen_sel:
-                    docs_to_load.append( os.path.join(st.session_state["preload_base"],"produkte",u_sel,"") )
+                    docs_to_load.append( os.path.join("produkte",u_sel,"") )
 
 
 with col5:
@@ -181,9 +180,12 @@ with col5:
 
     if opt_5 == True and st.session_state.username == 'temp' and stream:
         option_5 = True
-       
-if any([option_1,option_2,option_3,option_4,option_5]) or st.session_state["temp_upload"] == True:
-    if st.button("Verzeichnisse jetzt laden",type="primary"):
+
+
+if st.button("Verzeichnisse jetzt laden",type="primary"):      
+    if any([option_1,option_2,option_3,option_4,option_5]) or st.session_state["temp_upload"] == True:
         st.session_state["docs_to_load"] = docs_to_load
         switch_page("chat")
+    else:
+        st.write("Verzeichnisse wählen")
 

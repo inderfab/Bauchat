@@ -27,8 +27,6 @@ if "metadata_preloaded" not in st.session_state:
     st.session_state["metadata_preloaded"] = None
 if "Files_Saved" not in st.session_state:
     st.session_state["Files_Saved"] = False
-if "Files_Saved" not in st.session_state:
-    st.session_state["Files_Saved"] = False
 if "collection" not in st.session_state:
     st.session_state["collection"] = None
 if "update_collection" not in st.session_state:
@@ -90,18 +88,18 @@ with c2:
 
 
 if stream != []:
-  
+    st.session_state["Files_Saved"] == False
     st.session_state["u_folders"] = db.collections_data_db(st.session_state.username)
 
     st.session_state["speicher_expander"] = True
-    st.session_state["loader_state"] = False
+    #st.session_state["loader_state"] = False
     
     with st.expander("Sammlung erstellen", expanded=st.session_state["speicher_expander"]):
         with st.form(key="Update Collections"):
             sc1, sc2 = st.columns(2)
             
             with sc1:
-                collection = st.text_input("Neue Sammlung anlegen:", max_chars=25, help="maximal 25 Buchstaben", value=None)                        
+                collection = st.text_input("Neue Sammlung anlegen:", max_chars=30, help="maximal 25 Buchstaben", value=None)                        
                 if collection is not None:
                     st.session_state["collection"] = collection
 
@@ -113,8 +111,8 @@ if stream != []:
             st.session_state["submitted"] = st.form_submit_button("Speichern")
         
         
-        if st.session_state["submitted"] is not None:
+        if st.session_state["submitted"] == True:
             
             ai.submit_upload(stream)
-            st.session_state["submitted"] = None
+            st.session_state["submitted"] = False
                 

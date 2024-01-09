@@ -118,10 +118,7 @@ def reset_pw(user):
 def login():
     user = st.text_input("Benutzername", key = "user_login")
     pwd = st.text_input("Passwort",type='password',key = "pwd")
-    if st.button("Anmelden"):
-        st.session_state["anmeldeversuch"] = True
-    if st.session_state["anmeldeversuch"] == True:
-        login_user(user,pwd)
+    st.button("Anmelden", on_click=login_user, args=[user,pwd])  
 
 
 def login_fast():
@@ -294,8 +291,9 @@ def load_data_user():
     elif user != 'temp':
         st.session_state["u_path"] = os.path.join(base,user)
         st.session_state["u_folders"] = collections_data_db(user)
-        
-
+    
+    else:
+        st.session_state["u_folders"] = None
 
 @st.cache_data
 def load_data_preloaded():
@@ -303,7 +301,6 @@ def load_data_preloaded():
     for key in keys:
         st.session_state[key] = collections_data_db(key)
     st.session_state["preload_data_loaded"] = True
-    st.session_state["preload_base"] = "data_preloaded/"
 
 
 ### Firma DB

@@ -17,18 +17,27 @@ def pdf_display(references, id):
     for i, ref in enumerate(references):
         pagenr = ref["page"]
         name = f'{str(i+1)}: {ref["title"]} Seite: {str(ref["page"])}'
-        key = ref["save_loc"] + "-" + str(pagenr) +".pdf"
+        if ref.get("save_loc") is not 'temp':
+            key = ref["save_loc"] + "-" + str(pagenr) +".pdf"
+        else:
+            key = "temporary"
         keys.update({name:key})
     
     img_col, src_col = st.columns([3,1])
     with src_col:
         img_src = st.radio(label="Relevante Quellen", options=keys, key=id)
-    
+        full_pdf_key = "".join(keys[img_src].split("-")[:-1])
+        if keys[img_src] != 'temporary': 
+            store.download_button_full_pdf(full_pdf_key)
+
     with img_col:
-        if st.session_state.username != 'temp':
+        if keys[img_src] != 'temporary': 
             pdf_s3_to_img(keys[img_src])
+            #pdf_s3_to_iframe(keys[img_src])
         else:
-            pdf_to_img(id)
+            pdf_temp_to_img()
+            #pdf_temp_to_iframe()
+        
         #display_PDF_HTML_S3(key)
 
 
@@ -50,17 +59,26 @@ def pdf_s3_to_iframe(key):
 
     pdf_iframe = F'<iframe src="data:application/pdf;base64,{base64_pdf}" view="fit" frameBorder="0" width="700" height="950" type="application/pdf"></iframe>'
 
+    #page=5&navpanes=0&scrollbar=0&view=fit
     st.markdown(pdf_iframe, unsafe_allow_html=True)
 
 
 @st.cache_data
-def pdf_to_img(id):
+def pdf_temp_to_img():
     #Displays the Stream.read() file
-    size = None
     file = st.session_state["Temp_Stream_IMG"]
     img = pdf2image.convert_from_bytes(file)
     st.image(img)    
 
+
+#@st.cache_data
+def pdf_temp_to_iframe():
+    #Downloads PDF Page from AWS S3 and outputs in iFrame as PDF
+    file = st.session_state["Temp_Stream_IMG"]
+    base64_pdf = base64.b64encode(file).decode('utf-8')
+
+    pdf_iframe = F'<iframe src="data:application/pdf;base64,{base64_pdf}" view="fit" frameBorder="0" width="700" height="950" type="application/pdf"></iframe>'
+    st.markdown(pdf_iframe, unsafe_allow_html=True)
 
 
 

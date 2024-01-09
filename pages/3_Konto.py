@@ -17,7 +17,11 @@ if st.session_state.username == 'temp':
 
 else:
     st.write("Benutzername: ", st.session_state.username )
-    
+    if st.button("Abmelden") is True:
+        st.session_state.username = 'temp'
+        switch_page("Startseite")
+
+    st.subheader("Nutzung")
     with st.expander("Verfügbare Einheiten"):
         if st.session_state.token_change == True:
             st.session_state["u_data"] = db.get_user(st.session_state.username)
@@ -39,26 +43,29 @@ else:
         st.progress(value= token_verfügbar1,text= "Verfügbare Token diesen Monat: " + str(token_verfügbar2) + " Tokens")
         st.progress(value= bytes_verfügbar1,text= "Verfügbare MB diesen Monat: " + str(round(bytes_verfügbar2,1)) + " MB")
 
+    st.subheader("Sammlungsübersicht")
     with st.expander("Sammlungen"):
         if st.session_state["u_folders"] == None:
             db.load_data_user()
 
-
-        for collection in st.session_state["u_folders"]["collections"]:
-            tags =  " | ".join(collection["tags"])
-            st.write(collection["collection"].upper(), "      Tags: ",tags)
-            st.dataframe(collection["filenames"],
-                        use_container_width = True,
-                        column_order=("titel","num_pages","up_date"),
-                        column_config={"titel": "Titel",
-                                        "num_pages": "Seitenzahl",
-                                        "up_date": "Hochgeladen am"
-                                        },
-                        hide_index=True,
-                        )
+        try: 
+            for collection in st.session_state["u_folders"]["collections"]:
+                tags =  " | ".join(collection["tags"])
+                st.write(collection["collection"].upper(), "      Tags: ",tags)
+                st.dataframe(collection["filenames"],
+                            use_container_width = True,
+                            column_order=("titel","num_pages","up_date"),
+                            column_config={"titel": "Titel",
+                                            "num_pages": "Seitenzahl",
+                                            "up_date": "Hochgeladen am"
+                                            },
+                            hide_index=True,
+                            )
+        except:
+            st.write("Noch keine Eigene Sammlung")
             
-    with st.expander("Chatverlauf"):
-        if st.session_state["u_data"]["history"] != []:
-            display.chat_display(st.session_state["u_data"]["history"])
+    st.subheader("Chatverlauf")
+    if st.session_state["u_data"]["history"] != []:
+        display.chat_display(st.session_state["u_data"]["history"])
 
 

@@ -31,26 +31,25 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
             st.write("Geladene Dokumente:")
             st.markdown(chat_docs)
         
-    if st.session_state.username != "temp":
-        with st.spinner("Dokumente laden"):
-            VectorStore = ai.load_Store(st.session_state["docs_to_load"])
+    VectorStore = ai.load_Store(st.session_state["docs_to_load"])
         
     if st.session_state["temp_upload"] == True:
         Vectorstore_Temp = ai.store_temp(st.session_state["Temp_Stream"])
-        #if VectorStore != None:
-        #    VectorStore = ai.combine_Stores([VectorStore,Vectorstore_Temp])
-        #else:
-        #    VectorStore = Vectorstore_Temp$
-        VectorStore = Vectorstore_Temp
+        if VectorStore is not None:
+            VectorStore = ai.combine_Stores([VectorStore,Vectorstore_Temp])
+        else:
+            VectorStore = Vectorstore_Temp
+        
 
     if st.checkbox(label="Ausführliche Antwort", value=False):
-            st.session_state.long_answer = True
+        st.session_state.long_answer = True
 
     query = st.chat_input("Stellen Sie hier Ihre Frage")
 
     if query:
         message = ai.bauchat_query(query, VectorStore)
-        db.user_update_message_and_tokens(message)
+        if st.session_state.username != 'temp':
+            db.user_update_message_and_tokens(message)
 
     else:
         st.write("Stellen Sie eine Frage an die Dokumente")

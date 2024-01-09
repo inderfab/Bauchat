@@ -63,6 +63,9 @@ def pdf_to_doc(stream, metadata):
     
     num_pages = len(reader.pages)
 
+    stream.seek(0)
+    full_pdf = stream.getvalue()
+
     texts = []
     text = [p.page_content for p in text_pages]
     for t in text:
@@ -80,7 +83,8 @@ def pdf_to_doc(stream, metadata):
     return {"title":metadata["title"],
             "document":document, 
             "pdf_reader":reader, 
-            "full_text":full_text, 
+            "full_text":full_text,
+            "full_pdf": full_pdf,
             "num_pages":num_pages, 
             "file_size":file_size,
             }
@@ -101,7 +105,7 @@ def clean_text(text):
 
 def embedd_FAISS(docs):
     embeddings = OpenAIEmbeddings()
-    encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
+    encoding = tiktoken.encoding_for_model("gpt-4-1106-preview")
     num_tokens = 0
     docs = docs["document"]
     for doc in docs:
@@ -129,13 +133,14 @@ def create_Store(docs):
             pdf_page = pdf_page_to_buffer(docs["pdf_reader"], index)
             store.s3_uploader(save_loc + "-" + str(index+1) + ".pdf", pdf_page)
         
-        st.session_state["Files_Saved"] = True
+        full_pdf = pickle.dumps(docs["full_pdf"])
+        store.s3_uploader(save_loc+"-full.pdf", full_pdf)
+        
 
     if st.session_state.username == "temp":
         VectorStore = embedd_FAISS(docs)                
-        st.session_state["Files_Saved"] = True
 
-    if st.session_state["preload_active"] == False:
+    if st.session_state["preload_active"] == False and st.session_state.username != "temp":
         db.user_update_embedding_tokens(st.session_state.username)
         db.update_user_byte_size()
     st.session_state["token_change"] = True
@@ -150,41 +155,50 @@ def combine_Stores(VectorStores):
     return baseVS
 
 
-#@st.cache_data
 def load_Store(paths):
     VectorStores = []
     
-    for p in paths:
-        #if st.session_state["Storage"] == "S3":
-        files = store.s3_download_files(p)
-        VectorStores = files
+    if st.session_state["docs_to_load"] != []:
+        progress_text = "Dokumente laden"
+        progress_max = len(paths)
+        progress_bar = st.progress(0,progress_text)
+        progress = 0
 
-        # if st.session_state["Storage"] == "Local":
-        #     subfolders = sorted((f for f in os.listdir(p) if not f.startswith(".")), key=str.lower)
-        #     for s in subfolders:
-        #         if s.split(".")[-1] == "pkl":
-        #             with open(f"{p}{s}","rb") as f:
-        #                 VectorStore = pickle.load(f)
-        #                 VectorStores.append(VectorStore)
-            
-    VectorStore = combine_Stores(VectorStores)
+        for p in paths:
+            files = store.s3_download_files(p)
+            VectorStores = files
 
-    return VectorStore #, Stream
+            progress += 1
+            progress_bar.progress(progress/progress_max, text=progress_text)
+        
+        VectorStore = combine_Stores(VectorStores)
+        progress_bar.empty()
+    else:
+        VectorStore = None
+    return VectorStore
+
+
+def store_temp(stream=None, collection=None):
+    title = stream.name.strip(".pdf")
+    metadata = {"collection":collection, "title":title}
+    documents = pdf_to_doc(stream, metadata)
+    Vectorstore_Temp = create_Store(documents)
+    return Vectorstore_Temp
+
 
 
 def pickle_store(stream, collection=None):
-    if st.session_state["Files_Saved"] == False:
-        if  len(stream) >= 1:
-            for s in stream:
-                title = s.name.strip(".pdf")
-                stores_path = store.store_location(new_collection=collection)
-                save_loc = os.path.join(stores_path,title)
-                metadata = {"collection":collection,"save_loc":save_loc,"title":title, "type":s.type }
-                documents = pdf_to_doc(s, metadata)
-                metadata.update({"num_pages":documents["num_pages"], 
-                                 "file_size":documents["file_size"]})
-                create_Store(documents)
-                db.update_data_db(metadata)
+    if  len(stream) >= 1:
+        for s in stream:
+            title = s.name.strip(".pdf")
+            stores_path = store.store_location(new_collection=collection)
+            save_loc = os.path.join(stores_path,title)
+            metadata = {"collection":collection,"save_loc":save_loc,"title":title, "type":s.type }
+            documents = pdf_to_doc(s, metadata)
+            metadata.update({"num_pages":documents["num_pages"], 
+                                "file_size":documents["file_size"]})
+            create_Store(documents)
+            db.update_data_db(metadata)
 
 
 def submit_upload(stream):
@@ -193,27 +207,24 @@ def submit_upload(stream):
             pickle_store(stream=stream, collection = st.session_state["collection"] )
             st.session_state["user_choice_default"] = st.session_state["collection"]
             st.session_state["option5value"] = True
-            
+            st.session_state["update_collection"] = None
+            st.session_state["collection"] = None
+
         elif st.session_state["update_collection"] != None:
             pickle_store(stream=stream, collection= st.session_state["update_collection"] )
             st.session_state["user_choice_default"] = st.session_state["update_collection"]
             st.session_state["option5value"] = True
-        
+            st.session_state["update_collection"] = None
+            st.session_state["collection"] = None
+
         else:
             st.write("Sammlung auswählen")
 
         st.session_state["speicher_expander"] = False
-        st.session_state["update_collection"] = None
-        st.session_state["collection"] = None
+        
 
-
-def store_temp(stream=None, collection=None):
-    title = stream.name.strip(".pdf")
-    metadata = {"collection":collection, "title":title}
-    #st.write(stream)
-    documents = pdf_to_doc(stream, metadata)
-    Vectorstore_Temp = create_Store(documents)
-    return Vectorstore_Temp
+    if st.session_state["preload_active"] == True:
+        st.write("Hochgeladen ", stream )
 
 
 
@@ -225,7 +236,7 @@ def search(VectorStore, query,k=3):
 
 
 def prompt(query, results, k=1):
-    model = 'gpt-3.5-turbo'
+    model = 'gpt-4-1106-preview'
     temperature=0.0
     kontext = "\n".join([text.page_content + " Quelle= " + text.metadata["title"] + " Seite= " + str(text.metadata["page"]) for i,text in enumerate(results)])
     
@@ -249,17 +260,18 @@ def prompt(query, results, k=1):
 
 
 
-def bauchat_query(query, VectorStore, k=4):
+def bauchat_query(query, VectorStore, k=3):
     with st.spinner("Dokumente durchsuchen"):
         result = search(VectorStore,query,k=10)
     
     references_list = []
+
     for res in result:
         try:
             save_loc = res.metadata["save_loc"]
         except:
             save_loc = 'temp'
- 
+
         references = {"title":res.metadata["title"],  "page":res.metadata["page"], "save_loc":save_loc }
         references_list.append(references)
 

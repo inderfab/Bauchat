@@ -15,19 +15,19 @@ AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_DEFAULT_REGION = os.getenv("AWS_DEFAULT_REGION")
 AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
 
-@st.cache_data
-def load_data_preloaded():
-    filepath = "data_preloaded-folders.pkl"
-    path = "data_preloaded/"
+# @st.cache_data
+# def load_data_preloaded():
+#     filepath = "data_preloaded-folders.pkl"
+#     path = "data_preloaded/"
 
-    try:
-        folders = s3_download_pkl(filepath)
-    except:
-        folders = get_subfolders(path)
+#     try:
+#         folders = s3_download_pkl(filepath)
+#     except:
+#         folders = get_subfolders(path)
 
-        s3_upload_pkl(filepath, folders)
+#         s3_upload_pkl(filepath, folders)
 
-    return path, folders
+#     return path, folders
 
 
 
@@ -71,28 +71,29 @@ def s3_reader(filepath):
     return file
 
 
-def s3_get_subfolders(path):
-    client = s3_boto_client()
-    bucket = "bauchatstorage"
-    response = client.list_objects_v2(Bucket = bucket, Delimiter='/',Prefix =path) 
-    subfolders = []
 
-    files = []
-    if response.get("Contents"):
-        for key in response.get("Contents"):
-            f_name = key.get("Key").split("/")[-1]
-            files.append(f_name)
-        return files
+# def s3_get_subfolders(path):
+#     client = s3_boto_client()
+#     bucket = "bauchatstorage"
+#     response = client.list_objects_v2(Bucket = bucket, Delimiter='/',Prefix =path) 
+#     subfolders = []
 
-    else:
-        #st.write(path)
-        for folder in response.get('CommonPrefixes'):
-            subpath = folder.get('Prefix')
-            foldername = folder.get('Prefix').rstrip('/').split("/")[-1]  
-            sf = s3_get_subfolders(subpath)
-            subfolders.append([foldername,sf])
+#     files = []
+#     if response.get("Contents"):
+#         for key in response.get("Contents"):
+#             f_name = key.get("Key").split("/")[-1]
+#             files.append(f_name)
+#         return files
+
+#     else:
+#         #st.write(path)
+#         for folder in response.get('CommonPrefixes'):
+#             subpath = folder.get('Prefix')
+#             foldername = folder.get('Prefix').rstrip('/').split("/")[-1]  
+#             sf = s3_get_subfolders(subpath)
+#             subfolders.append([foldername,sf])
     
-    return subfolders
+#     return subfolders
 
 def s3_upload_pkl(key, data):
     
@@ -102,7 +103,7 @@ def s3_upload_pkl(key, data):
     return success
 
 
-def s3_download_pkl(key):
+def s3_download_pkl(key) -> str : 
     client = s3_boto_client()
     bucket = "bauchatstorage"
     
@@ -113,7 +114,7 @@ def s3_download_pkl(key):
     return file
 
 
-def read_s3_contents_with_buffer(key):
+def read_s3_contents_with_buffer(key) -> str :
     client = s3_boto_client()
     bucket = "bauchatstorage"
     bytes = io.BytesIO()
@@ -122,10 +123,11 @@ def read_s3_contents_with_buffer(key):
 
 
 
-def s3_download_files(path):
+def s3_download_files(path) -> str :
     client = s3_boto_client()
     bucket = "bauchatstorage"
-    response=client.list_objects_v2(Bucket=bucket,Prefix  =path)['Contents']
+    st.write("Path ", path)
+    response=client.list_objects_v2(Bucket=bucket,Prefix  = path)['Contents']
     files = []
     for f in response:
         key = f["Key"]
@@ -137,7 +139,7 @@ def s3_download_files(path):
     return files
 
 
-def s3_get_files(path):
+def s3_get_files(path) -> str :
     client = s3_boto_client()
     bucket = "bauchatstorage"
     response = client.list_objects_v2(Bucket = bucket, Delimiter='/',Prefix =path)
@@ -154,33 +156,49 @@ def s3_get_files(path):
 
 
 
+def download_button_full_pdf(key):   
+    #Key ist save_loc
+    key += "-full.pdf" 
+    down_file = st.button(label="Ganzes PDF herunterladen")
+    if down_file is True:
+        with st.spinner("Das PDF wird vom Server geladen"):
+            pdf = s3_download_pkl(key)
+        st.download_button(
+            label="PDF speichern",
+            data=pdf,
+            file_name=key,
+            mime="application/octet-stream",
+            help="Lade das gesamte PDF herunter", 
+            use_container_width=False,
+            )
+
 # ----- Local Storage
 
-def get_subfolders(path):
-    #Local Storage
-    objects_in_dir = sorted((f for f in os.listdir(path) if not f.startswith(".")), key=str.lower)
+# def get_subfolders(path):
+#     #Local Storage
+#     objects_in_dir = sorted((f for f in os.listdir(path) if not f.startswith(".")), key=str.lower)
 
-    subfolders = []
-    for object in objects_in_dir:
-        subpath = os.path.join(path,object)
+#     subfolders = []
+#     for object in objects_in_dir:
+#         subpath = os.path.join(path,object)
     
-        if os.path.isdir(subpath):
-            #st.write(subpath)
-            sf = get_subfolders(subpath)
-            if sf == []:
-                sf = get_files(subpath)
-            subfolders.append([object,sf])
+#         if os.path.isdir(subpath):
+#             #st.write(subpath)
+#             sf = get_subfolders(subpath)
+#             if sf == []:
+#                 sf = get_files(subpath)
+#             subfolders.append([object,sf])
             
-    return subfolders
+#     return subfolders
 
-def get_files(path):
-    objects_in_dir = sorted((f for f in os.listdir(path) if not f.startswith(".")), key=str.lower)
+# def get_files(path):
+#     objects_in_dir = sorted((f for f in os.listdir(path) if not f.startswith(".")), key=str.lower)
 
-    files = []
-    for file in objects_in_dir:
-        subpath = os.path.join(path,file)
+#     files = []
+#     for file in objects_in_dir:
+#         subpath = os.path.join(path,file)
         
-        if os.path.isfile(subpath):
-            file_name = subpath.split("/")[-1]
-            files.append(file_name) 
-    return files
+#         if os.path.isfile(subpath):
+#             file_name = subpath.split("/")[-1]
+#             files.append(file_name) 
+#     return files
