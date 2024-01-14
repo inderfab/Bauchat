@@ -19,8 +19,7 @@ dotenv.load_dotenv()
 page_title = "bauCHAT"
 
 
-
-st.set_page_config(page_title = page_title,initial_sidebar_state=st.session_state.sidebar_state,layout="wide") #
+st.set_page_config(page_title = page_title,layout="wide") #
 
 configuration.conf_session_state()
 configuration.conf_menu()
