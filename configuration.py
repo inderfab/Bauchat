@@ -2,8 +2,8 @@
 import streamlit as st
 import db
 
+@st.cache_data
 def conf_session_state():
-
 
     if 'sidebar_state' not in st.session_state:
         st.session_state.sidebar_state = 'expanded'
