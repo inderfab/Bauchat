@@ -18,19 +18,17 @@ dotenv.load_dotenv()
 
 page_title = "bauCHAT"
 
-configuration.conf_session_state()
+
 
 st.set_page_config(page_title = page_title,initial_sidebar_state=st.session_state.sidebar_state,layout="wide") #
 
+configuration.conf_session_state()
 configuration.conf_menu()
+add_logo("gallery/bauchat_logo.png", height=100)
+
+st.write("User", st.session_state.username)
 
 st.session_state["data_user"] = None
-# titel_text = "BauCHAT"
-# if st.session_state.username != 'temp':
-#     titel_text += ' im Gespräch mit ' + st.session_state.username
-# st.subheader(titel_text)
-
-add_logo("gallery/bauchat_logo.png", height=100)
 
 
 st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
