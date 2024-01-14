@@ -152,6 +152,7 @@ def create_Store(docs):
 
 def combine_Stores(VectorStores):
     # Merges all Vectorstores to the Base (First in List)
+    st.write("Stores: ", VectorStores)
     baseVS = VectorStores[0]
     for vs in VectorStores[1:]:
         baseVS.merge_from(vs)
@@ -162,7 +163,6 @@ def load_Store(paths):
     VectorStores = []
     
     if st.session_state["docs_to_load"] != []:
-        st.write("Docs", st.session_state["docs_to_load"])
         
         progress_text = "Dokumente laden"
         progress_max = len(paths)
