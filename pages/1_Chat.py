@@ -9,6 +9,7 @@ import display
 import configuration
 import db
 
+st.session_state.update(st.session_state)
 VectorStore = None
 
 add_logo("gallery/bauchat_logo.png", height=100)

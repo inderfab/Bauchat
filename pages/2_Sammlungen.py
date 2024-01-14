@@ -4,9 +4,11 @@ from streamlit_extras.app_logo import add_logo
 import configuration
 
 import db
+st.session_state.update(st.session_state)
 
 add_logo("gallery/bauchat_logo.png", height=100)
 configuration.conf_session_state()
+
 
 
 
