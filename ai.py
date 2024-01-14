@@ -41,6 +41,9 @@ def pdf_preprocess(stream, metadata):
         text_pages.append(Document(page_content=text_page, metadata=meta))
         full_text += text_page
 
+    if full_text == "":
+        st.session_state["ocr_needed"] = True
+        st.session_state["exctraction_problem_files"].append(metadata["title"])
     return text_pages, reader, full_text, file_size
 
 
@@ -54,7 +57,7 @@ def pdf_page_to_buffer(reader, index):
 
 def pdf_to_doc(stream, metadata):
 
-    text_pages, reader, full_text,file_size = pdf_preprocess(stream, metadata)
+    text_pages, reader, full_text,file_size = pdf_preprocess(stream, metadata)        
 
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size = 1500,
@@ -88,7 +91,7 @@ def pdf_to_doc(stream, metadata):
             "num_pages":num_pages, 
             "file_size":file_size,
             }
-
+    
 
 def clean_text(text):
     clean_text = text.encode("utf-8", "ignore").decode("utf-8")
@@ -170,7 +173,6 @@ def load_Store(paths):
 
             progress += 1
             progress_bar.progress(progress/progress_max, text=progress_text)
-        
         VectorStore = combine_Stores(VectorStores)
         progress_bar.empty()
     else:
@@ -179,29 +181,43 @@ def load_Store(paths):
 
 
 def store_temp(stream=None, collection=None):
+    Vectorstore_Temp = None
     title = stream.name.strip(".pdf")
     metadata = {"collection":collection, "title":title}
     documents = pdf_to_doc(stream, metadata)
-    Vectorstore_Temp = create_Store(documents)
+    if documents is not None:
+        Vectorstore_Temp = create_Store(documents)
     return Vectorstore_Temp
 
 
 
 def pickle_store(stream, collection=None):
-    if  len(stream) >= 1:
+
+    stream_len = len(stream)
+    progress_text = "Dokumente speichern"
+    progress_bar = st.progress(0,progress_text)
+    progress = 0
+    
+    if  stream_len >= 1:
         for s in stream:
+            st.session_state["ocr_needed"] = False
             title = s.name.strip(".pdf")
             stores_path = store.store_location(new_collection=collection)
             save_loc = os.path.join(stores_path,title)
             metadata = {"collection":collection,"save_loc":save_loc,"title":title, "type":s.type }
             documents = pdf_to_doc(s, metadata)
-            metadata.update({"num_pages":documents["num_pages"], 
-                                "file_size":documents["file_size"]})
-            create_Store(documents)
-            db.update_data_db(metadata)
+            if st.session_state["ocr_needed"] == False:
+                metadata.update({"num_pages":documents["num_pages"], 
+                                    "file_size":documents["file_size"]})
+                create_Store(documents)
+                db.update_data_db(metadata)
+            progress += 1
+            progress_bar.progress(progress/stream_len, text=progress_text)
 
+    progress_bar.empty()
 
 def submit_upload(stream):
+
     with st.spinner("Dokumente zwischenspeichern"):
         if st.session_state["collection"] != None:
             pickle_store(stream=stream, collection = st.session_state["collection"] )
@@ -224,7 +240,7 @@ def submit_upload(stream):
         
 
     if st.session_state["preload_active"] == True:
-        st.write("Hochgeladen ", stream )
+        st.write("Streams: ", stream )
 
 
 
@@ -262,7 +278,7 @@ def prompt(query, results, k=1):
 
 def bauchat_query(query, VectorStore, k=3):
     with st.spinner("Dokumente durchsuchen"):
-        result = search(VectorStore,query,k=10)
+        result = search(VectorStore,query,k=7)
     
     references_list = []
 

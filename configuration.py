@@ -71,6 +71,11 @@ def conf_session_state():
         st.session_state["token_change"] = True   
     if "preload_active" not in st.session_state:
         st.session_state["preload_active"] = False
+    if "ocr_needed" not in st.session_state:
+        st.session_state["ocr_needed"] = False
+    if "exctraction_problem_files" not in st.session_state:
+        st.session_state["exctraction_problem_files"] = []
+
 
     #Chat
     if "messages" not in st.session_state:

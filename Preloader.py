@@ -36,6 +36,8 @@ if "preload_key" not in st.session_state:
 if "preload_active" not in st.session_state:
     st.session_state["preload_active"] = True
 st.session_state["bytes_update"] = 0
+if "exctraction_problem_files" not in st.session_state:
+    st.session_state["exctraction_problem_files"] = []
 
 keys = ["baugesetz", "normen", "richtlinien", "produkte"]
 
@@ -114,5 +116,8 @@ if stream != []:
         if st.session_state["submitted"] == True:
             
             ai.submit_upload(stream)
+            if st.session_state["exctraction_problem_files"] != []:
+                st.write("Bei diesen Dateien konnte kein Text extrahiert werden (Datei gescannt oder geschützt)",
+                         st.session_state["exctraction_problem_files"])
             st.session_state["submitted"] = False
                 
