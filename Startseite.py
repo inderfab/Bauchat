@@ -26,7 +26,6 @@ configuration.conf_session_state()
 configuration.conf_menu()
 add_logo("gallery/bauchat_logo.png", height=100)
 
-st.write("User", st.session_state.username)
 
 st.session_state["data_user"] = None
 
