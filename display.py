@@ -17,7 +17,7 @@ def pdf_display(references, id):
     for i, ref in enumerate(references):
         pagenr = ref["page"]
         name = f'{str(i+1)}: {ref["title"]} Seite: {str(ref["page"])}'
-        if ref.get("save_loc") is not 'temp':
+        if ref.get("save_loc") != 'temp':
             key = ref["save_loc"] + "-" + str(pagenr) +".pdf"
         else:
             key = "temporary"

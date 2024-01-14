@@ -295,7 +295,7 @@ def load_data_user():
     else:
         st.session_state["u_folders"] = None
 
-@st.cache_data
+#@st.cache_data
 def load_data_preloaded():
     keys = ["baugesetz", "normen", "richtlinien", "produkte"]
     for key in keys:
