@@ -14,7 +14,7 @@ import os
 
 import dotenv
 dotenv.load_dotenv()
-
+st.session_state.update(st.session_state)
 
 page_title = "bauCHAT"
 
@@ -25,10 +25,10 @@ configuration.conf_session_state()
 configuration.conf_menu()
 add_logo("gallery/bauchat_logo.png", height=100)
 
-placeholder = st.empty()
-with placeholder.container():
-    st.write(st.session_state.username)
-placeholder.empty()
+# placeholder = st.empty()
+# with placeholder.container():
+#     st.write(st.session_state.username)
+# placeholder.empty()
 
 st.session_state["data_user"] = None
 
