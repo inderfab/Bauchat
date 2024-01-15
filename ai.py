@@ -150,14 +150,7 @@ def create_Store(docs):
     st.session_state["token_change"] = True
     return VectorStore
 
-3
-def combine_Stores(VectorStores):
-    # Merges all Vectorstores to the Base (First in List)
-    #st.write("Stores: ", VectorStores)
-    baseVS = VectorStores[0]
-    for vs in VectorStores[1:]:
-        baseVS.merge_from(vs)
-    return baseVS
+
 
 
 def load_Store(paths):
@@ -183,8 +176,13 @@ def load_Store(paths):
         #st.write("Stores", VectorStores)
        
         with st.spinner("Alle PDF-Texte zusammenführen"):
-            VectorStore = combine_Stores(VectorStores)
-        
+            if len(VectorStores) > 1:
+                VectorStore = VectorStores.pop(0)
+                for vs in VectorStores:
+                    VectorStore.merge_from(vs)
+    
+            else:
+                VectorStore = VectorStores[0]
     else:
         VectorStore = None
     return VectorStore
