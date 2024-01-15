@@ -136,12 +136,12 @@ def s3_download_files(path) -> str :
     for f in response:
         key = f["Key"]
         if key.endswith(".pkl"):
-            st.write("Key: ", key)
+            #st.write("Key: ", key)
             file = client.get_object(Bucket=bucket,Key=key)
             file = file['Body'].read()
             file = pickle.loads(file)
             files.append(file)
-    st.write("Files", files)
+    #st.write("Files", files)
     return files
 
 

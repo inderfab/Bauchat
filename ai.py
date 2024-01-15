@@ -172,15 +172,13 @@ def load_Store(paths):
 
         for p in paths:
             files = store.s3_download_files(p)
-            for file in files:
-                VectorStores.append(file)
-
+            VectorStores + files
             progress += 1
             progress_bar.progress(progress/progress_max, text=progress_text)
         
         progress_bar.empty()
 
-        st.write("Stores", VectorStore)
+        st.write("Stores", VectorStores)
        
         #with st.spinner("Alle PDF-Texte zusammenführen"):
         #    VectorStore = combine_Stores(VectorStores)
