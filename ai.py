@@ -178,8 +178,9 @@ def load_Store(paths):
         with st.spinner("Alle PDF-Texte zusammenführen"):
             if len(VectorStores) > 1:
                 VectorStore = VectorStores.pop(0)
+                st.write("Base ", VectorStore)
                 for vs in VectorStores:
-                    st.write(vs)
+                    st.write("Merge ", vs)
                     VectorStore.merge_from(vs)
     
             else:
