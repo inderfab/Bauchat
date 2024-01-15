@@ -156,7 +156,6 @@ def combine_Stores(VectorStores):
     #st.write("Stores: ", VectorStores)
     baseVS = VectorStores[0]
     for vs in VectorStores[1:]:
-        vs.seek(0)
         baseVS.merge_from(vs)
     return baseVS
 
