@@ -179,12 +179,14 @@ def load_Store(paths):
             if len(VectorStores) > 1:
                 VectorStore = VectorStores.pop(0)
                 for vs in VectorStores:
+                    st.write(vs)
                     VectorStore.merge_from(vs)
     
             else:
                 VectorStore = VectorStores[0]
     else:
         VectorStore = None
+    
     return VectorStore
 
 
