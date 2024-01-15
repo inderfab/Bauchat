@@ -131,15 +131,17 @@ def s3_download_files(path) -> str :
     bucket = "bauchatstorage"
     path = os.path.join(path,"pkl/")
     response=client.list_objects_v2(Bucket=bucket,Prefix  = path)['Contents']
-    st.write("Response", response)
+    #st.write("Response", response)
     files = []
     for f in response:
         key = f["Key"]
         if key.endswith(".pkl"):
+            st.write("Key: ", key)
             file = client.get_object(Bucket=bucket,Key=key)
             file = file['Body'].read()
             file = pickle.loads(file)
             files.append(file)
+    st.write("Files", files)
     return files
 
 
