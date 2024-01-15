@@ -173,7 +173,7 @@ def load_Store(paths):
         for p in paths:
             files = store.s3_download_files(p)
             st.write("Downloaded Files", files)
-            VectorStores + files
+            VectorStores = VectorStores + files
             st.write("Stores list", VectorStores)
             progress += 1
             progress_bar.progress(progress/progress_max, text=progress_text)
