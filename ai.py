@@ -179,8 +179,11 @@ def load_Store(paths):
             progress_bar.progress(progress/progress_max, text=progress_text)
         
         progress_bar.empty()
-        with st.spinner("Alle PDF-Texte zusammenführen"):
-            VectorStore = combine_Stores(VectorStores)
+
+        st.write("Stores", VectorStore)
+       
+        #with st.spinner("Alle PDF-Texte zusammenführen"):
+        #    VectorStore = combine_Stores(VectorStores)
         
     else:
         VectorStore = None
