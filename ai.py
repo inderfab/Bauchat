@@ -108,7 +108,7 @@ def clean_text(text):
 
 
 def embedd_FAISS(docs):
-    embeddings = OpenAIEmbeddings()
+    #embeddings = OpenAIEmbeddings()
     encoding = tiktoken.encoding_for_model("gpt-4-1106-preview")
     num_tokens = 0
     docs = docs["document"]
@@ -118,6 +118,12 @@ def embedd_FAISS(docs):
     if st.session_state["preload_active"] == False:
         st.session_state.token_usage += num_tokens
 
+    #VectorStore = FAISS.from_documents(docs, embedding=embeddings)
+    #return VectorStore
+    return docs
+
+def store_from_docs(docs):
+    embeddings = OpenAIEmbeddings()
     VectorStore = FAISS.from_documents(docs, embedding=embeddings)
     return VectorStore
 
@@ -125,13 +131,20 @@ def embedd_FAISS(docs):
 def create_Store(docs):
     if st.session_state.username != 'temp':
         save_loc = docs["document"][0].metadata["save_loc"]
-        VectorStore = embedd_FAISS(docs)
-        
+        path = ''.join(save_loc.split("/")[:-1])
+        title = docs["document"][0].metadata["title"]
+        #VectorStore = embedd_FAISS(docs)
+        #pickle_byte_obj = pickle.dumps(VectorStore)
+        #store.s3_uploader(save_loc+".pkl", pickle_byte_obj)
+
+        docs = embedd_FAISS(docs)
+
+        pickle_byte_obj = pickle.dumps(docs)
+        store.s3_uploader(path+"/docs/+"+title+".pkl", pickle_byte_obj)
+
         pickle_full_text = pickle.dumps(docs["full_text"])
         store.s3_uploader(save_loc+".txt", pickle_full_text)
 
-        pickle_byte_obj = pickle.dumps(VectorStore)
-        store.s3_uploader(save_loc+".pkl", pickle_byte_obj)
 
         for index in range(len(docs["pdf_reader"].pages)):
             pdf_page = pdf_page_to_buffer(docs["pdf_reader"], index)
@@ -165,30 +178,30 @@ def load_Store(paths):
 
         for p in paths:
             files = store.s3_download_files(p)
-            #st.write("Downloaded Files", files)
+            st.write("Downloaded Files", files)
             VectorStores = VectorStores + files
-            #st.write("Stores list", VectorStores)
+            st.write("Stores list", VectorStores)
             progress += 1
             progress_bar.progress(progress/progress_max, text=progress_text)
         
         progress_bar.empty()
 
-        #st.write("Stores", VectorStores)
+        st.write("Stores", VectorStores)
        
-        with st.spinner("Alle PDF-Texte zusammenführen"):
-            if len(VectorStores) > 1:
-                VectorStore = VectorStores.pop(0)
-                st.write("Base ", VectorStore)
-                for vs in VectorStores:
-                    st.write("Merge ", vs)
-                    VectorStore.merge_from(vs)
+        # with st.spinner("Alle PDF-Texte zusammenführen"):
+        #     if len(VectorStores) > 1:
+        #         VectorStore = VectorStores.pop(0)
+        #         st.write("Base ", VectorStore)
+        #         for vs in VectorStores:
+        #             st.write("Merge ", vs)
+        #             VectorStore.merge_from(vs)
     
-            else:
-                VectorStore = VectorStores[0]
+        #     else:
+        #         VectorStore = VectorStores[0]
     else:
         VectorStore = None
     
-    return VectorStore
+    #return VectorStore
 
 
 def store_temp(stream=None, collection=None):
