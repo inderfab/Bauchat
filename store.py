@@ -9,6 +9,7 @@ import io
 import datetime
 import pickle
 import db
+import random
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
@@ -126,7 +127,6 @@ def read_s3_contents_with_buffer(key) -> str :
 def s3_download_files(path) -> str :
     client = s3_boto_client()
     bucket = "bauchatstorage"
-    st.write("Path ", path)
     response=client.list_objects_v2(Bucket=bucket,Prefix  = path)['Contents']
     files = []
     for f in response:
@@ -157,9 +157,10 @@ def s3_get_files(path) -> str :
 
 
 def download_button_full_pdf(key):   
+    keynr = random.randint(100000,999999)
     #Key ist save_loc
     key += "-full.pdf" 
-    down_file = st.button(label="Ganzes PDF herunterladen")
+    down_file = st.button(label="Ganzes PDF herunterladen", key=keynr)
     if down_file is True:
         with st.spinner("Das PDF wird vom Server geladen"):
             pdf = s3_download_pkl(key)

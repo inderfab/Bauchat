@@ -25,10 +25,10 @@ configuration.conf_session_state()
 configuration.conf_menu()
 add_logo("gallery/bauchat_logo.png", height=100)
 
-# placeholder = st.empty()
-# with placeholder.container():
-#     st.write(st.session_state.username)
-# placeholder.empty()
+if st.session_state["preload_data_loaded"] == False:
+    db.load_data_preloaded()
+
+db.load_data_user()
 
 st.session_state["data_user"] = None
 
@@ -101,8 +101,6 @@ st.write("Alle angewählten Verzeichnisse werden gleichzeitig durchsucht. Wähle
 col1, col2, col3, col4, col5 = st.columns(5)
 docs_to_load = []
 
-db.load_data_preloaded()
-db.load_data_user()
 
 
 if st.session_state["preload_data_loaded"] == True:
@@ -113,7 +111,7 @@ if st.session_state["preload_data_loaded"] == True:
             kanton_titel = "Kanton und Gemeinde wählen"
             kanton_sel = selectbox(kanton_titel, kanton_liste)
             if kanton_sel is not None:
-                docs_to_load.append( os.path.join(kanton_sel,"") )
+                docs_to_load.append( os.path.join("baugesetz",kanton_sel,"") )
 
     with col2:
         option_2 = st.checkbox("Normen", value=False)

@@ -149,12 +149,13 @@ def create_Store(docs):
     st.session_state["token_change"] = True
     return VectorStore
 
-
+3
 def combine_Stores(VectorStores):
     # Merges all Vectorstores to the Base (First in List)
-    st.write("Stores: ", VectorStores)
+    #st.write("Stores: ", VectorStores)
     baseVS = VectorStores[0]
     for vs in VectorStores[1:]:
+        vs.seek(0)
         baseVS.merge_from(vs)
     return baseVS
 

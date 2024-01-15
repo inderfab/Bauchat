@@ -8,7 +8,7 @@ from streamlit_extras.row import row
 from pypdf import PdfReader
 import store
 import base64
-
+import random
 
 def pdf_display(references, id):
     #generates tab with Radio Button to choose page to display
