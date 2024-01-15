@@ -163,8 +163,8 @@ def combine_Stores(VectorStores):
 def load_Store(paths):
     VectorStores = []
     
-    if st.session_state["docs_to_load"] != []:
-        st.write("Docs to load: ", st.session_state["docs_to_load"])
+    if paths != []:
+        st.write("Docs to load: ",paths)
         progress_text = "Dokumente laden"
         progress_max = len(paths)
         progress_bar = st.progress(0,progress_text)
