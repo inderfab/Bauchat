@@ -1,6 +1,7 @@
 
 import streamlit as st
 import db
+st.session_state.update(st.session_state)
 
 def conf_session_state():
 

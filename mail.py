@@ -5,6 +5,7 @@ import smtplib
  
 import dotenv
 
+st.session_state.update(st.session_state)
 
 
 

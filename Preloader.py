@@ -14,6 +14,7 @@ import os
 
 import dotenv
 dotenv.load_dotenv()
+st.session_state.update(st.session_state)
 
 
 page_title = "Preloader"

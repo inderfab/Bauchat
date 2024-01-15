@@ -10,6 +10,7 @@ from random import randint, sample
 import time
 import string
 
+st.session_state.update(st.session_state)
 
 dotenv.load_dotenv()
 deta = Deta(os.getenv('DETA_KEY'))

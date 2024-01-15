@@ -10,6 +10,9 @@ import store
 import base64
 import random
 
+st.session_state.update(st.session_state)
+
+
 def pdf_display(references, id):
     #generates tab with Radio Button to choose page to display
 
