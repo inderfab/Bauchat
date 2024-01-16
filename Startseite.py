@@ -27,7 +27,8 @@ add_logo("gallery/bauchat_logo.png", height=100)
 if st.session_state["preload_data_loaded"] == False:
     db.load_data_preloaded()
 
-db.load_data_user()
+if st.session_state.username != "Temp": 
+    db.load_data_user(st.session_state.username)
 
 st.session_state["data_user"] = None
 
@@ -164,7 +165,7 @@ with col5:
 
     opt_5 = st.checkbox(sammlung_checkbox,value=st.session_state["option5value"])
     if opt_5 == True and st.session_state.username != 'temp':
-        db.load_data_user()
+        db.load_data_user( st.session_state.username )
         if st.session_state["u_folders"] is not None:
             option_5 = True
 

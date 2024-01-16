@@ -41,17 +41,6 @@ def load_data_temp():
         timenow = timenow.strftime("%y-%m-%d_%H-%M-%S")
 
         st.session_state["u_folders"] = timenow
-    
-
-def store_location(new_collection=None):
-    db.load_data_user()
-    if new_collection is not None:
-        path = st.session_state["u_path"] + "/" + new_collection + "/"
-        st.session_state["u_path"] = path
-    else:
-        path = st.session_state["u_path"]
-    return path
-   
 
 
 # ----- S3 Storage

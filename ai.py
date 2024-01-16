@@ -122,6 +122,7 @@ def embedd_FAISS(docs):
     #return VectorStore
     return docs
 
+
 def store_from_docs(docs):
     embeddings = OpenAIEmbeddings()
     VectorStore = FAISS.from_documents(docs, embedding=embeddings)
@@ -129,48 +130,49 @@ def store_from_docs(docs):
 
 
 def create_Store(docs):
-    if st.session_state.username != 'temp':
-        save_loc = docs["document"][0].metadata["save_loc"]
-        path = ''.join(save_loc.split("/")[:-1])
-        title = docs["document"][0].metadata["title"]
-        #VectorStore = embedd_FAISS(docs)
-        #pickle_byte_obj = pickle.dumps(VectorStore)
-        #store.s3_uploader(save_loc+".pkl", pickle_byte_obj)
+    #if st.session_state.username != 'temp':
+    path = docs["document"][0].metadata["save_loc"]
+    title = docs["document"][0].metadata["title"]
+    #VectorStore = embedd_FAISS(docs)
+    #pickle_byte_obj = pickle.dumps(VectorStore)
+    #store.s3_uploader(save_loc+".pkl", pickle_byte_obj)
 
-        docs = embedd_FAISS(docs)
+    embedded_docs = embedd_FAISS(docs)
+    path_docs = os.path.join(path + "docs", title + ".pkl")
+    st.write(path_docs)
 
-        pickle_byte_obj = pickle.dumps(docs)
-        store.s3_uploader(path+"/docs/+"+title+".pkl", pickle_byte_obj)
+    pickle_byte_obj = pickle.dumps(embedded_docs)
+    store.s3_uploader(path_docs, pickle_byte_obj)
 
-        pickle_full_text = pickle.dumps(docs["full_text"])
-        store.s3_uploader(save_loc+".txt", pickle_full_text)
+    pickle_full_text = pickle.dumps(docs["full_text"])
+    store.s3_uploader(os.path.join(path,title) + ".txt", pickle_full_text)
 
 
-        for index in range(len(docs["pdf_reader"].pages)):
-            pdf_page = pdf_page_to_buffer(docs["pdf_reader"], index)
-            store.s3_uploader(save_loc + "-" + str(index+1) + ".pdf", pdf_page)
+    for index in range(len(docs["pdf_reader"].pages)):
+        pdf_page = pdf_page_to_buffer(docs["pdf_reader"], index)
+        store.s3_uploader(os.path.join(path,title) + "-" + str(index+1) + ".pdf", pdf_page)
+    
+    full_pdf = pickle.dumps(docs["full_pdf"])
+    store.s3_uploader(os.path.join(path,title) + "-full.pdf", full_pdf)
         
-        full_pdf = pickle.dumps(docs["full_pdf"])
-        store.s3_uploader(save_loc+"-full.pdf", full_pdf)
-        
 
-    if st.session_state.username == "temp":
-        VectorStore = embedd_FAISS(docs)                
+    #if st.session_state.username == "temp":
+    #    VectorStore = embedd_FAISS(docs)                
 
     if st.session_state["preload_active"] == False and st.session_state.username != "temp":
         db.user_update_embedding_tokens(st.session_state.username)
         db.update_user_byte_size()
-    st.session_state["token_change"] = True
-    return VectorStore
+    #st.session_state["token_change"] = True
+    #return VectorStore
 
 
 
 
 def load_Store(paths):
-    VectorStores = []
+    FaissDocs = []
     
     if paths != []:
-        st.write("Docs to load: ",paths)
+        #st.write("Docs to load: ",paths)
         progress_text = "Dokumente laden"
         progress_max = len(paths)
         progress_bar = st.progress(0,progress_text)
@@ -178,44 +180,28 @@ def load_Store(paths):
 
         for p in paths:
             files = store.s3_download_files(p)
-            st.write("Downloaded Files", files)
-            VectorStores = VectorStores + files
-            st.write("Stores list", VectorStores)
+            #st.write("Downloaded Files", files)
+            for file in files:
+                FaissDocs = FaissDocs + file
+            #st.write("Stores list", VectorStores)
             progress += 1
             progress_bar.progress(progress/progress_max, text=progress_text)
         
         progress_bar.empty()
-
-        st.write("Stores", VectorStores)
        
-        # with st.spinner("Alle PDF-Texte zusammenführen"):
-        #     if len(VectorStores) > 1:
-        #         VectorStore = VectorStores.pop(0)
-        #         st.write("Base ", VectorStore)
-        #         for vs in VectorStores:
-        #             st.write("Merge ", vs)
-        #             VectorStore.merge_from(vs)
-    
-        #     else:
-        #         VectorStore = VectorStores[0]
-    else:
-        VectorStore = None
-    
-    #return VectorStore
+    return FaissDocs
 
 
-def store_temp(stream=None, collection=None):
-    Vectorstore_Temp = None
+def store_temp(stream):
     title = stream.name.strip(".pdf")
-    metadata = {"collection":collection, "title":title}
+    metadata = {"collection":None, "title":title}
     documents = pdf_to_doc(stream, metadata)
     if documents is not None:
-        Vectorstore_Temp = create_Store(documents)
-    return Vectorstore_Temp
+        FaissDocs = create_Store(documents)
+        return FaissDocs
 
 
-
-def pickle_store(stream, collection=None):
+def pickle_store(stream, collection):
 
     stream_len = len(stream)
     progress_text = "Dokumente speichern"
@@ -226,9 +212,11 @@ def pickle_store(stream, collection=None):
         for s in stream:
             st.session_state["ocr_needed"] = False
             title = s.name.strip(".pdf")
-            stores_path = store.store_location(new_collection=collection)
-            save_loc = os.path.join(stores_path,title)
-            metadata = {"collection":collection,"save_loc":save_loc,"title":title, "type":s.type }
+
+            if st.session_state.preload_active:
+                stores_path = os.path.join(st.session_state.preload_key, collection,'')
+            #save_loc = os.path.join(stores_path,title)
+            metadata = {"collection":collection,"save_loc":stores_path,"title":title, "type":s.type }
             documents = pdf_to_doc(s, metadata)
             if st.session_state["ocr_needed"] == False:
                 metadata.update({"num_pages":documents["num_pages"], 
@@ -239,6 +227,7 @@ def pickle_store(stream, collection=None):
             progress_bar.progress(progress/stream_len, text=progress_text)
 
     progress_bar.empty()
+
 
 def submit_upload(stream):
 

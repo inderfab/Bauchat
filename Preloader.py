@@ -39,12 +39,13 @@ if "preload_active" not in st.session_state:
 st.session_state["bytes_update"] = 0
 if "exctraction_problem_files" not in st.session_state:
     st.session_state["exctraction_problem_files"] = []
-
+if "submitted" not in st.session_state:
+    st.session_state["submitted"] = False
+        
 keys = ["baugesetz", "normen", "richtlinien", "produkte"]
 
 
 key = st.selectbox("key wählen", keys)
-st.session_state.username = key
 st.session_state["preload_key"] = key
 
 
@@ -89,36 +90,28 @@ with c2:
 
 
 
-
 if stream != []:
     st.session_state["Files_Saved"] == False
-    st.session_state["u_folders"] = db.collections_data_db(st.session_state.username)
+    st.session_state["u_folders"] = db.collections_data_db(key)
 
     st.session_state["speicher_expander"] = True
-    #st.session_state["loader_state"] = False
     
-    with st.expander("Sammlung erstellen", expanded=st.session_state["speicher_expander"]):
-        with st.form(key="Update Collections"):
-            sc1, sc2 = st.columns(2)
+    with st.expander("Sammlung erstellen", expanded=True):
             
-            with sc1:
-                collection = st.text_input("Neue Sammlung anlegen:", max_chars=30, help="maximal 25 Buchstaben", value=None)                        
-                if collection is not None:
-                    st.session_state["collection"] = collection
+        sc1, sc2 = st.columns(2)
+        
+        with sc1:
+            collection = st.text_input("Neue Sammlung anlegen:", max_chars=30, help="maximal 25 Buchstaben", value=None)                        
+            if collection is not None:
+                st.session_state["collection"] = collection
 
-            with sc2:
-                update_collection = st.selectbox('Sammlung aktualisieren',[n["collection"] for n in st.session_state["u_folders"]["collections"]], index=None)
-                if update_collection is not None:
-                        st.session_state["collection"] = update_collection
-            
-            st.session_state["submitted"] = st.form_submit_button("Speichern")
+        with sc2:
+            update_collection = st.selectbox('Sammlung aktualisieren',[n["collection"] for n in st.session_state["u_folders"]["collections"]], index=None)
+            if update_collection is not None:
+                st.session_state["collection"] = update_collection
         
-        
-        if st.session_state["submitted"] == True:
-            
+        if st.button(label="Dokument speichern"):
             ai.submit_upload(stream)
-            if st.session_state["exctraction_problem_files"] != []:
-                st.write("Bei diesen Dateien konnte kein Text extrahiert werden (Datei gescannt oder geschützt)",
-                         st.session_state["exctraction_problem_files"])
-            st.session_state["submitted"] = False
-                
+            #st.form_submit_button("Speichern", on_click=ai.submit_upload, args=[stream])
+        
+  

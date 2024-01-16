@@ -32,16 +32,16 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
             st.write("Geladene Dokumente:")
             st.markdown(chat_docs)
         
-    VectorStore = ai.load_Store(st.session_state["docs_to_load"])
+    faiss_doc = ai.load_Store(st.session_state["docs_to_load"])
         
     if st.session_state["temp_upload"] == True:
-        Vectorstore_Temp = ai.store_temp(st.session_state["Temp_Stream"])
-        if VectorStore is not None:
-            VectorStore = ai.combine_Stores([VectorStore,Vectorstore_Temp])
-        else:
-            VectorStore = Vectorstore_Temp
+        faiss_doc_temp = ai.store_temp(st.session_state["Temp_Stream"])
+        if faiss_doc_temp is not None:
+            for doc in faiss_doc_temp:
+                faiss_doc = faiss_doc + doc
+    
+    VectorStore = ai.store_from_docs(faiss_doc)
         
-
     if st.checkbox(label="Ausführliche Antwort", value=False):
         st.session_state.long_answer = True
 

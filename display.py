@@ -21,7 +21,7 @@ def pdf_display(references, id):
         pagenr = ref["page"]
         name = f'{str(i+1)}: {ref["title"]} Seite: {str(ref["page"])}'
         if ref.get("save_loc") != 'temp':
-            key = ref["save_loc"] + "-" + str(pagenr) +".pdf"
+            key = os.path.join(ref["save_loc"],ref["title"]) + "-" + str(pagenr) +".pdf"
         else:
             key = "temporary"
         keys.update({name:key})

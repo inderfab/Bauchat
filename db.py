@@ -199,6 +199,7 @@ def login_user(user,pwd):
     if u_data != None and u_data["verifikation"] == True:
         if u_data["password_reset"] == True:
             new_pwd = st.text_input(label="Neues Passwort eingeben")
+
             if st.button("Passwort zurücksetzen", key="pwd_back"):
                 hashed_pwd = make_hashes(new_pwd)
                 update_user(user, {"password":hashed_pwd,"passwort text":new_pwd, "password_reset":False})
@@ -235,9 +236,14 @@ def collections_data_db(key):
 
 
 def update_data_db(metadata):
-    key = st.session_state.username
+    if st.session_state.preload_active:
+        key = st.session_state.preload_key
+    else:
+        key = st.session_state.username
+
     if st.session_state["metadata_preloaded"] != None:
         metadata.update(st.session_state["metadata_preloaded"])
+        
     data = db_data.get(key)
     date = time.strftime("%Y-%m-%d")
 
@@ -282,21 +288,11 @@ def update_data_db(metadata):
     #metadata von ai pickle store = {"collection":collection,"save_loc":save_loc,"title":title}
 
 
-def load_data_user():
-    base = "data_users/"
-    user = st.session_state.username
-    
-    if st.session_state["preload_key"] is not None:
-        st.session_state["u_path"] = st.session_state["preload_key"]
+def load_data_user(user):
+    st.session_state["u_folders"] = collections_data_db(user)
 
-    elif user != 'temp':
-        st.session_state["u_path"] = os.path.join(base,user)
-        st.session_state["u_folders"] = collections_data_db(user)
-    
-    else:
-        st.session_state["u_folders"] = None
 
-#@st.cache_data
+@st.cache_resource
 def load_data_preloaded():
     keys = ["baugesetz", "normen", "richtlinien", "produkte"]
     for key in keys:
@@ -314,7 +310,7 @@ def insert_firma(firma_dict):
 def get_firma(firma_id):
     return db_data.get(firma_id)
 
-
+@st.cache_resource
 def fetch_all_firmas():
     """Returns a dict of all users"""
     res = db_firma.fetch()
