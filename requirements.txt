@@ -25,7 +25,7 @@ requests==2.31.0
 
 st-annotated-text==4.0.1
 st-files-connection==0.1.0
-streamlit==1.27.1
+streamlit#==1.27.1
 streamlit-authenticator==0.2.3
 streamlit-camera-input-live==0.2.0
 streamlit-card==0.0.61
