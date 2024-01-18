@@ -117,9 +117,6 @@ def embedd_FAISS(docs):
     
     if st.session_state["preload_active"] == False:
         st.session_state.token_usage += num_tokens
-
-    #VectorStore = FAISS.from_documents(docs, embedding=embeddings)
-    #return VectorStore
     return docs
 
 
@@ -130,18 +127,14 @@ def store_from_docs(docs):
 
 
 def create_Store(docs):
-    #if st.session_state.username != 'temp':
     path = docs["document"][0].metadata["save_loc"]
     title = docs["document"][0].metadata["title"]
-    #VectorStore = embedd_FAISS(docs)
-    #pickle_byte_obj = pickle.dumps(VectorStore)
-    #store.s3_uploader(save_loc+".pkl", pickle_byte_obj)
-
+ 
     embedded_docs = embedd_FAISS(docs)
+    vector_store = store_from_docs(embedded_docs)
     path_docs = os.path.join(path + "docs", title + ".pkl")
-    st.write(path_docs)
 
-    pickle_byte_obj = pickle.dumps(embedded_docs)
+    pickle_byte_obj = pickle.dumps(vector_store)
     store.s3_uploader(path_docs, pickle_byte_obj)
 
     pickle_full_text = pickle.dumps(docs["full_text"])
@@ -169,7 +162,7 @@ def create_Store(docs):
 
 
 def load_Store(paths):
-    FaissDocs = []
+    Stores = []
     
     if paths != []:
         #st.write("Docs to load: ",paths)
@@ -179,17 +172,14 @@ def load_Store(paths):
         progress = 0
 
         for p in paths:
-            files = store.s3_download_files(p)
-            #st.write("Downloaded Files", files)
-            for file in files:
-                FaissDocs = FaissDocs + file
-            #st.write("Stores list", VectorStores)
+            file = store.s3_download_files(p)
+            Stores.append(file)
+            
             progress += 1
             progress_bar.progress(progress/progress_max, text=progress_text)
         
         progress_bar.empty()
-       
-    return FaissDocs
+    return Stores
 
 
 def store_temp(stream):

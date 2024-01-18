@@ -12,6 +12,8 @@ langsmith==0.0.41
 
 openai==0.28.1
 
+funcy
+
 pdf2image==1.16.3
 pillow==10.0.1
 protobuf==4.21.12

@@ -21,7 +21,7 @@ st.set_page_config(page_title = page_title,layout="wide") #
 
 configuration.conf_session_state()
 configuration.conf_menu()
-add_logo("gallery/bauchat_logo.png", height=100)
+add_logo("gallery/bauchat_logo.png", height=300)
 
 if st.session_state["preload_data_loaded"] == False:
     db.load_data_preloaded()

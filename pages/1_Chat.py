@@ -2,11 +2,12 @@ import streamlit as st
 
 from streamlit_extras.app_logo import add_logo 
 
-
+import funcy
 import ai
 import display
 import configuration
 import db
+import faiss
 
 st.session_state.update(st.session_state)
 VectorStore = None
@@ -31,15 +32,23 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
             st.write("Geladene Dokumente:")
             st.markdown(chat_docs)
         
-    faiss_doc = ai.load_Store(st.session_state["docs_to_load"])
+    stores = ai.load_Store(st.session_state["docs_to_load"])
         
-    if st.session_state["temp_upload"] == True:
-        faiss_doc_temp = ai.store_temp(st.session_state["Temp_Stream"])
-        if faiss_doc_temp is not None:
-            for doc in faiss_doc_temp:
-                faiss_doc = faiss_doc + doc
+    # if st.session_state["temp_upload"] == True:
+    #     faiss_doc_temp = ai.store_temp(st.session_state["Temp_Stream"])
+    #     if faiss_doc_temp is not None:
+    #         for doc in faiss_doc_temp:
+    #             faiss_doc = faiss_doc + doc
+    # Stores append
+    store_list = funcy.lflatten(stores)
     
-    VectorStore = ai.store_from_docs(faiss_doc)
+    if len(store_list)>1:
+        VectorStore = store_list.pop(0)
+        for store in store_list:
+            VectorStore.merge_from(store)
+    else:
+        VectorStore = store_list[0]
+    
 
     if st.checkbox(label="Ausführliche Antwort", value=False):
         st.session_state.long_answer = True
