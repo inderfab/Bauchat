@@ -1,6 +1,5 @@
 import streamlit as st
 import db
-from streamlit_extras.switch_page_button import switch_page
 from streamlit_extras.app_logo import add_logo 
 import configuration
 import time
@@ -20,7 +19,7 @@ else:
     st.write("Benutzername: ", st.session_state.username )
     if st.button("Abmelden") is True:
         st.session_state.username = 'temp'
-        switch_page("Startseite")
+        st.switch_page("Startseite")
 
     st.subheader("Nutzung")
     with st.expander("Verfügbare Einheiten"):

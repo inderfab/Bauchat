@@ -6,7 +6,6 @@ import configuration
 
 import store
 from streamlit_extras.no_default_selectbox import selectbox
-from streamlit_extras.switch_page_button import switch_page
 from streamlit_extras.app_logo import add_logo 
 import db
 import ai

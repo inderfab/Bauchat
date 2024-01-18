@@ -6,7 +6,6 @@ import configuration
 
 import store
 from streamlit_extras.no_default_selectbox import selectbox
-from streamlit_extras.switch_page_button import switch_page
 from streamlit_extras.app_logo import add_logo 
 import db
 import os
@@ -44,7 +43,7 @@ if st.session_state.username == 'temp':
         st.write("Anmelden um bis zu 15 Dokumente gleichzeitig hochzuladen. Sonst nur in einem eigenen Dokument gesucht werden.")
 
     if zu_anmeldung:
-        switch_page("konto")
+        st.switch_page("konto")
 
 stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", type='pdf',accept_multiple_files=True, label_visibility="hidden")
 
@@ -183,7 +182,7 @@ with col5:
 if st.button("Verzeichnisse jetzt laden",type="primary"):      
     if any([option_1,option_2,option_3,option_4,option_5]) or st.session_state["temp_upload"] == True:
         st.session_state["docs_to_load"] = docs_to_load
-        switch_page("chat")
+        st.switch_page("chat")
     else:
         st.write("Verzeichnisse wählen")
 

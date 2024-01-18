@@ -1,7 +1,6 @@
 import streamlit as st
 import re
 import hashlib
-from streamlit_extras.switch_page_button import switch_page
 from deta import Deta
 import dotenv
 import os
@@ -211,7 +210,7 @@ def login_user(user,pwd):
             st.session_state.username = u_data["username"]
             del u_data["password"]
             st.session_state["u_data"] = u_data
-            switch_page("startseite")
+            st.switch_page("startseite")
         else:
             st.session_state.username = 'temp'
             st.write("Falscher Benutzername oder Passwort")
@@ -223,7 +222,7 @@ def login_user(user,pwd):
                 update_user(user, {"verifikation":True, "verification_code":None})
                 st.session_state.username = u_data["username"]
                 st.session_state["u_data"] = u_data
-                switch_page("startseite")
+                st.switch_page("startseite")
         else:
             st.write("Benutzername oder Passwort falsch")
 
