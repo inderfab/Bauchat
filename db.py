@@ -243,7 +243,7 @@ def update_data_db(metadata):
 
     if st.session_state["metadata_preloaded"] != None:
         metadata.update(st.session_state["metadata_preloaded"])
-        
+
     data = db_data.get(key)
     date = time.strftime("%Y-%m-%d")
 
@@ -292,7 +292,7 @@ def load_data_user(user):
     st.session_state["u_folders"] = collections_data_db(user)
 
 
-@st.cache_resource
+#@st.cache_resource
 def load_data_preloaded():
     keys = ["baugesetz", "normen", "richtlinien", "produkte"]
     for key in keys:
