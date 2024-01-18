@@ -95,14 +95,13 @@ def s3_upload_pkl(key, data):
     return success
 
 
-def s3_download_pkl(key) -> str : 
+def s3_download_pkl(key): 
     client = s3_boto_client()
     bucket = "bauchatstorage"
     
     file = client.get_object(Bucket=bucket,Key=key)
     file = file['Body'].read()
     file = pickle.loads(file)
-
     return file
 
 
@@ -155,8 +154,7 @@ def download_button_full_pdf(key):
     keynr = random.randint(100000,999999)
     #Key ist save_loc
     key += "-full.pdf" 
-    down_file = st.button(label="Ganzes PDF herunterladen", key=keynr)
-    if down_file is True:
+    if st.button(label="Ganzes PDF herunterladen", key=keynr):
         with st.spinner("Das PDF wird vom Server geladen"):
             pdf = s3_download_pkl(key)
         st.download_button(

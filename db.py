@@ -148,47 +148,47 @@ def forget_pwd():
         
 def registration():
     with st.expander("Registrieren",expanded=st.session_state["registration_expandend"]):
-        with st.form(key = "registration", clear_on_submit=False):
-            username_free = True
-            email_filled = False
-            pwd_filled = False
-            user = st.text_input("Benutzername", key = "user_re") 
-            vorname = st.text_input("Vorname", key = "vorn_re")
-            nachname = st.text_input("Nachname", key = "nachn_re")
+        
+        username_free = True
+        email_filled = False
+        pwd_filled = False
+        user = st.text_input("Benutzername", key = "user_re") 
+        vorname = st.text_input("Vorname", key = "vorn_re")
+        nachname = st.text_input("Nachname", key = "nachn_re")
 
-            email = st.text_input("Email",key = "email_re")
-            email_regex = re.compile(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$")
+        email = st.text_input("Email",key = "email_re")
+        email_regex = re.compile(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$")
 
-            if email_regex.match(email):
-                 email_filled = True
-                 
-            pwd = st.text_input("Passwort",type='password',key="pwd_re")
-            if len(pwd) <= 7:
-                st.write("mindestens 8 Charakter eingeben")
-            else:
-                 pwd_filled = True
+        if email_regex.match(email):
+                email_filled = True
+                
+        pwd = st.text_input("Passwort",type='password',key="pwd_re")
+        if len(pwd) <= 7:
+            st.write("mindestens 8 Charakter eingeben")
+        else:
+                pwd_filled = True
 
 
-            if st.form_submit_button("Registrieren"):
-                if get_user(user) != None:
-                        st.write("Benutzername bereits vergeben")
-                        username_free = False
-                if email_filled and pwd_filled and username_free == True:
-                    hashed_pwd = make_hashes(pwd)
-                    verification_code = randint(100000,999999)
-                    data = {"username":user, "vorname":vorname, "nachname":nachname, "email":email, 
-                            "password":hashed_pwd, "password_reset":False,
-                            "verifikation":False,"verification_code":verification_code,
-                            "history":[],
-                            "token_month":{},"token_total":0, "token_available":100000,
-                            "full_access":False, 
-                            "bytes_month":{}, "bytes_total":0, "bytes_available":1000000000,
-                            "pages":0, 
-                            }
-                    
-                    mail.send_registration(email, verification_code)
-                    insert_user(data)
-                    st.session_state["registration_expandend"] = False
+        if st.button("Registrieren"):
+            if get_user(user) != None:
+                    st.write("Benutzername bereits vergeben")
+                    username_free = False
+            if email_filled and pwd_filled and username_free == True:
+                hashed_pwd = make_hashes(pwd)
+                verification_code = randint(100000,999999)
+                data = {"username":user, "vorname":vorname, "nachname":nachname, "email":email, 
+                        "password":hashed_pwd, "password_reset":False,
+                        "verifikation":False,"verification_code":verification_code,
+                        "history":[],
+                        "token_month":{},"token_total":0, "token_available":100000,
+                        "full_access":False, 
+                        "bytes_month":{}, "bytes_total":0, "bytes_available":1000000000,
+                        "pages":0, 
+                        }
+                
+                mail.send_registration(email, verification_code)
+                insert_user(data)
+                st.session_state["registration_expandend"] = False
                     
 
 

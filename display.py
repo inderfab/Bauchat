@@ -95,7 +95,6 @@ def chat_display(messages):
         # m_user = {"role": "user", "content": query, "date":date}
         # m_ai = {"role": "ai", "content": answer, "references":references_list}
         # message_dict = {"user":m_user, "ai": m_ai, "references":references_list, "usage":usage}
-        
 
         with st.expander(label=message["user"]["content"], expanded=expand_newest[i]):
 

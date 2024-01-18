@@ -41,7 +41,6 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
                 faiss_doc = faiss_doc + doc
     
     VectorStore = ai.store_from_docs(faiss_doc)
-    st.write("Store: ",VectorStore)
 
     if st.checkbox(label="Ausführliche Antwort", value=False):
         st.session_state.long_answer = True

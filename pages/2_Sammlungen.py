@@ -19,7 +19,10 @@ keys = ["baugesetz", "normen", "richtlinien", "produkte"]
 for key in keys:
     with st.expander(label=key.upper()):
         for collection in st.session_state[key]["collections"]:
-            tags =  " | ".join(collection["tags"])
+            try:
+                tags =  " | ".join(collection["tags"])
+            except:
+                tags = ""
             st.write(collection["collection"].upper(), "      Tags: ",tags)
             st.dataframe(collection["filenames"],
                         use_container_width = True,
