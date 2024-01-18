@@ -43,7 +43,7 @@ if st.session_state.username == 'temp':
         st.write("Anmelden um bis zu 15 Dokumente gleichzeitig hochzuladen. Sonst nur in einem eigenen Dokument gesucht werden.")
 
     if zu_anmeldung:
-        st.switch_page("konto")
+        st.switch_page("pages/3_Konto.py")
 
 stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", type='pdf',accept_multiple_files=True, label_visibility="hidden")
 
@@ -182,7 +182,7 @@ with col5:
 if st.button("Verzeichnisse jetzt laden",type="primary"):      
     if any([option_1,option_2,option_3,option_4,option_5]) or st.session_state["temp_upload"] == True:
         st.session_state["docs_to_load"] = docs_to_load
-        st.switch_page("chat")
+        st.switch_page("pages/1_Chat.py")
     else:
         st.write("Verzeichnisse wählen")
 

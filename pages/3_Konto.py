@@ -19,7 +19,7 @@ else:
     st.write("Benutzername: ", st.session_state.username )
     if st.button("Abmelden") is True:
         st.session_state.username = 'temp'
-        st.switch_page("Startseite")
+        st.switch_page("Startseite.py")
 
     st.subheader("Nutzung")
     with st.expander("Verfügbare Einheiten"):
