@@ -12,7 +12,7 @@ import faiss
 st.session_state.update(st.session_state)
 VectorStore = None
 
-add_logo("gallery/bauchat_logo.png", height=100)
+add_logo("gallery/bauchat_logo.png", height=200)
 
 configuration.conf_session_state()
 
@@ -34,12 +34,11 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
         
     stores = ai.load_Store(st.session_state["docs_to_load"])
         
-    # if st.session_state["temp_upload"] == True:
-    #     faiss_doc_temp = ai.store_temp(st.session_state["Temp_Stream"])
-    #     if faiss_doc_temp is not None:
-    #         for doc in faiss_doc_temp:
-    #             faiss_doc = faiss_doc + doc
-    # Stores append
+    if st.session_state["temp_upload"] == True:
+        temp_store = ai.store_temp(st.session_state["Temp_Stream"])
+        if temp_store is not None:
+            stores.append(temp_store)
+
     store_list = funcy.lflatten(stores)
     
     if len(store_list)>1:

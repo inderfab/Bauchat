@@ -21,7 +21,7 @@ st.set_page_config(page_title = page_title,layout="wide") #
 
 configuration.conf_session_state()
 configuration.conf_menu()
-add_logo("gallery/bauchat_logo.png", height=300)
+add_logo("gallery/bauchat_logo.png", height=200)
 
 if st.session_state["preload_data_loaded"] == False:
     db.load_data_preloaded()
@@ -34,8 +34,8 @@ st.session_state["data_user"] = None
 
 st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
-
 if st.session_state.username == 'temp':
+
     up_col1, up_col2 = st.columns([1,4])
     with up_col1:
         zu_anmeldung = st.button("Anmelden / Registrieren")
@@ -46,6 +46,13 @@ if st.session_state.username == 'temp':
         st.switch_page("pages/3_Konto.py")
 
 stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", type='pdf',accept_multiple_files=True, label_visibility="hidden")
+
+if stream == []:
+    st.session_state["temp_upload"] = False 
+    st.session_state["Temp_Stream"] = None
+    st.session_state["Temp_Stream_IMG"] = None
+    st.session_state["option5value"] = False
+
 
 if st.session_state.username != 'temp' and len(stream) > 15:
     stream = stream[:15]

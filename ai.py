@@ -127,40 +127,43 @@ def store_from_docs(docs):
 
 
 def create_Store(docs):
-    path = docs["document"][0].metadata["save_loc"]
-    title = docs["document"][0].metadata["title"]
- 
-    embedded_docs = embedd_FAISS(docs)
-    vector_store = store_from_docs(embedded_docs)
-    path_docs = os.path.join(path + "docs", title + ".pkl")
-
-    pickle_byte_obj = pickle.dumps(vector_store)
-    store.s3_uploader(path_docs, pickle_byte_obj)
-
-    pickle_full_text = pickle.dumps(docs["full_text"])
-    store.s3_uploader(os.path.join(path,title) + ".txt", pickle_full_text)
-
-
-    for index in range(len(docs["pdf_reader"].pages)):
-        pdf_page = pdf_page_to_buffer(docs["pdf_reader"], index)
-        store.s3_uploader(os.path.join(path,title) + "-" + str(index+1) + ".pdf", pdf_page)
+    if st.session_state.username != "temp":
+        path = docs["document"][0].metadata["save_loc"]
+        title = docs["document"][0].metadata["title"]
     
-    full_pdf = pickle.dumps(docs["full_pdf"])
-    store.s3_uploader(os.path.join(path,title) + "-full.pdf", full_pdf)
+        embedded_docs = embedd_FAISS(docs)
+        vector_store = store_from_docs(embedded_docs)
+        path_docs = os.path.join(path + "docs", title + ".pkl")
+
+        pickle_byte_obj = pickle.dumps(vector_store)
+        store.s3_uploader(path_docs, pickle_byte_obj)
+
+        pickle_full_text = pickle.dumps(docs["full_text"])
+        store.s3_uploader(os.path.join(path,title) + ".txt", pickle_full_text)
+
+
+        for index in range(len(docs["pdf_reader"].pages)):
+            pdf_page = pdf_page_to_buffer(docs["pdf_reader"], index)
+            store.s3_uploader(os.path.join(path,title) + "-" + str(index+1) + ".pdf", pdf_page)
+        
+        full_pdf = pickle.dumps(docs["full_pdf"])
+        store.s3_uploader(os.path.join(path,title) + "-full.pdf", full_pdf)
         
 
-    #if st.session_state.username == "temp":
-    #    VectorStore = embedd_FAISS(docs)                
+    if st.session_state.username == "temp":
+        embedded_docs = embedd_FAISS(docs)
+        vector_store = store_from_docs(embedded_docs)
+        return vector_store           
 
     if st.session_state["preload_active"] == False and st.session_state.username != "temp":
         db.user_update_embedding_tokens(st.session_state.username)
         db.update_user_byte_size()
-    #st.session_state["token_change"] = True
-    #return VectorStore
+    
+    return None
 
 
 
-
+@st.cache_data
 def load_Store(paths):
     Stores = []
     
@@ -187,8 +190,8 @@ def store_temp(stream):
     metadata = {"collection":None, "title":title}
     documents = pdf_to_doc(stream, metadata)
     if documents is not None:
-        FaissDocs = create_Store(documents)
-        return FaissDocs
+        VectorStore = create_Store(documents)
+        return VectorStore
 
 
 def pickle_store(stream, collection):
