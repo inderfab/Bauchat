@@ -46,6 +46,7 @@ keys = ["baugesetz", "normen", "richtlinien", "produkte"]
 
 key = st.selectbox("key wählen", keys)
 st.session_state["preload_key"] = key
+st.session_state["username"] = key
 
 
 stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", type='pdf',accept_multiple_files=True, label_visibility="hidden")
@@ -91,7 +92,7 @@ with c2:
 
 if stream != []:
     st.session_state["Files_Saved"] == False
-    st.session_state["u_folders"] = db.collections_data_db(key)
+    st.session_state["u_folders"] = db.collections_data_db(st.session_state["preload_key"])
 
     st.session_state["speicher_expander"] = True
     

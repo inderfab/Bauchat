@@ -127,7 +127,7 @@ def store_from_docs(docs):
 
 
 def create_Store(docs):
-    if st.session_state.username != "temp":
+    if st.session_state.preload_key != None or st.session_state.username != "temp":
         path = docs["document"][0].metadata["save_loc"]
         title = docs["document"][0].metadata["title"]
     
