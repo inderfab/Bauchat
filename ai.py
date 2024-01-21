@@ -213,7 +213,8 @@ def pickle_store(stream, collection):
 
             if st.session_state.preload_active:
                 stores_path = os.path.join(st.session_state.preload_key, collection,'')
-            #save_loc = os.path.join(stores_path,title)
+            else:
+                stores_path = os.path.join(st.session_state.username, collection,'')
             metadata = {"collection":collection,"save_loc":stores_path,"title":title, "type":s.type }
             documents = pdf_to_doc(s, metadata)
             if st.session_state["ocr_needed"] == False:
@@ -266,7 +267,7 @@ def merge_faiss_stores(store_list):
 
 # ----- Suche -----
 def search(VectorStore, query,k=3):
-    docs = VectorStore.similarity_search(query=query, k =k)
+    docs = VectorStore.similarity_search(query=query, k=k,)
     st.write("Relevanz: ",docs)
     return docs
 
