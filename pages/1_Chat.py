@@ -47,8 +47,6 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
     else:
         VectorStore = store_list[0]
     
-    st.write("Vectorstore ", VectorStore)
-
     if st.checkbox(label="Ausführliche Antwort", value=False):
         st.session_state.long_answer = True
 
