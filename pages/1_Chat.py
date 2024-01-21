@@ -44,6 +44,7 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
     if len(store_list)>1:
         VectorStore = store_list.pop(0)
         for store in store_list:
+            store.seek(0)
             VectorStore.merge_from(store)
     else:
         VectorStore = store_list[0]

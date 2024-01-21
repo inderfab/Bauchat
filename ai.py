@@ -163,7 +163,7 @@ def create_Store(docs):
 
 
 
-#@st.cache_data
+@st.cache_data
 def load_Store(paths):
     Stores = []
     
@@ -185,6 +185,7 @@ def load_Store(paths):
     return Stores
 
 
+@st.cache_data
 def store_temp(stream):
     title = stream.name.strip(".pdf")
     metadata = {"collection":None, "title":title}
