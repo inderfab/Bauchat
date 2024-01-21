@@ -40,6 +40,7 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
             stores.append(temp_store)
 
     store_list = funcy.lflatten(stores)
+    st.write("Store_list", store_list)
     
     if len(store_list)>1:
         VectorStore = store_list.pop(0)
@@ -48,6 +49,7 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
     else:
         VectorStore = store_list[0]
     
+    st.write("Vectorstore ", VectorStore)
 
     if st.checkbox(label="Ausführliche Antwort", value=False):
         st.session_state.long_answer = True
