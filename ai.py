@@ -18,7 +18,8 @@ import tiktoken
 import db
 import io
 import numpy as np
-from langchain.vectorstores import FAISS
+
+
 
 import dotenv
 dotenv.load_dotenv()
@@ -253,19 +254,12 @@ def submit_upload(stream):
 
 
 def merge_faiss_stores(store_list):
-    first_store_in_list = store_list.pop(0)
-    index1 = first_store_in_list #.faiss_index
+    vector_store = store_list.pop(0)
+    st.write("First Store", vector_store.docstore._dict)
+    for store in store_list:  
+        vector_store.merge_from(store)
+        st.write("Next Store", vector_store.docstore._dict)
 
-    # Create a new FAISS index with the same dimension as the original indexes
-    new_index = FAISS.create_faiss_index(index1.faiss_index.d)
-    new_index.add(np.vstack((index1.reconstruct(i) for i in range(index1.ntotal))))
-
-    for store in store_list:
-        index_to_merge = store.faiss_index
-        new_index.add(np.vstack((index_to_merge.reconstruct(i) for i in range(index_to_merge.ntotal))))
-
-    # Create a new FAISS vectorstore with the merged index
-    vector_store = FAISS(new_index, first_store_in_list.embeddings)
     return vector_store
 
 
