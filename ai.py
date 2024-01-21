@@ -256,10 +256,10 @@ def submit_upload(stream):
 
 def merge_faiss_stores(store_list):
 
-    st.write(store_list)
     vector_store = store_list.pop(0)
     for store in store_list:  
-        vector_store.merge_from(store)
+        st.write(store)
+        #vector_store.merge_from(store)
     return vector_store
 
 
