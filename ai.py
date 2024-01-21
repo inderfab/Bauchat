@@ -18,6 +18,7 @@ import tiktoken
 import db
 import io
 import numpy as np
+import faiss
 
 
 import dotenv
@@ -253,11 +254,12 @@ def submit_upload(stream):
 
 
 def merge_faiss_stores(store_list):
-    vector_store = store_list.pop(1)
-    st.write("First Store", vector_store.docstore._dict)
+
+    #combined_index = faiss.Index()
+    vector_store = store_list.pop(0)
+
     for store in store_list:  
         vector_store.merge_from(store)
-        st.write("Next Store", vector_store.docstore._dict)
 
     return vector_store
 
