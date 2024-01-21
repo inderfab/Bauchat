@@ -42,10 +42,10 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
     store_list = funcy.lflatten(stores)
     
     if len(store_list)>1:
-        VectorStore = store_list.pop(0)
-        for store in store_list:
-            st.write("Store", store)
-            VectorStore.merge_from(store)
+        #VectorStore = store_list.pop(0)
+        #for store in store_list:
+        #    VectorStore.merge_from(store)
+        VectorStore = store_list[0]
     else:
         VectorStore = store_list[0]
     
