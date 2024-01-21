@@ -68,26 +68,22 @@ if stream != []:
     
     if st.session_state.username != 'temp':
         with st.expander("Sammlung erstellen", expanded=st.session_state["speicher_expander"]):
-            with st.form(key="Update Collections"):
-                sc1, sc2 = st.columns(2)
-                
-                with sc1:
-                    collection = st.text_input("Neue Sammlung anlegen:", max_chars=25, help="maximal 25 Buchstaben", value=None)                        
-                    if collection is not None:
-                        st.session_state["collection"] = collection
-
-                st.session_state["u_folders"] = db.collections_data_db(st.session_state.username)
-
-                if st.session_state["u_folders"] is not None:# and st.session_state["u_data_exists"] == True:
-                    with sc2:
-                        update_collection = st.selectbox('Sammlung aktualisieren',[n["collection"] for n in st.session_state["u_folders"]["collections"]], index=None)
-                        if update_collection is not None:
-                                st.session_state["collection"] = update_collection
-                
-                st.session_state["submitted"] = st.form_submit_button("Speichern")
+            sc1, sc2 = st.columns(2)
             
+            with sc1:
+                collection = st.text_input("Neue Sammlung anlegen:", max_chars=25, help="maximal 25 Buchstaben", value=None)                        
+                if collection is not None:
+                    st.session_state["collection"] = collection
+
+            st.session_state["u_folders"] = db.collections_data_db(st.session_state.username)
+
+            if st.session_state["u_folders"] is not None:# and st.session_state["u_data_exists"] == True:
+                with sc2:
+                    update_collection = st.selectbox('Sammlung aktualisieren',[n["collection"] for n in st.session_state["u_folders"]["collections"]], index=None)
+                    if update_collection is not None:
+                            st.session_state["collection"] = update_collection
             
-            if st.session_state["submitted"] is not None:
+            if st.button("Speichern"):
                 ai.submit_upload(stream)
                 st.session_state["submitted"] = None
                 
