@@ -290,6 +290,7 @@ def update_data_db(metadata):
 
 #@st.cache_data
 def load_data_user(user):
+    st.write("User",user)
     st.session_state["u_folders"] = collections_data_db(user)
 
 
