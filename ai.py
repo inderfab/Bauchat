@@ -254,10 +254,10 @@ def submit_upload(stream):
 
 def merge_faiss_stores(store_list):
     first_store_in_list = store_list.pop(0)
-    index1 = first_store_in_list.faiss_index
+    index1 = first_store_in_list #.faiss_index
 
     # Create a new FAISS index with the same dimension as the original indexes
-    new_index = FAISS.create_faiss_index(index1.d)
+    new_index = FAISS.create_faiss_index(index1.faiss_index.d)
     new_index.add(np.vstack((index1.reconstruct(i) for i in range(index1.ntotal))))
 
     for store in store_list:
