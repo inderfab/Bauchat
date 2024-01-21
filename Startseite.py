@@ -177,7 +177,7 @@ with col5:
             user_choice = st.multiselect('Sammlungen',user_liste, default=st.session_state["user_choice_default"])
             if user_choice != []:
                 for c in user_choice:
-                    st.write(st.session_state.username)
+                    #st.write(st.session_state.username)
                     docs_to_load.append(f"{st.session_state.username}/{c}/")
 
     if opt_5 == True and st.session_state.username == 'temp' and stream:
