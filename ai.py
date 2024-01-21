@@ -19,7 +19,8 @@ import db
 import io
 import numpy as np
 import faiss
-
+import numpy as np
+from langchain.vectorstores import FAISS
 
 import dotenv
 dotenv.load_dotenv()
@@ -257,9 +258,16 @@ def merge_faiss_stores(store_list):
 
     #combined_index = faiss.Index()
     vector_store = store_list.pop(0)
+    index1 = vector_store.faiss_index
+    new_index = FAISS.create_faiss_index(index1.d)
 
     for store in store_list:  
-        vector_store.merge_from(store)
+        index2 = store.faiss_index
+        new_index.add(np.vstack((index2.reconstruct(i) for i in range(index2.ntotal))))
+
+    new_index.add(np.vstack((index1.reconstruct(i) for i in range(index1.ntotal))))
+    vector_store = FAISS(new_index, index1.embeddings)
+
 
     return vector_store
 
