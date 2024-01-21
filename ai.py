@@ -268,7 +268,6 @@ def merge_faiss_stores(store_list):
 # ----- Suche -----
 def search(VectorStore, query,k=3):
     docs = VectorStore.similarity_search(query=query, k=k,)
-    st.write("Relevanz: ",docs)
     return docs
 
 
