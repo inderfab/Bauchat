@@ -20,7 +20,6 @@ import io
 import numpy as np
 
 
-
 import dotenv
 dotenv.load_dotenv()
 
@@ -254,7 +253,7 @@ def submit_upload(stream):
 
 
 def merge_faiss_stores(store_list):
-    vector_store = store_list.pop(0)
+    vector_store = store_list.pop(1)
     st.write("First Store", vector_store.docstore._dict)
     for store in store_list:  
         vector_store.merge_from(store)
