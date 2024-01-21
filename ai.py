@@ -256,20 +256,10 @@ def submit_upload(stream):
 
 def merge_faiss_stores(store_list):
 
-    #combined_index = faiss.Index()
+    st.write(store_list)
     vector_store = store_list.pop(0)
-    st.write(vector_store)
-    index1 = vector_store.index
-    new_index = FAISS.create_faiss_index(index1.d)
-
     for store in store_list:  
-        index2 = store.index
-        new_index.add(np.vstack((index2.reconstruct(i) for i in range(index2.ntotal))))
-
-    new_index.add(np.vstack((index1.reconstruct(i) for i in range(index1.ntotal))))
-    vector_store = FAISS(new_index, index1.embeddings)
-
-
+        vector_store.merge_from(store)
     return vector_store
 
 
