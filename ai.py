@@ -259,11 +259,11 @@ def merge_faiss_stores(store_list):
     #combined_index = faiss.Index()
     vector_store = store_list.pop(0)
     st.write(vector_store)
-    index1 = vector_store.faiss_index
+    index1 = vector_store.index
     new_index = FAISS.create_faiss_index(index1.d)
 
     for store in store_list:  
-        index2 = store.faiss_index
+        index2 = store.index
         new_index.add(np.vstack((index2.reconstruct(i) for i in range(index2.ntotal))))
 
     new_index.add(np.vstack((index1.reconstruct(i) for i in range(index1.ntotal))))
