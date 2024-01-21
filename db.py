@@ -288,17 +288,17 @@ def update_data_db(metadata):
     #metadata von ai pickle store = {"collection":collection,"save_loc":save_loc,"title":title}
 
 
-@st.cache_data
+#@st.cache_data
 def load_data_user(user):
-    st.write("User",user)
-    st.session_state["u_folders"] = collections_data_db(user)
+    #st.write("User",user)
+    st.session_state["u_folders"] = db_data.get(user)
 
 
 #@st.cache_resource
 def load_data_preloaded():
     keys = ["baugesetz", "normen", "richtlinien", "produkte"]
     for key in keys:
-        st.session_state[key] = collections_data_db(key)
+        st.session_state[key] = db_data.get(key)
     st.session_state["preload_data_loaded"] = True
 
 
