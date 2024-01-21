@@ -171,13 +171,14 @@ with col5:
         if st.session_state["u_folders"] is not None:
             option_5 = True
 
-            st.write(st.session_state["u_folders"])
+            #st.write(st.session_state["u_folders"])
             user_liste = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
 
             user_choice = st.multiselect('Sammlungen',user_liste, default=st.session_state["user_choice_default"])
             if user_choice != []:
                 for c in user_choice:
-                    docs_to_load.append(f"{st.session_state['u_path']}/{c}/")
+                    st.write(st.session_state.username)
+                    docs_to_load.append(f"{st.session_state.username}/{c}/")
 
     if opt_5 == True and st.session_state.username == 'temp' and stream:
         option_5 = True
