@@ -290,7 +290,8 @@ def update_data_db(metadata):
 
 #@st.cache_data
 def load_data_user(user):
-    return db_data.get(user)
+    st.session_state["u_folders"] = db_data.get(user)
+    return st.session_state["u_folders"]
 
 
 #@st.cache_resource
