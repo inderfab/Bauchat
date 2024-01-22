@@ -26,7 +26,7 @@ add_logo("gallery/bauchat_logo.png", height=200)
 if st.session_state["preload_data_loaded"] == False:
     db.load_data_preloaded()
 
-if st.session_state.username != "Temp": 
+if st.session_state.username != "Temp" and st.session_state["u_folders"] == None: 
     st.session_state["u_folders"] = db.load_data_user(st.session_state.username)
 
 st.session_state["data_user"] = None
