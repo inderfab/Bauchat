@@ -82,7 +82,7 @@ if stream != []:
             if st.session_state["u_folders"] is not None:# and st.session_state["u_data_exists"] == True:
                 with sc2:
                     update_collection = st.selectbox('Sammlung aktualisieren',[n["collection"] for n in st.session_state["u_folders"]["collections"]], index=None)
-                    if update_collection is not None:
+                    if update_collection != None:
                             st.session_state["collection"] = update_collection
             
             if st.button("Speichern"):
@@ -174,7 +174,7 @@ with col5:
         st.session_state["u_folders"] = db.load_data_user(key )
         #st.write (st.session_state["u_folders"] )
 
-        if st.session_state["u_folders"] is not None:
+        if st.session_state["u_folders"] != None:
             option_5 = True
 
             #st.write(st.session_state["u_folders"])
