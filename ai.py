@@ -142,16 +142,16 @@ def create_Store(docs):
         pickle_byte_obj = pickle.dumps(vector_store)
         store.s3_uploader(path_docs, pickle_byte_obj)
 
-        # pickle_full_text = pickle.dumps(docs["full_text"])
-        # store.s3_uploader(os.path.join(path,title) + ".txt", pickle_full_text)
+        pickle_full_text = pickle.dumps(docs["full_text"])
+        store.s3_uploader(os.path.join(path,title) + ".txt", pickle_full_text)
 
 
-        # for index in range(len(docs["pdf_reader"].pages)):
-        #     pdf_page = pdf_page_to_buffer(docs["pdf_reader"], index)
-        #     store.s3_uploader(os.path.join(path,title) + "-" + str(index+1) + ".pdf", pdf_page)
+        for index in range(len(docs["pdf_reader"].pages)):
+            pdf_page = pdf_page_to_buffer(docs["pdf_reader"], index)
+            store.s3_uploader(os.path.join(path,title) + "-" + str(index+1) + ".pdf", pdf_page)
         
-        # full_pdf = pickle.dumps(docs["full_pdf"])
-        # store.s3_uploader(os.path.join(path,title) + "-full.pdf", full_pdf)
+        full_pdf = pickle.dumps(docs["full_pdf"])
+        store.s3_uploader(os.path.join(path,title) + "-full.pdf", full_pdf)
         
 
     if st.session_state.username == "temp":
