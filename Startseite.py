@@ -176,8 +176,8 @@ with col5:
 
             #st.write(st.session_state["u_folders"])
             user_liste = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
-            if st.session_state["collection"] != None:
-                user_liste.append(st.session_state["collection"])
+            #if st.session_state["collection"] != None:
+            #    user_liste.append(st.session_state["collection"])
             st.write(user_liste)
 
             user_choice = st.multiselect('Sammlungen',user_liste, default=st.session_state["user_choice_default"])
