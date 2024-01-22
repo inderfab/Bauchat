@@ -122,6 +122,7 @@ if st.session_state["preload_data_loaded"] == True:
                 if st.session_state["u_data"].get("full_access", None):
                 
                     normen_liste = [n["collection"] for n in st.session_state["normen"]["collections"]]
+                    st.write("N Liste", normen_liste)
                     normen_title = "Normen wählen"
                     norm_sel = st.multiselect(normen_title, normen_liste)
                     if norm_sel != []:
