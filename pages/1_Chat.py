@@ -44,7 +44,6 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
     
     if len(store_list)>1:
         VectorStore = ai.merge_faiss_stores(store_list)
-      
     else:
         VectorStore = store_list[0]
     
