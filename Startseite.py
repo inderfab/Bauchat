@@ -76,8 +76,8 @@ if stream != []:
                 if collection is not None:
                     st.session_state["collection"] = collection
 
-            key = st.session_state.username
-            st.session_state["u_folders"] = db.load_data_user(key)
+            #key = st.session_state.username
+            #st.session_state["u_folders"] = db.load_data_user(key)
 
             if st.session_state["u_folders"] is not None:# and st.session_state["u_data_exists"] == True:
                 with sc2:
@@ -170,8 +170,8 @@ with col5:
 
     opt_5 = st.checkbox(sammlung_checkbox,value=st.session_state["option5value"])
     if opt_5 == True and st.session_state.username != 'temp':
-        key = st.session_state.username
-        st.session_state["u_folders"] = db.load_data_user(key )
+        #key = st.session_state.username
+        #st.session_state["u_folders"] = db.load_data_user(key )
         #st.write (st.session_state["u_folders"] )
 
         if st.session_state["u_folders"] != None:
@@ -179,8 +179,8 @@ with col5:
 
             #st.write(st.session_state["u_folders"])
             user_liste = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
-            #if st.session_state["collection"] != None:
-            #    user_liste.append(st.session_state["collection"])
+            if st.session_state["collection"] != None:
+                user_liste.append(st.session_state["collection"])
             st.write(user_liste)
 
             user_choice = st.multiselect('Sammlungen',user_liste, default=st.session_state["user_choice_default"])
