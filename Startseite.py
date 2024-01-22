@@ -27,7 +27,8 @@ if st.session_state["preload_data_loaded"] == False:
     db.load_data_preloaded()
 
 if st.session_state.username != "Temp" and st.session_state["u_folders"] == None: 
-    st.session_state["u_folders"] = db.load_data_user(st.session_state.username)
+    key = st.session_state.username
+    st.session_state["u_folders"] = db.load_data_user(key)
 
 st.session_state["data_user"] = None
 
@@ -75,7 +76,8 @@ if stream != []:
                 if collection is not None:
                     st.session_state["collection"] = collection
 
-            #st.session_state["u_folders"] = db.load_data_user(st.session_state.username)
+            key = st.session_state.username
+            st.session_state["u_folders"] = db.load_data_user(key)
 
             if st.session_state["u_folders"] is not None:# and st.session_state["u_data_exists"] == True:
                 with sc2:
@@ -168,7 +170,8 @@ with col5:
 
     opt_5 = st.checkbox(sammlung_checkbox,value=st.session_state["option5value"])
     if opt_5 == True and st.session_state.username != 'temp':
-        #st.session_state["u_folders"] = db.load_data_user( st.session_state.username )
+        key = st.session_state.username
+        st.session_state["u_folders"] = db.load_data_user(key )
         #st.write (st.session_state["u_folders"] )
 
         if st.session_state["u_folders"] is not None:
