@@ -288,10 +288,11 @@ def update_data_db(metadata):
     #metadata von ai pickle store = {"collection":collection,"save_loc":save_loc,"title":title}
 
 
-#@st.cache_data
+@st.cache_data
 def load_data_user(user):
-    st.session_state["u_folders"] = db_data.get(user)
-    return st.session_state["u_folders"]
+    folders = db_data.get(user)
+    st.session_state["u_folders"] = folders
+    return folders
 
 
 #@st.cache_resource
