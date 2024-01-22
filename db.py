@@ -292,6 +292,8 @@ def update_data_db(metadata):
 def load_data_user(user):
     return db_data.get(user)
 
+def load_data_user2(user):
+    return db_data.get(user)
 
 #@st.cache_resource
 def load_data_preloaded():
