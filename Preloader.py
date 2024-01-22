@@ -88,8 +88,8 @@ with c2:
         st.write(db.insert_firma(firma))
         st.session_state["firmas"] = db.fetch_all_firmas()
 
-
-db.load_data_user(st.session_state["preload_key"])
+key = st.session_state["preload_key"]
+db.load_data_user(key)
 
 if stream != []:
     st.session_state["Files_Saved"] == False
