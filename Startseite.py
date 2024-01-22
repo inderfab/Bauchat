@@ -84,7 +84,6 @@ if stream != []:
                             st.session_state["collection"] = update_collection
             
             if st.button("Speichern"):
-                st.session_state["u_folders"].append(st.session_state["collection"])
                 ai.submit_upload(stream)
                 st.session_state["submitted"] = None
                 
@@ -175,7 +174,7 @@ with col5:
             option_5 = True
 
             #st.write(st.session_state["u_folders"])
-            user_liste = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
+            user_liste = [n["collection"] for n in st.session_state["u_folders"]["collections"]].append(st.session_state["collection"])
 
             user_choice = st.multiselect('Sammlungen',user_liste, default=st.session_state["user_choice_default"])
             if user_choice != []:
