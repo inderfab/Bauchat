@@ -89,11 +89,12 @@ with c2:
         st.session_state["firmas"] = db.fetch_all_firmas()
 
 
+db.load_data_user(st.session_state["preload_key"])
 
 if stream != []:
     st.session_state["Files_Saved"] == False
     st.write("Key: ",st.session_state["preload_key"])
-    db.load_data_user(st.session_state["preload_key"])
+    
 
     st.session_state["speicher_expander"] = True
     
