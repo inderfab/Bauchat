@@ -30,7 +30,8 @@ st.session_state["data_user"] = None
 if st.session_state.username != "Temp": 
     db.load_data_user()
     st.write("Folders", st.session_state.u_folders)
-
+    st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
+    
 st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
 if st.session_state.username == 'temp':
@@ -77,7 +78,6 @@ if stream != []:
             #key = st.session_state.username
             #st.session_state["u_folders"] = db.load_data_user(key)
             user_l = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
-            st.write("user_l", user_l, st.session_state.u_folders)
             if st.session_state["u_folders"] is not None:# and st.session_state["u_data_exists"] == True:
                 with sc2:
                     update_collection = st.selectbox('Sammlung aktualisieren',user_l, index=None)
@@ -85,8 +85,6 @@ if stream != []:
                             st.session_state["collection"] = update_collection
             
             if st.button("Speichern"):
-                
-                st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
                 st.session_state["u_collections"].append(st.session_state["collection"])
                 ai.submit_upload(stream)
                 st.session_state["submitted"] = None
@@ -172,15 +170,12 @@ with col5:
 
     opt_5 = st.checkbox(sammlung_checkbox,value=st.session_state["option5value"])
     if opt_5 == True and st.session_state.username != 'temp':
-        #key = st.session_state.username
-        db.load_data_user()
-        #st.write (st.session_state["u_folders"] )
-
+        
         if st.session_state["u_collections"] != []:
+            #st.write("user_l", user_l, st.session_state.u_folders)
+
             option_5 = True
             
-            #st.write(st.session_state["u_collections"])
-
             user_choice = st.multiselect('Sammlungen',st.session_state["u_collections"], default=st.session_state["user_choice_default"])
             if user_choice != []:
                 for c in user_choice:
