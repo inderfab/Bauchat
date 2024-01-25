@@ -171,7 +171,7 @@ with col5:
     if opt_5 == True and st.session_state.username != 'temp':
         #key = st.session_state.username
         #st.session_state["u_folders"] = db.load_data_user(key )
-        #st.write (st.session_state["u_folders"] )
+        st.write (st.session_state["u_folders"] )
 
         if st.session_state["u_folders"] != None:
             option_5 = True
