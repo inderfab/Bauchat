@@ -41,7 +41,7 @@ if st.session_state.username == 'temp':
     if zu_anmeldung:
         st.switch_page("pages/3_Konto.py")
 else:
-    db.load_data_user(int=random.randint(1,9999999))
+    db.load_data_user(int=randint(1,9999999))
     st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
 
 stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", type='pdf',accept_multiple_files=True, label_visibility="hidden")
