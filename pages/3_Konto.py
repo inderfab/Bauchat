@@ -49,7 +49,7 @@ else:
     st.subheader("Sammlungsübersicht")
     with st.expander("Sammlungen"):
         
-
+        st.write(st.session_state["u_folders"])
         try: 
             for collection in st.session_state["u_folders"]["collections"]:
                 tags =  " | ".join(collection["tags"])
