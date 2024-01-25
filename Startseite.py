@@ -85,6 +85,8 @@ if stream != []:
                             st.session_state["collection"] = update_collection
             
             if st.button("Speichern"):
+                st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
+                st.session_state["u_collections"].append(st.session_state["collection"])
                 ai.submit_upload(stream)
                 st.session_state["submitted"] = None
                 
@@ -171,22 +173,19 @@ with col5:
     if opt_5 == True and st.session_state.username != 'temp':
         #key = st.session_state.username
         #st.session_state["u_folders"] = db.load_data_user(key )
-        st.write (st.session_state["u_folders"] )
+        #st.write (st.session_state["u_folders"] )
 
-        if st.session_state["u_folders"] != None:
+        if st.session_state["u_collections"] != []:
             option_5 = True
+            
+            st.write(st.session_state["u_collections"])
 
-            #st.write(st.session_state["u_folders"])
-            user_liste = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
-            if st.session_state["user_choice_default"] != None:
-                user_liste.append(st.session_state["user_choice_default"])
-            #st.write(user_liste)
-
-            user_choice = st.multiselect('Sammlungen',user_liste, default=st.session_state["user_choice_default"])
+            user_choice = st.multiselect('Sammlungen',st.session_state["u_collections"], default=st.session_state["user_choice_default"])
             if user_choice != []:
                 for c in user_choice:
                     #st.write(st.session_state.username)
                     docs_to_load.append(f"{st.session_state.username}/{c}/")
+                    st.write(docs_to_load)
 
     if opt_5 == True and st.session_state.username == 'temp' and stream:
         option_5 = True
