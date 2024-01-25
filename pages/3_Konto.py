@@ -17,6 +17,9 @@ if st.session_state.username == 'temp':
 
 else:
     st.write("Benutzername: ", st.session_state.username )
+    
+    
+    
     if st.button("Abmelden") is True:
         st.session_state.username = 'temp'
         st.switch_page("Startseite.py")
@@ -45,7 +48,7 @@ else:
 
     st.subheader("Sammlungsübersicht")
     with st.expander("Sammlungen"):
-        db.load_data_user()
+        
 
         try: 
             for collection in st.session_state["u_folders"]["collections"]:
