@@ -28,6 +28,7 @@ if st.session_state["preload_data_loaded"] == False:
     
 st.session_state["data_user"] = None
 if st.session_state.username != "Temp": 
+    st.write(st.session_state.username)
     db.load_data_user()
     st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
     
