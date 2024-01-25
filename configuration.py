@@ -51,6 +51,8 @@ def conf_session_state():
         st.session_state["u_path"] = None
     if "u_folder" not in st.session_state:
         st.session_state["u_folders"] = None
+    if "u_collections" not in st.session_state:
+        st.session_state["u_collections"] = []
     #if "u_data_exists" not in st.session_state:
     #    st.session_state["u_data_exists"] = False
     if "u_data" not in st.session_state:
