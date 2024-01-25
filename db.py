@@ -289,10 +289,11 @@ def update_data_db(metadata):
 
 
 #@st.cache_data
-def load_data_user(user):
-    folders = db_data.get(user)
-    st.session_state["u_folders"] = folders
-    return folders
+def load_data_user(user=None):
+	if user == None:
+	    folders = db_data.get(st.session_state.username)
+	    st.session_state["u_folders"] = folders
+	    return folders
 
 
 #@st.cache_resource
