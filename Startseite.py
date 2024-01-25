@@ -29,6 +29,7 @@ if st.session_state["preload_data_loaded"] == False:
 st.session_state["data_user"] = None
 if st.session_state.username != "Temp": 
     db.load_data_user()
+    st.write("Folders", st.session_state.u_folders)
 
 st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
