@@ -180,7 +180,7 @@ with col5:
                 for c in user_choice:
                     #st.write(st.session_state.username)
                     docs_to_load.append(f"{st.session_state.username}/{c}/")
-                    st.write(docs_to_load)
+                    #st.write(docs_to_load)
 
     if opt_5 == True and st.session_state.username == 'temp' and stream:
         option_5 = True
