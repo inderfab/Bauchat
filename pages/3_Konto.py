@@ -52,8 +52,8 @@ else:
         db.load_data_user(int=randint(1,9999999))
         if st.session_state.u_folders != []:
             for collection in st.session_state["u_folders"]["collections"]:
-                tags =  " | ".join(collection["tags"])
-                st.write(collection["collection"].upper(), "      Tags: ",tags)
+                #tags =  " | ".join(collection["tags"])
+                st.write(collection["collection"].upper()) #, "      Tags: ",tags
                 st.dataframe(collection["filenames"],
                             use_container_width = True,
                             column_order=("titel","num_pages","up_date"),
