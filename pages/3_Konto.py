@@ -45,8 +45,7 @@ else:
 
     st.subheader("Sammlungsübersicht")
     with st.expander("Sammlungen"):
-        if st.session_state["u_folders"] == None:
-            db.load_data_user(st.session_state.username)
+        db.load_data_user()
 
         try: 
             for collection in st.session_state["u_folders"]["collections"]:
