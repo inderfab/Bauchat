@@ -292,7 +292,7 @@ def update_data_db(metadata):
 #@st.cache_data
 def load_data_user(user=None, int=None):
     if user or int != None:
-        if user == None
+        if user == None:
             user = st.session_state.username
         folders = db_data.get(user)
         st.session_state["u_folders"] = folders
