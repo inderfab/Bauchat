@@ -85,6 +85,7 @@ if stream != []:
                             st.session_state["collection"] = update_collection
             
             if st.button("Speichern"):
+                st.write("Folders:" , st.session_state["u_folders"])
                 st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
                 st.session_state["u_collections"].append(st.session_state["collection"])
                 ai.submit_upload(stream)
