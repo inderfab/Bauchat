@@ -50,7 +50,7 @@ else:
     with st.expander("Sammlungen"):
         
         db.load_data_user(int=randint(1,9999999))
-        if st.session_state.u_folders != []
+        if st.session_state.u_folders != []:
             for collection in st.session_state["u_folders"]["collections"]:
                 tags =  " | ".join(collection["tags"])
                 st.write(collection["collection"].upper(), "      Tags: ",tags)
