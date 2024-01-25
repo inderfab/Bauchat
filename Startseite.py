@@ -9,6 +9,7 @@ from streamlit_extras.no_default_selectbox import selectbox
 from streamlit_extras.app_logo import add_logo 
 import db
 import os
+from random import randint
 
 import dotenv
 dotenv.load_dotenv()
@@ -40,6 +41,7 @@ if st.session_state.username == 'temp':
     if zu_anmeldung:
         st.switch_page("pages/3_Konto.py")
 else:
+    load_data_user(int=random.randint(1,9999999)
     st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
 
 stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", type='pdf',accept_multiple_files=True, label_visibility="hidden")
