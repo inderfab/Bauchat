@@ -166,8 +166,7 @@ def create_Store(docs):
     return None
 
 
-
-@st.cache_data
+#@st.cache_data
 def load_Store(paths):
     Stores = []
     
