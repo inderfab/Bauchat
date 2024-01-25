@@ -4,6 +4,7 @@ from streamlit_extras.app_logo import add_logo
 import configuration
 import time
 import display
+from random import randint
 st.session_state.update(st.session_state)
 
 add_logo("gallery/bauchat_logo.png", height=200)
@@ -49,7 +50,8 @@ else:
     st.subheader("Sammlungsübersicht")
     with st.expander("Sammlungen"):
         
-        st.write(st.session_state["u_folders"])
+        db.load_data_user(int=randint(1,9999999))
+        st.write(st.session_state.u_folders)
         try: 
             for collection in st.session_state["u_folders"]["collections"]:
                 tags =  " | ".join(collection["tags"])
