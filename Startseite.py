@@ -76,10 +76,11 @@ if stream != []:
 
             #key = st.session_state.username
             #st.session_state["u_folders"] = db.load_data_user(key)
-
+            user_l = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
+            st.write("user_l", user_l, st.session_state.u_folders)
             if st.session_state["u_folders"] is not None:# and st.session_state["u_data_exists"] == True:
                 with sc2:
-                    update_collection = st.selectbox('Sammlung aktualisieren',[n["collection"] for n in st.session_state["u_folders"]["collections"]], index=None)
+                    update_collection = st.selectbox('Sammlung aktualisieren',user_l, index=None)
                     if update_collection != None:
                             st.session_state["collection"] = update_collection
             
