@@ -19,8 +19,7 @@ if st.session_state.username == 'temp':
 else:
     st.write("Benutzername: ", st.session_state.username )
     
-    
-    
+
     if st.button("Abmelden") is True:
         st.session_state.username = 'temp'
         st.switch_page("Startseite.py")
@@ -51,8 +50,7 @@ else:
     with st.expander("Sammlungen"):
         
         db.load_data_user(int=randint(1,9999999))
-        st.write(st.session_state.u_folders)
-        try: 
+        if st.session_state.u_folders != []
             for collection in st.session_state["u_folders"]["collections"]:
                 tags =  " | ".join(collection["tags"])
                 st.write(collection["collection"].upper(), "      Tags: ",tags)
@@ -65,7 +63,7 @@ else:
                                             },
                             hide_index=True,
                             )
-        except:
+        else:
             st.write("Noch keine Eigene Sammlung")
             
     st.subheader("Chatverlauf")
