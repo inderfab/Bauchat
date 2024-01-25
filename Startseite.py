@@ -25,13 +25,13 @@ add_logo("gallery/bauchat_logo.png", height=200)
 
 if st.session_state["preload_data_loaded"] == False:
     db.load_data_preloaded()
-
+    
+st.session_state["data_user"] = None
 if st.session_state.username != "Temp": 
     st.session_state["u_folders"] = db.load_data_user(st.session_state.username)
 
-st.session_state["data_user"] = None
 
-
+st.write("Folders:" , st.session_state["u_folders"])
 st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
 if st.session_state.username == 'temp':
@@ -85,7 +85,7 @@ if stream != []:
                             st.session_state["collection"] = update_collection
             
             if st.button("Speichern"):
-                st.write("Folders:" , st.session_state["u_folders"])
+                
                 st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
                 st.session_state["u_collections"].append(st.session_state["collection"])
                 ai.submit_upload(stream)
