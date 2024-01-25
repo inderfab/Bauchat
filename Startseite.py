@@ -31,7 +31,6 @@ st.session_state["data_user"] = None
 st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
 if st.session_state.username == 'temp':
-
     up_col1, up_col2 = st.columns([1,4])
     with up_col1:
         zu_anmeldung = st.button("Anmelden / Registrieren")
@@ -40,6 +39,8 @@ if st.session_state.username == 'temp':
 
     if zu_anmeldung:
         st.switch_page("pages/3_Konto.py")
+else:
+    st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
 
 stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", type='pdf',accept_multiple_files=True, label_visibility="hidden")
 
