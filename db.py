@@ -210,7 +210,7 @@ def login_user(user,pwd):
             st.session_state.username = u_data["username"]
             del u_data["password"]
             st.session_state["u_data"] = u_data
-            load_data_user(int=random.randint(1,9999999))
+            load_data_user(int=randint(1,9999999))
             st.switch_page("Startseite.py")
         else:
             st.session_state.username = 'temp'
