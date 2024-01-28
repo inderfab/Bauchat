@@ -167,11 +167,14 @@ def create_Store(docs):
 
 
 #@st.cache_data
-def load_Store(paths):
+def load_Store(paths, random_int=None):
+    #Streamlit Cloud automaticly makes cache and only reloads with new params, 
+    #int param to throw off automatic caching, change for better option
+
+    #function.clear() #test
     Stores = []
     
     if paths != []:
-        #st.write("Docs to load: ",paths)
         progress_text = "Dokumente laden"
         progress_max = len(paths)
         progress_bar = st.progress(0,progress_text)

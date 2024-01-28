@@ -75,7 +75,8 @@ if stream != []:
                     st.session_state["collection"] = collection
 
             #key = st.session_state.username
-            #st.session_state["u_folders"] = db.load_data_user(key)
+            db.load_data_user().clear()
+            db.load_data_user()
             user_l = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
             if st.session_state["u_folders"] is not None:# and st.session_state["u_data_exists"] == True:
                 with sc2:
@@ -84,7 +85,7 @@ if stream != []:
                             st.session_state["collection"] = update_collection
             
             if st.button("Speichern"):
-                st.session_state["u_collections"].append(st.session_state["collection"])
+                #st.session_state["u_collections"].append(st.session_state["collection"])
                 ai.submit_upload(stream)
                 st.session_state["submitted"] = None
                 

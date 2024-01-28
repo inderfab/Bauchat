@@ -114,7 +114,7 @@ def read_s3_contents_with_buffer(key) -> str :
 
 
 
-def s3_download_files(path) -> str :
+def s3_download_files(path) :
     client = s3_boto_client()
     bucket = "bauchatstorage"
     path = os.path.join(path,"docs/")
