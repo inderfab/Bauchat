@@ -99,7 +99,7 @@ def conf_menu():
     footer {visibility: hidden;}
     #GithubIcon {visibility: hidden;}
 
-    [data-testid="stFileUploadDropzone"] div div::before {color:red; content:"Datei hier hin ziehen und loslassen"}
+    [data-testid="stFileUploadDropzone"] div div::before {color:black; content:"Datei hier hin ziehen und loslassen"}
     [data-testid="stFileUploadDropzone"] div div span{display:none;}
     [data-testid="stFileUploadDropzone"] div div::after {color:grey; font-size: .8em; content:"Maximal 20 Megabyte"}
     [data-testid="stFileUploadDropzone"] div div small{display:none;}
