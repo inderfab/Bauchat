@@ -167,7 +167,7 @@ def create_Store(docs):
 
 
 @st.cache_data(ttl=30, show_spinner="Lädt die Sammlungen")
-def load_Store(paths, random_int=None):
+def load_Store(paths):
 
     Stores = []
     
