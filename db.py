@@ -290,16 +290,18 @@ def update_data_db(metadata):
 
 
 @st.cache_data(ttl=10, show_spinner="Lädt Benutzerdaten")
-def load_data_user(user=None, int=None):
-    if user or int != None:
-        if user == None:
-            user = st.session_state.username
-        folders = db_data.get(user)
-        st.session_state["u_folders"] = folders
-        return folders
+def load_data_user(user=None):
+    #alle 10 sek cache löschen um immer aktuell zu sein, 
+    #streamlit cloud macht automatisch cache, deshalb muss man es steuern
+    if user == None:
+        user = st.session_state.username
+    folders = db_data.get(user)
+    st.session_state["u_folders"] = folders
+    return folders
 
 
-#@st.cache_resource
+@st.cache_data(ttl=3600, show_spinner="Lädt vorgefertigte Sammlungen")
+# Jede Stunde neues Cache laden
 def load_data_preloaded():
     keys = ["baugesetz", "normen", "richtlinien", "produkte"]
     for key in keys:
@@ -317,7 +319,8 @@ def insert_firma(firma_dict):
 def get_firma(firma_id):
     return db_data.get(firma_id)
 
-@st.cache_resource
+
+@st.cache_data(ttl=10, show_spinner="Lädt Firmennamen")
 def fetch_all_firmas():
     """Returns a dict of all users"""
     res = db_firma.fetch()

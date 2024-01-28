@@ -166,12 +166,9 @@ def create_Store(docs):
     return None
 
 
-#@st.cache_data
+@st.cache_data(ttl=30, show_spinner="Lädt die Sammlungen")
 def load_Store(paths, random_int=None):
-    #Streamlit Cloud automaticly makes cache and only reloads with new params, 
-    #int param to throw off automatic caching, change for better option
 
-    #function.clear() #test
     Stores = []
     
     if paths != []:
@@ -191,7 +188,7 @@ def load_Store(paths, random_int=None):
     return Stores
 
 
-@st.cache_data
+@st.cache_data(show_spinner="Das Zwischengespeicherte Dokument wird verarbeitet")
 def store_temp(stream):
     title = stream.name.strip(".pdf")
     metadata = {"collection":None, "title":title}
@@ -230,8 +227,8 @@ def pickle_store(stream, collection):
     progress_bar.empty()
 
 
-def submit_upload(stream):
 
+def submit_upload(stream):
     with st.spinner("Dokumente zwischenspeichern"):
         if st.session_state["collection"] != None:
             pickle_store(stream=stream, collection = st.session_state["collection"] )

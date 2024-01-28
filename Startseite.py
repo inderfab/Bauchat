@@ -22,6 +22,7 @@ st.set_page_config(page_title = page_title,layout="wide") #
 
 configuration.conf_session_state()
 configuration.conf_menu()
+
 add_logo("gallery/bauchat_logo.png", height=200)
 
 if st.session_state["preload_data_loaded"] == False:
@@ -66,7 +67,8 @@ if stream != []:
     #st.session_state["loader_state"] = False
     
     if st.session_state.username != 'temp':
-        with st.expander("Sammlung erstellen", expanded=st.session_state["speicher_expander"]):
+        sammlung_placeholer = st.empty()
+        with sammlung_placeholer:
             sc1, sc2 = st.columns(2)
             
             with sc1:
@@ -87,7 +89,8 @@ if stream != []:
                 #st.session_state["u_collections"].append(st.session_state["collection"])
                 ai.submit_upload(stream)
                 st.session_state["submitted"] = None
-                
+                sammlung_placeholer.empty()
+                    
 
     else:
         collection = None
