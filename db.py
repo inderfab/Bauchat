@@ -289,7 +289,7 @@ def update_data_db(metadata):
     #metadata von ai pickle store = {"collection":collection,"save_loc":save_loc,"title":title}
 
 
-#@st.cache_data
+@st.cache_data(ttl=10, show_spinner="Lädt Benutzerdaten")
 def load_data_user(user=None, int=None):
     if user or int != None:
         if user == None:

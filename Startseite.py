@@ -75,8 +75,7 @@ if stream != []:
                     st.session_state["collection"] = collection
 
             #key = st.session_state.username
-            db.load_data_user().clear()
-            db.load_data_user()
+            db.load_data_user(st.session_state.username)
             user_l = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
             if st.session_state["u_folders"] is not None:# and st.session_state["u_data_exists"] == True:
                 with sc2:
