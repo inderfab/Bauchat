@@ -110,5 +110,5 @@ def conf_menu():
     
     st.markdown(css, unsafe_allow_html=True)
 
-def read_markdown_file(markdown_file):
-    return Path(markdown_file).read_text()
+def read_markdown_file(md_file):
+    return Path(md_file).read_text()
