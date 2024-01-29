@@ -32,7 +32,7 @@ if st.session_state.username == 'temp':
     zu_anmeldung = st.button("Anmelden / Registrieren", 
                                  help="Anmelden um bis zu 15 Dokumente gleichzeitig hochzuladen. Sonst nur in einem eigenen Dokument gesucht werden.",
                                  on_click=st.switch_page,
-                                 args="pages/3_Konto.py")
+                                 args=["pages/3_Konto.py"])
 else:
     db.load_data_user()
     st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
