@@ -30,9 +30,10 @@ st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichn
 
 if st.session_state.username == 'temp':
     zu_anmeldung = st.button("Anmelden / Registrieren", 
-                                 help="Anmelden um bis zu 15 Dokumente gleichzeitig hochzuladen. Sonst nur in einem eigenen Dokument gesucht werden.",
-                                 on_click=st.switch_page,
-                                 args=["pages/3_Konto.py"])
+                                 help="Anmelden um bis zu 15 Dokumente gleichzeitig hochzuladen. Sonst nur in einem eigenen Dokument gesucht werden.")
+    if zu_anmeldung:
+        st.switch_page("pages/3_Konto.py")
+        
 else:
     db.load_data_user()
     st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
