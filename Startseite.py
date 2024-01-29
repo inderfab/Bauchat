@@ -17,7 +17,6 @@ st.session_state.update(st.session_state)
 
 page_title = "bauCHAT"
 
-
 st.set_page_config(page_title = page_title,layout="wide") #
 
 configuration.conf_session_state()
@@ -25,20 +24,15 @@ configuration.conf_menu()
 
 add_logo("gallery/bauchat_logo.png", height=200)
 
-if st.session_state["preload_data_loaded"] == False:
-    db.load_data_preloaded()
-    
+db.load_data_preloaded()
+
 st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
 if st.session_state.username == 'temp':
-    up_col1, up_col2 = st.columns([1,4])
-    with up_col1:
-        zu_anmeldung = st.button("Anmelden / Registrieren")
-    with up_col2:
-        st.write("Anmelden um bis zu 15 Dokumente gleichzeitig hochzuladen. Sonst nur in einem eigenen Dokument gesucht werden.")
-
-    if zu_anmeldung:
-        st.switch_page("pages/3_Konto.py")
+    zu_anmeldung = st.button("Anmelden / Registrieren", 
+                                 help="Anmelden um bis zu 15 Dokumente gleichzeitig hochzuladen. Sonst nur in einem eigenen Dokument gesucht werden.",
+                                 on_click=st.switch_page,
+                                 args="pages/3_Konto.py")
 else:
     db.load_data_user()
     st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
@@ -99,7 +93,7 @@ if stream != []:
         st.session_state["option5value"] = True
             
 
-st.write("Alle angewählten Verzeichnisse werden gleichzeitig durchsucht. Wählen Sie die Gewünschten und klicken Sie auf laden.")
+#st.write("Alle angewählten Verzeichnisse werden gleichzeitig durchsucht. Wählen Sie die Gewünschten und klicken Sie auf laden.")
 
 
 col1, col2, col3, col4, col5 = st.columns(5)
