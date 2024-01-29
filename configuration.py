@@ -1,6 +1,7 @@
 
 import streamlit as st
-import db
+from pathlib import Path
+
 st.session_state.update(st.session_state)
 
 def conf_session_state():
@@ -108,3 +109,6 @@ def conf_menu():
     """
     
     st.markdown(css, unsafe_allow_html=True)
+
+def read_markdown_file(markdown_file):
+    return Path(markdown_file).read_text()
