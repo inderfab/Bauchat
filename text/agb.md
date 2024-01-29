@@ -12,11 +12,5 @@
 -   b. Die generierten Antworten basieren auf den Informationen in den bereitgestellten Dokumenten und stellen keine rechtliche Beratung dar. Die Website übernimmt keine Haftung für die Richtigkeit, Vollständigkeit oder Aktualität der generierten Antworten.
 -   c. Es wird keine Haftung für den Verlust von Daten oder Schäden übernommen, die aus dem Verlust von Daten resultieren, einschließlich, aber nicht beschränkt auf das Fehlen von Backups.
 
-**4. Datenschutz**
--   Die Verarbeitung personenbezogener Daten erfolgt in Übereinstimmung mit der Datenschutz-Grundverordnung (DSGVO) sowie unserer Datenschutzrichtlinie, die auf der Website einsehbar ist.
-
-**5. Änderungen der AGB**
--   Die Website behält sich das Recht vor, diese AGB jederzeit zu ändern. Die Nutzer werden über Änderungen informiert und müssen diesen zustimmen, um die Dienste weiterhin nutzen zu können.
-
-**6. Schlussbestimmungen**
+**4. Schlussbestimmungen**
 -   Sollten einzelne Bestimmungen dieser AGB unwirksam oder undurchführbar sein oder werden, berührt dies die Wirksamkeit der übrigen Bestimmungen nicht.

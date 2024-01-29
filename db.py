@@ -116,9 +116,10 @@ def reset_pw(user):
 
 
 def login():
-    user = st.text_input("Benutzername", key = "user_login")
-    pwd = st.text_input("Passwort",type='password',key = "pwd")
-    st.button("Anmelden", on_click=login_user, args=[user,pwd])  
+    with st.expander("Anmelden", expanded=True):
+        user = st.text_input("Benutzername", key = "user_login")
+        pwd = st.text_input("Passwort",type='password',key = "pwd")
+        st.button("Anmelden", on_click=login_user, args=[user,pwd])  
 
 
 def login_fast():

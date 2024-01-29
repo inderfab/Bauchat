@@ -28,15 +28,18 @@ db.load_data_preloaded()
 
 st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
+cont = st.container()
+
 if st.session_state.username == 'temp':
     zu_anmeldung = st.button("Anmelden / Registrieren", 
                                  help="Anmelden um bis zu 15 Dokumente gleichzeitig hochzuladen. Sonst nur in einem eigenen Dokument gesucht werden.")
     if zu_anmeldung:
         st.switch_page("pages/3_Konto.py")
-        
+
 else:
     db.load_data_user()
     st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
+
 
 stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", type='pdf',accept_multiple_files=True, label_visibility="hidden")
 
@@ -46,10 +49,10 @@ if stream == []:
     st.session_state["Temp_Stream_IMG"] = None
     st.session_state["option5value"] = False
 
-
 if st.session_state.username != 'temp' and len(stream) > 15:
     stream = stream[:15]
     st.write("Die erste 15 Dokumente wurden zwischengespeichert")
+
 elif st.session_state.username == 'temp' and len(stream) >= 1:
     stream = stream[0]
     #st.write("Das erste Dokument wurden zwischengespeichert")
@@ -57,7 +60,6 @@ elif st.session_state.username == 'temp' and len(stream) >= 1:
 
 if stream != []:
     st.session_state["speicher_expander"] = True
-    #st.session_state["loader_state"] = False
     
     if st.session_state.username != 'temp':
         sammlung_placeholer = st.empty()
