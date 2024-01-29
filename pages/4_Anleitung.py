@@ -8,4 +8,5 @@ add_logo("gallery/bauchat_logo.png", height=200)
 
 configuration.conf_session_state()
 
-st.subheader("Anleitung")
+anleitung_markdown = configuration.read_markdown_file("text/anleitung.md")
+st.markdown(anleitung_markdown, unsafe_allow_html=True)

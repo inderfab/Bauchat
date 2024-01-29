@@ -15,6 +15,8 @@ col1, col2 = st.columns(2)
 with col1:
         about_markdown = configuration.read_markdown_file("text/about.md")
         st.markdown(about_markdown, unsafe_allow_html=True)
-
+        
+        st.write("---")
+        
         agb_markdown = configuration.read_markdown_file("text/agb.md")
         st.markdown(agb_markdown, unsafe_allow_html=True)
