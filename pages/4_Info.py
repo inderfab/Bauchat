@@ -14,11 +14,11 @@ with col1:
         st.markdown(anleitung_markdown, unsafe_allow_html=True)
         
         st.write("---")
-
-        about_markdown = configuration.read_markdown_file("text/about.md")
-        st.markdown(about_markdown, unsafe_allow_html=True)
-        
-        st.write("---")
         
         agb_markdown = configuration.read_markdown_file("text/agb.md")
         st.markdown(agb_markdown, unsafe_allow_html=True)
+
+        st.write("---")
+
+        about_markdown = configuration.read_markdown_file("text/about.md")
+        st.markdown(about_markdown, unsafe_allow_html=True)

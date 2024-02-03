@@ -146,6 +146,8 @@ with sammlung_container:
         #if st.button("Verzeichnisse jetzt laden",type="primary"): 
         #st.session_state["docs_to_load"] = docs_to_load
         st.session_state.show_chat = True
+    else:
+        show_chat=False
         
 
 if st.session_state.show_chat:

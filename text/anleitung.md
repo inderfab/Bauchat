@@ -1,3 +1,4 @@
 **Anleitung**
 
-Fehlt noch
+Diese Seite ermöglicht es eine Frage an eine Sammlung von PDF Dokumenten zu stellen. Die Frage wird beantwortet und die relevanten Quellen werden angegeben. Suchen Sie entweder in den vorkonfigurierten Verzeichnissen oder laden Sie selber Dokumente hoch. Um viele Dokumente gleichzeitig zu durchsuchen, zum Beispiel alle Dokumente die zu einem Bauprojekt gehören, können Sie sich anmelden. Die Dokumente werden dann in ihrem Benutzerkonto zwischengespeichert und sind beim nächsten Aufruf wieder verfügbar.
+Dieses Seite ist noch in Entwicklung, bei Problemen, Unklarheiten oder Verbesserungsvorschlägen melden Sie sich bei info@bauchat.ch
