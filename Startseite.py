@@ -27,23 +27,28 @@ add_logo("gallery/bauchat_logo.png", height=200)
 
 db.load_data_preloaded()
 
-st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
+#st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
 cont = st.container()
 
-if st.session_state.username == 'temp':
-    zu_anmeldung = st.button("Anmelden / Registrieren", 
-                                 help="Anmelden um bis zu 15 Dokumente gleichzeitig hochzuladen. Sonst nur in einem eigenen Dokument gesucht werden.")
-    if zu_anmeldung:
-        st.switch_page("pages/3_Konto.py")
-
-else:
-    db.load_data_user()
-    st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
 
 upload_container = st.container(border=True)
 with upload_container:
-    stream = store.uploader()
+    if st.session_state.username == 'temp':
+        temp_col1,temp_col2 = st.columns(2)
+        with temp_col1:
+            stream = store.uploader()
+        with temp_col2:
+            zu_anmeldung = st.button("Anmelden / Registrieren", 
+                                        help="Anmelden um bis zu 15 Dokumente gleichzeitig hochzuladen. Sonst nur in einem eigenen Dokument gesucht werden.")
+            if zu_anmeldung:
+                st.switch_page("pages/3_Konto.py")
+
+    else:
+        stream = store.uploader()
+        db.load_data_user()
+        st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
+
     stream = store.file_uploader_container(stream)
 
 #st.write("Alle angewählten Verzeichnisse werden gleichzeitig durchsucht. Wählen Sie die Gewünschten und klicken Sie auf laden.")
