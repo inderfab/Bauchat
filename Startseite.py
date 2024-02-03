@@ -31,7 +31,7 @@ db.load_data_preloaded()
 
 upload_container = st.container(border=True)
 with upload_container:
-    st.write("Eigene Dokumente hochladen")
+    #st.write("Eigene Dokumente hochladen")
     if st.session_state.username == 'temp':
         temp_col1,temp_col2 = st.columns([3,1])
         with temp_col1:
@@ -55,7 +55,7 @@ with upload_container:
 
 sammlung_container = st.container(border=True)
 with sammlung_container:
-    st.write("Wählen Sie die vorgefertige oder die eigenen Sammlungen aus")
+    #st.write("Wählen Sie die vorgefertige oder die eigenen Sammlungen aus")
     col1, col2, col3, col4, col5 = st.columns(5)
     docs_to_load = []
 
@@ -143,9 +143,9 @@ with sammlung_container:
 
          
     if any([option_1,option_2,option_3,option_4,option_5]) or st.session_state["temp_upload"] == True:
-        if st.button("Verzeichnisse jetzt laden",type="primary"): 
-            st.session_state["docs_to_load"] = docs_to_load
-            st.session_state.show_chat = True
+        #if st.button("Verzeichnisse jetzt laden",type="primary"): 
+        st.session_state["docs_to_load"] = docs_to_load
+        st.session_state.show_chat = True
         
 
 if st.session_state.show_chat:
@@ -163,9 +163,14 @@ if st.session_state.show_chat:
                     st.write("Geladene Dokumente:")
                     st.markdown(chat_docs)
 
-            #st.write("Docs to load:" , st.session_state["docs_to_load"]) 
-            stores = ai.load_Store(st.session_state["docs_to_load"])
-                
+            #st.write("Docs to load:" , st.session_state["docs_to_load"])
+            if st.session_state.reload_store == True:
+                stores = ai.load_store(st.session_state["docs_to_load"])
+                st.session_state.reload_store = False
+            else:
+                stores = ai.load_store_cache(st.session_state["docs_to_load"])
+
+
             if st.session_state["temp_upload"] == True:
                 temp_store = ai.store_temp(st.session_state["Temp_Stream"])
                 if temp_store is not None:

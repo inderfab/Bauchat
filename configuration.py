@@ -36,6 +36,8 @@ def conf_session_state():
         st.session_state["anmeldeversuch"] = False   
     if "empty_stream" not in st.session_state:
         st.session_state["empty_stream"] =  False
+    if "reload_store" not in st.session_state:
+        st.session_state.reload_store = False
 
     # Storage
     if "Files_Saved" not in st.session_state:

@@ -166,10 +166,10 @@ def create_Store(docs):
     return None
 
 
-@st.cache_data(ttl=30, show_spinner="Lädt die Sammlungen")
-def load_Store(paths):
+@st.cache_data(ttl=0.1, show_spinner="Lädt die Sammlungen")
+def load_store(paths, reload_hash=None):
 
-    Stores = []
+    stores = []
     
     if paths != []:
         progress_text = "Dokumente laden"
@@ -179,13 +179,35 @@ def load_Store(paths):
 
         for p in paths:
             file = store.s3_download_files(p)
-            Stores.append(file)
+            stores.append(file)
             
             progress += 1
             progress_bar.progress(progress/progress_max, text=progress_text)
         
         progress_bar.empty()
-    return Stores
+    return stores
+
+
+@st.cache_data(ttl=3600, show_spinner="Lädt die Sammlungen")
+def load_store_cache(paths, reload_hash=None):
+
+    stores = []
+    
+    if paths != []:
+        progress_text = "Dokumente laden"
+        progress_max = len(paths)
+        progress_bar = st.progress(0,progress_text)
+        progress = 0
+
+        for p in paths:
+            file = store.s3_download_files(p)
+            stores.append(file)
+            
+            progress += 1
+            progress_bar.progress(progress/progress_max, text=progress_text)
+        
+        progress_bar.empty()
+    return stores
 
 
 @st.cache_data(show_spinner="Das Zwischengespeicherte Dokument wird verarbeitet")
