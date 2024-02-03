@@ -177,7 +177,7 @@ def uploader():
 
 def file_uploader_container(stream):
     sammlung_empty = st.empty()
-    with sammlung_empty:
+    with sammlung_empty.container():
         if stream != []:
             #st.session_state["speicher_expander"] = True
             
