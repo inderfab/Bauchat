@@ -166,11 +166,9 @@ def create_Store(docs):
     return None
 
 
-@st.cache_data(ttl=0.1, show_spinner="Lädt die Sammlungen")
-def load_store(paths, reload_hash=None):
-
+#@st.cache_data(ttl=0.1, show_spinner="Lädt die Sammlungen")
+def load_store(paths):
     stores = []
-    
     if paths != []:
         progress_text = "Dokumente laden"
         progress_max = len(paths)
