@@ -149,7 +149,7 @@ with sammlung_container:
     else:
         show_chat=False
         
-
+st.write(st.session_state.show_chat)
 if st.session_state.show_chat == True:
     query = st.chat_input("Stellen Sie hier Ihre Frage")
     chat_container = st.container(border=True)
