@@ -57,7 +57,7 @@ sammlung_container = st.container(border=True)
 with sammlung_container:
     #st.write("Wählen Sie die vorgefertige oder die eigenen Sammlungen aus")
     col1, col2, col3, col4, col5 = st.columns(5)
-    st.session_state["docs_to_load"] = []
+    docs_to_load = []
 
 
 
@@ -69,7 +69,7 @@ with sammlung_container:
                 kanton_titel = "Kanton und Gemeinde wählen"
                 kanton_sel = selectbox(kanton_titel, kanton_liste)
                 if kanton_sel is not None:
-                    st.session_state["docs_to_load"].append( os.path.join("baugesetz",kanton_sel,"") )
+                    docs_to_load.append( os.path.join("baugesetz",kanton_sel,"") )
 
         with col2:
             option_2 = st.checkbox("Normen", value=False)
@@ -83,7 +83,7 @@ with sammlung_container:
                         norm_sel = st.multiselect(normen_title, normen_liste)
                         if norm_sel != []:
                             for u_sel in norm_sel:
-                                st.session_state["docs_to_load"].append( os.path.join("normen",u_sel,"") )
+                                docs_to_load.append( os.path.join("normen",u_sel,"") )
                     else:
                         st.write("Normen sind aus rechtlichen Gründen zur Zeit noch nicht freigeschaltet")
                 else:
@@ -99,7 +99,7 @@ with sammlung_container:
 
                 if richtlinie_sel != []:
                     for u_sel in richtlinie_sel:
-                        st.session_state["docs_to_load"].append( os.path.join("richtlinien",u_sel,"") )
+                        docs_to_load.append( os.path.join("richtlinien",u_sel,"") )
 
         with col4:
             option_4 = st.checkbox("Produkte", value=False)
@@ -112,7 +112,7 @@ with sammlung_container:
 
                 if unternehmen_sel != []:
                     for u_sel in unternehmen_sel:
-                        st.session_state["docs_to_load"].append( os.path.join("produkte",u_sel,"") )
+                        docs_to_load.append( os.path.join("produkte",u_sel,"") )
 
 
     with col5:
@@ -134,8 +134,8 @@ with sammlung_container:
                 if user_choice != []:
                     for c in user_choice:
                         #st.write(st.session_state.username)
-                        st.session_state["docs_to_load"].append(f"{st.session_state.username}/{c}/")
-                        #st.write(st.session_state["docs_to_load"])
+                        docs_to_load.append(f"{st.session_state.username}/{c}/")
+                        #st.write(docs_to_load)
 
         if opt_5 == True and st.session_state.username == 'temp' and st.session_state["Temp_Stream"]:
             option_5 = True
@@ -153,24 +153,24 @@ if st.session_state.show_chat:
     chat_container = st.container(border=True)
     with chat_container:
         VectorStore = None
-        if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == True:
+        if docs_to_load != [] or st.session_state["temp_upload"] == True:
 
-            if st.session_state.docs_to_load != []:
+            if docs_to_load != []:
                 with st.sidebar:
                     chat_docs = ''
-                    for i in st.session_state["docs_to_load"]:
+                    for i in docs_to_load:
                         chat_docs += "- " + i.split("/")[-2] + "\n"
                     st.write("Geladene Dokumente:")
                     st.markdown(chat_docs)
 
-            st.write("Docs to load", st.session_state["docs_to_load"])
-            #st.write("Docs to load:" , st.session_state["docs_to_load"])
-            stores = ai.load_store(st.session_state["docs_to_load"])
+            st.write("Docs to load", docs_to_load)
+            #st.write("Docs to load:" , docs_to_load)
+            stores = ai.load_store(docs_to_load)
             #if st.session_state.reload_store == True:
-            #    stores = ai.load_store(st.session_state["docs_to_load"])
+            #    stores = ai.load_store(docs_to_load)
             #    st.session_state.reload_store = False
             #else:
-            #    stores = ai.load_store_cache(st.session_state["docs_to_load"])
+            #    stores = ai.load_store_cache(docs_to_load)
 
 
             if st.session_state["temp_upload"] == True:
