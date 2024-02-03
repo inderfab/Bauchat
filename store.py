@@ -176,7 +176,9 @@ def uploader():
 
 
 def file_uploader_container():
-    if not upload_container:
+    try:
+        upload_container
+    except:
         upload_container = st.container()
     
     with upload_container:
