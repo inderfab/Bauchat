@@ -41,60 +41,7 @@ else:
     st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
 
 
-stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", type='pdf',accept_multiple_files=True, label_visibility="hidden")
-
-if stream == []:
-    st.session_state["temp_upload"] = False 
-    st.session_state["Temp_Stream"] = None
-    st.session_state["Temp_Stream_IMG"] = None
-    st.session_state["option5value"] = False
-
-if st.session_state.username != 'temp' and len(stream) > 15:
-    stream = stream[:15]
-    st.write("Die erste 15 Dokumente wurden zwischengespeichert")
-
-elif st.session_state.username == 'temp' and len(stream) >= 1:
-    stream = stream[0]
-    #st.write("Das erste Dokument wurden zwischengespeichert")
-
-
-if stream != []:
-    st.session_state["speicher_expander"] = True
-    
-    if st.session_state.username != 'temp':
-        sammlung_placeholer = st.empty()
-        with sammlung_placeholer:
-            sc1, sc2 = st.columns(2)
-            
-            with sc1:
-                collection = st.text_input("Neue Sammlung anlegen:", max_chars=25, help="maximal 25 Buchstaben", value=None)                        
-                if collection is not None:
-                    st.session_state["collection"] = collection
-
-            #key = st.session_state.username
-            db.load_data_user(st.session_state.username)
-            user_l = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
-            if st.session_state["u_folders"] is not None:# and st.session_state["u_data_exists"] == True:
-                with sc2:
-                    update_collection = st.selectbox('Sammlung aktualisieren',user_l, index=None)
-                    if update_collection != None:
-                            st.session_state["collection"] = update_collection
-            
-            if st.button("Speichern"):
-                #st.session_state["u_collections"].append(st.session_state["collection"])
-                ai.submit_upload(stream)
-                st.session_state["submitted"] = None
-                sammlung_placeholer.empty()
-                    
-
-    else:
-        collection = None
-        st.write("Ihr hochgeladenes Dokument wurde zwischengespeichert, auf laden klicken um mit dem dokument zu chatten")
-        st.session_state["temp_upload"] = True 
-        st.session_state["Temp_Stream"] = stream
-        st.session_state["Temp_Stream_IMG"] = stream.read()
-        st.session_state["option5value"] = True
-            
+stream = store.file_uploader_container()
 
 #st.write("Alle angewählten Verzeichnisse werden gleichzeitig durchsucht. Wählen Sie die Gewünschten und klicken Sie auf laden.")
 

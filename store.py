@@ -231,6 +231,8 @@ def file_uploader_container():
         st.session_state["Temp_Stream"] = None
         st.session_state["Temp_Stream_IMG"] = None
         st.session_state["option5value"] = False
+    
+    return stream
 
 
                 
