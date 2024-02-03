@@ -34,7 +34,8 @@ def conf_session_state():
         st.session_state["temp_upload"] = False   
     if "anmeldeversuch" not in st.session_state:
         st.session_state["anmeldeversuch"] = False   
-
+    if "empty_stream" not in st.session_state:
+        st.session_state["empty_stream"] =  False
 
     # Storage
     if "Files_Saved" not in st.session_state:
