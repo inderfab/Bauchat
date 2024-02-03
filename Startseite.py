@@ -42,6 +42,10 @@ with upload_container:
                                         help="Anmelden um bis zu 15 Dokumente gleichzeitig hochzuladen. Sonst nur in einem eigenen Dokument gesucht werden.")
             if zu_anmeldung:
                 st.switch_page("pages/3_Konto.py")
+            zu_anleitung = st.button("Anleitung", 
+                                        help="Kurzanleitung wie man diese Webseite benutzen kann")
+            if zu_anleitung:
+                st.switch_page("pages/4_Info.py")
     else:
         stream = store.uploader()
         if st.session_state["empty_stream"] == False:

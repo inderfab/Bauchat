@@ -19,9 +19,9 @@ if st.session_state.username == 'temp':
 else:
     st.write("Benutzername: ", st.session_state.username )
     
-
     if st.button("Abmelden") is True:
         st.session_state.username = 'temp'
+        st.session_state.messages = []
         st.switch_page("Startseite.py")
 
     st.subheader("Nutzung")
