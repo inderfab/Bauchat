@@ -203,8 +203,6 @@ def file_uploader_container_user(stream):
                 sammlung_empty.empty()
                 st.session_state.reload_store = True
 
-        
-        else:
             st.session_state["temp_upload"] = False 
             st.session_state["Temp_Stream"] = None
             st.session_state["Temp_Stream_IMG"] = None
@@ -219,7 +217,6 @@ def file_uploader_container_temp(stream):
             stream = stream[0]
             st.write("Das erste Dokument wurden zwischengespeichert")
 
-            collection = None
             st.write("Ihr hochgeladenes Dokument wurde zwischengespeichert, auf laden klicken um mit dem Dokument zu chatten")
             st.session_state["temp_upload"] = True 
             st.session_state["Temp_Stream"] = stream

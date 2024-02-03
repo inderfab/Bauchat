@@ -100,10 +100,18 @@ def conf_session_state():
 
 def conf_menu():
     css = """
+    .css-1jc7ptx, .e1ewe7hr3, 
+    .viewerBadge_container__1QSob,
+    .styles_viewerBadge__1yB5_, 
+    .viewerBadge_link__1S137, 
+    .viewerBadge_text__1JaDK{ display: none; } 
+    #MainMenu{ visibility: hidden; } 
+    footer { visibility: hidden; } 
+    header { visibility: hidden; }
+
+    
     <style>
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    #GithubIcon {visibility: hidden;}
+ 
 
     [data-testid="stFileUploadDropzone"] div div::before {color:black; content:"Datei hier hin ziehen und loslassen"}
     [data-testid="stFileUploadDropzone"] div div span{display:none;}
@@ -114,6 +122,7 @@ def conf_menu():
     """
     
     st.markdown(css, unsafe_allow_html=True)
+
 
 def read_markdown_file(md_file):
     return Path(md_file).read_text()

@@ -149,9 +149,8 @@ with sammlung_container:
     else:
         show_chat=False
         
-st.write(st.session_state.show_chat)
 if st.session_state.show_chat == True:
-    query = st.chat_input("Stellen Sie hier Ihre Frage")
+    query = st.chat_input("Verzeichnisse wählen und hier die Frage stellen")
     chat_container = st.container(border=True)
     with chat_container:
         VectorStore = None
