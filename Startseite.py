@@ -11,7 +11,6 @@ import db
 import os
 #from random import randint
 import funcy
-import display
 
 import dotenv
 dotenv.load_dotenv()
@@ -186,7 +185,7 @@ with chat_container:
             st.write("Stellen Sie eine Frage an die Dokumente")
 
         if st.session_state.messages != []:
-            display.chat_display(st.session_state.messages)
+            d.chat_display(st.session_state.messages)
 
     else:
         st.write("Bitte wählen Sie eine Sammlung oder laden Sie eigene Dokumente hoch")
