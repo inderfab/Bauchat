@@ -100,22 +100,23 @@ def conf_session_state():
 
 def conf_menu():
     css = """
+    <style>
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     #GithubIcon {visibility: hidden;}
-    
-    <style>
- 
+    </style>
+    """
+    st.markdown(css, unsafe_allow_html=True)
 
+    css2 = """
     [data-testid="stFileUploadDropzone"] div div::before {color:black; content:"Datei hier hin ziehen und loslassen"}
     [data-testid="stFileUploadDropzone"] div div span{display:none;}
     [data-testid="stFileUploadDropzone"] div div::after {color:grey; font-size: .8em; content:"Maximal 20 Megabyte"}
     [data-testid="stFileUploadDropzone"] div div small{display:none;}
-
-    </style>
     """
+    st.markdown(css2, unsafe_allow_html=True)
+
     
-    st.markdown(css, unsafe_allow_html=True)
 
 
 def read_markdown_file(md_file):
