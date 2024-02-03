@@ -36,18 +36,19 @@ with upload_container:
         temp_col1,temp_col2 = st.columns([3,1])
         with temp_col1:
             stream = store.uploader()
+            store.file_uploader_container_temp(stream)
         with temp_col2:
             zu_anmeldung = st.button("Anmelden / Registrieren", 
                                         help="Anmelden um bis zu 15 Dokumente gleichzeitig hochzuladen. Sonst nur in einem eigenen Dokument gesucht werden.")
             if zu_anmeldung:
                 st.switch_page("pages/3_Konto.py")
-
     else:
         stream = store.uploader()
+        store.file_uploader_container_user(stream)
         db.load_data_user()
         st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
 
-    stream = store.file_uploader_container(stream)
+    
 
 #st.write("Alle angewählten Verzeichnisse werden gleichzeitig durchsucht. Wählen Sie die Gewünschten und klicken Sie auf laden.")
 
@@ -135,7 +136,7 @@ with sammlung_container:
                         docs_to_load.append(f"{st.session_state.username}/{c}/")
                         #st.write(docs_to_load)
 
-        if opt_5 == True and st.session_state.username == 'temp' and stream:
+        if opt_5 == True and st.session_state.username == 'temp' and st.session_state["Temp_Stream"]:
             option_5 = True
 
 
@@ -144,8 +145,7 @@ with sammlung_container:
         if st.button("Verzeichnisse jetzt laden",type="primary"): 
             st.session_state["docs_to_load"] = docs_to_load
             st.session_state.show_chat = True
-        else:
-            st.write("Verzeichnisse wählen")
+        
 
 if st.session_state.show_chat:
     chat_container = st.container(border=True)
