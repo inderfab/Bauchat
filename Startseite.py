@@ -148,9 +148,9 @@ with sammlung_container:
         
 
 if st.session_state.show_chat:
+    query = st.chat_input("Stellen Sie hier Ihre Frage")
     chat_container = st.container(border=True)
     with chat_container:
-
         VectorStore = None
         if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == True:
 
@@ -180,7 +180,7 @@ if st.session_state.show_chat:
             if st.checkbox(label="Ausführliche Antwort", value=False):
                 st.session_state.long_answer = True
 
-            query = st.chat_input("Stellen Sie hier Ihre Frage")
+            
 
             if query:
                 with st.spinner("Die Dokumente werden durchsucht"):
