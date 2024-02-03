@@ -176,10 +176,9 @@ def uploader():
 
 
 def file_uploader_container():
-    upload_container = st.empty()
     
-    with upload_container:
-        stream = uploader()
+    stream = uploader()
+    upload_container = st.empty()
 
     if stream != []:
         st.session_state["speicher_expander"] = True
@@ -213,9 +212,7 @@ def file_uploader_container():
                     #st.session_state["u_collections"].append(st.session_state["collection"])
                     ai.submit_upload(stream)
                     st.session_state["submitted"] = None
-                    #upload_container.empty()
-                    with upload_container:
-                        stream = uploader()
+   
 
         else:
             collection = None
