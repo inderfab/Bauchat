@@ -201,7 +201,7 @@ def file_uploader_container():
                     sc1, sc2 = sammlung_empty.columns(2)
                     
                     with sc1:
-                        collection = st.text_input("Neue Sammlung anlegen:", max_chars=25, help="maximal 25 Buchstaben", value=None)                        
+                        collection = sammlung_empty.text_input("Neue Sammlung anlegen:", max_chars=25, help="maximal 25 Buchstaben", value=None)                        
                         if collection is not None:
                             st.session_state["collection"] = collection
 
