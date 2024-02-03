@@ -30,7 +30,6 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
             st.write("Geladene Dokumente:")
             st.markdown(chat_docs)
 
-    #st.write("Docs to load:" , st.session_state["docs_to_load"]) 
     stores = ai.load_Store(st.session_state["docs_to_load"])
         
     if st.session_state["temp_upload"] == True:
