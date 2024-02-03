@@ -198,7 +198,7 @@ def file_uploader_container():
 
             if st.session_state.username != 'temp':
                 with sammlung_empty:
-                    sc1, sc2 = st.columns(2)
+                    sc1, sc2 = sammlung_empty.columns(2)
                     
                     with sc1:
                         collection = st.text_input("Neue Sammlung anlegen:", max_chars=25, help="maximal 25 Buchstaben", value=None)                        
