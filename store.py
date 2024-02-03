@@ -169,7 +169,8 @@ def uploader():
     return st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", 
                             type='pdf',
                             accept_multiple_files=True, 
-                            label_visibility="collapsed",)
+                            label_visibility="collapsed",
+                            help="Ncht angemeldete Nutzer können nur 1 Dokument hochladen. Angemeldete Nutzer können bis zu 15 Dokumente gleichzeitig hochladen und in einer Sammlung speichern.")
 
 
 def file_uploader_container_user(stream):
