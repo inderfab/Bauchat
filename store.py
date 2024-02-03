@@ -46,12 +46,10 @@ def load_data_temp():
 
 
 # ----- S3 Storage
-@st.cache_data(ttl=0.1)
 def s3_boto_client():
     return boto3.client("s3")
 
 
-@st.cache_data(ttl=0.1)
 def s3_uploader(filepath, file):
     # Binary Mode File
     client = s3_boto_client()
@@ -60,7 +58,6 @@ def s3_uploader(filepath, file):
     return success
 
 
-@st.cache_data(ttl=0.1)
 def s3_reader(filepath):
     conn = st.experimental_connection('s3', type=FilesConnection)
     file = conn.open("bauchatstorage/"+filepath,mode="rb")
@@ -90,7 +87,6 @@ def s3_reader(filepath):
 #             subfolders.append([foldername,sf])
     
 #     return subfolders
-@st.cache_data(ttl=0.1)
 def s3_upload_pkl(key, data):
     
     data_pkl = pickle.dumps(data)
@@ -99,7 +95,6 @@ def s3_upload_pkl(key, data):
     return success
 
 
-@st.cache_data(ttl=0.1)
 def s3_download_pkl(key): 
     client = s3_boto_client()
     bucket = "bauchatstorage"
@@ -110,7 +105,6 @@ def s3_download_pkl(key):
     return file
 
 
-@st.cache_data(ttl=0.1)
 def read_s3_contents_with_buffer(key) -> str :
     client = s3_boto_client()
     bucket = "bauchatstorage"
@@ -119,7 +113,6 @@ def read_s3_contents_with_buffer(key) -> str :
     return bytes.getvalue()
 
 
-@st.cache_data(ttl=0.1)
 def s3_download_files(path) :
     client = s3_boto_client()
     bucket = "bauchatstorage"
@@ -139,7 +132,6 @@ def s3_download_files(path) :
     return files
 
 
-@st.cache_data(ttl=0.1)
 def s3_get_files(path) :
     client = s3_boto_client()
     bucket = "bauchatstorage"
