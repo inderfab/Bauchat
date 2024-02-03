@@ -178,8 +178,7 @@ def uploader():
 def file_uploader_container():
     upload_container = st.empty()
     
-    with upload_container:
-        stream = uploader()
+    stream = uploader()
 
     if stream != []:
         st.session_state["speicher_expander"] = True
@@ -193,7 +192,6 @@ def file_uploader_container():
             #st.write("Das erste Dokument wurden zwischengespeichert")
 
         if st.session_state.username != 'temp':
-            upload_container.empty()
             with upload_container:
                 sc1, sc2 = st.columns(2)
                 
@@ -215,8 +213,6 @@ def file_uploader_container():
                     ai.submit_upload(stream)
                     st.session_state["submitted"] = None
                     upload_container.empty()
-                    with upload_container:
-                        stream = uploader()
 
         else:
             collection = None
