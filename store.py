@@ -176,11 +176,8 @@ def uploader():
 
 
 def file_uploader_container():
-    try:
-        upload_container
-    except:
-        upload_container = st.container(border=True)
-    
+    upload_container = st.container(border=True)
+
     with upload_container:
         stream = uploader()
         
@@ -230,7 +227,7 @@ def file_uploader_container():
             st.session_state["Temp_Stream"] = None
             st.session_state["Temp_Stream_IMG"] = None
             st.session_state["option5value"] = False
-        
+    
     return stream
 
 
