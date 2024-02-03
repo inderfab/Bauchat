@@ -181,8 +181,7 @@ def file_uploader_container_user(stream):
         if stream != []:
             #st.session_state["speicher_expander"] = True
             
-            stream = stream[0]
-            st.write("Das erste Dokument wurden zwischengespeichert")
+            stream = stream[:15]
 
             sc1, sc2 = st.columns(2)
             
