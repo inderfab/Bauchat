@@ -175,12 +175,9 @@ def uploader():
                             label_visibility="collapsed",)
 
 
-def file_uploader_container():
-    upload_container = st.container(border=True)
-
-    with upload_container:
-        stream = uploader()
-        
+def file_uploader_container(stream):
+    sammlung_empty = st.empty()
+    with sammlung_empty:
         if stream != []:
             #st.session_state["speicher_expander"] = True
             
@@ -212,7 +209,8 @@ def file_uploader_container():
                     #st.session_state["u_collections"].append(st.session_state["collection"])
                     ai.submit_upload(stream)
                     st.session_state["submitted"] = None
-    
+                    sammlung_empty.empty()
+
 
             else:
                 collection = None
@@ -227,7 +225,7 @@ def file_uploader_container():
             st.session_state["Temp_Stream"] = None
             st.session_state["Temp_Stream_IMG"] = None
             st.session_state["option5value"] = False
-    
+        
     return stream
 
 

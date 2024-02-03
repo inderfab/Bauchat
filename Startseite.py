@@ -40,8 +40,10 @@ else:
     db.load_data_user()
     st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
 
-
-stream = store.file_uploader_container()
+upload_container = st.container(border=True)
+with upload_container:
+    stream = store.uploader()
+    stream = store.file_uploader_container(stream)
 
 #st.write("Alle angewählten Verzeichnisse werden gleichzeitig durchsucht. Wählen Sie die Gewünschten und klicken Sie auf laden.")
 
