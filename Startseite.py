@@ -29,13 +29,11 @@ db.load_data_preloaded()
 
 #st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
-cont = st.container()
-
-
 upload_container = st.container(border=True)
 with upload_container:
+    st.write("Eigene Dokumente hochladen")
     if st.session_state.username == 'temp':
-        temp_col1,temp_col2 = st.columns(2)
+        temp_col1,temp_col2 = st.columns([3,1])
         with temp_col1:
             stream = store.uploader()
         with temp_col2:
@@ -55,6 +53,7 @@ with upload_container:
 
 sammlung_container = st.container(border=True)
 with sammlung_container:
+    st.write("Wählen Sie die vorgefertige oder die eigenen Sammlungen aus")
     col1, col2, col3, col4, col5 = st.columns(5)
     docs_to_load = []
 
@@ -140,8 +139,9 @@ with sammlung_container:
             option_5 = True
 
 
-    if st.button("Verzeichnisse jetzt laden",type="primary"):      
-        if any([option_1,option_2,option_3,option_4,option_5]) or st.session_state["temp_upload"] == True:
+         
+    if any([option_1,option_2,option_3,option_4,option_5]) or st.session_state["temp_upload"] == True:
+        if st.button("Verzeichnisse jetzt laden",type="primary"): 
             st.session_state["docs_to_load"] = docs_to_load
             st.session_state.show_chat = True
         else:
