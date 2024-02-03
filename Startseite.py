@@ -138,56 +138,58 @@ with sammlung_container:
     if st.button("Verzeichnisse jetzt laden",type="primary"):      
         if any([option_1,option_2,option_3,option_4,option_5]) or st.session_state["temp_upload"] == True:
             st.session_state["docs_to_load"] = docs_to_load
+            st.session_state.show_chat = True
         else:
             st.write("Verzeichnisse wählen")
 
-chat_container = st.container(border=True)
-with chat_container:
+if st.session_state.show_chat:
+    chat_container = st.container(border=True)
+    with chat_container:
 
-    VectorStore = None
-    if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == True:
+        VectorStore = None
+        if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == True:
 
-        if st.session_state.docs_to_load != []:
-            with st.sidebar:
-                chat_docs = ''
-                for i in st.session_state["docs_to_load"]:
-                    chat_docs += "- " + i.split("/")[-2] + "\n"
-                st.write("Geladene Dokumente:")
-                st.markdown(chat_docs)
+            if st.session_state.docs_to_load != []:
+                with st.sidebar:
+                    chat_docs = ''
+                    for i in st.session_state["docs_to_load"]:
+                        chat_docs += "- " + i.split("/")[-2] + "\n"
+                    st.write("Geladene Dokumente:")
+                    st.markdown(chat_docs)
 
-        #st.write("Docs to load:" , st.session_state["docs_to_load"]) 
-        stores = ai.load_Store(st.session_state["docs_to_load"])
+            #st.write("Docs to load:" , st.session_state["docs_to_load"]) 
+            stores = ai.load_Store(st.session_state["docs_to_load"])
+                
+            if st.session_state["temp_upload"] == True:
+                temp_store = ai.store_temp(st.session_state["Temp_Stream"])
+                if temp_store is not None:
+                    stores.append(temp_store)
+
+            store_list = funcy.lflatten(stores)
             
-        if st.session_state["temp_upload"] == True:
-            temp_store = ai.store_temp(st.session_state["Temp_Stream"])
-            if temp_store is not None:
-                stores.append(temp_store)
+            if len(store_list)>1:
+                VectorStore = ai.merge_faiss_stores(store_list)
+            else:
+                VectorStore = store_list[0]
+            
+            if st.checkbox(label="Ausführliche Antwort", value=False):
+                st.session_state.long_answer = True
 
-        store_list = funcy.lflatten(stores)
-        
-        if len(store_list)>1:
-            VectorStore = ai.merge_faiss_stores(store_list)
+            query = st.chat_input("Stellen Sie hier Ihre Frage")
+
+            if query:
+                with st.spinner("Die Dokumente werden durchsucht"):
+                    message = ai.bauchat_query(query, VectorStore)
+                    if st.session_state.username != 'temp':
+                        db.user_update_message_and_tokens(message)
+
+            else:
+                st.write("Stellen Sie eine Frage an die Dokumente")
+
+            if st.session_state.messages != []:
+                d.chat_display(st.session_state.messages)
+
         else:
-            VectorStore = store_list[0]
-        
-        if st.checkbox(label="Ausführliche Antwort", value=False):
-            st.session_state.long_answer = True
-
-        query = st.chat_input("Stellen Sie hier Ihre Frage")
-
-        if query:
-            with st.spinner("Die Dokumente werden durchsucht"):
-                message = ai.bauchat_query(query, VectorStore)
-                if st.session_state.username != 'temp':
-                    db.user_update_message_and_tokens(message)
-
-        else:
-            st.write("Stellen Sie eine Frage an die Dokumente")
-
-        if st.session_state.messages != []:
-            d.chat_display(st.session_state.messages)
-
-    else:
-        st.write("Bitte wählen Sie eine Sammlung oder laden Sie eigene Dokumente hoch")
+            st.write("Bitte wählen Sie eine Sammlung oder laden Sie eigene Dokumente hoch")
 
 
