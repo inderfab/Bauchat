@@ -163,7 +163,6 @@ if st.session_state.show_chat:
                     st.write("Geladene Dokumente:")
                     st.markdown(chat_docs)
 
-            st.write("Docs to load", docs_to_load)
             #st.write("Docs to load:" , docs_to_load)
             stores = ai.load_store(docs_to_load)
             #if st.session_state.reload_store == True:
@@ -187,8 +186,6 @@ if st.session_state.show_chat:
             
             if st.checkbox(label="Ausführliche Antwort", value=False):
                 st.session_state.long_answer = True
-
-            
 
             if query:
                 with st.spinner("Die Dokumente werden durchsucht"):
