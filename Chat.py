@@ -55,9 +55,6 @@ if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == Tru
             if st.session_state.username != 'temp':
                 db.user_update_message_and_tokens(message)
 
-    else:
-        st.write("Stellen Sie eine Frage an die Dokumente")
-
     if st.session_state.messages != []:
         display.chat_display(st.session_state.messages)
 
