@@ -202,6 +202,7 @@ def file_uploader_container_user(stream):
                 #st.session_state["u_collections"].append(st.session_state["collection"])
                 ai.submit_upload(stream)
                 st.session_state["submitted"] = None
+                stream = []
                 sammlung_empty.empty()
         
         else:
