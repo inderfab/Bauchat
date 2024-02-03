@@ -301,8 +301,7 @@ def load_data_user(user=None):
     return folders
 
 
-@st.cache_data(ttl=3600, show_spinner="Lädt vorgefertigte Sammlungen")
-# Jede Stunde neues Cache laden
+@st.cache_data(ttl=0.1, show_spinner="Lädt vorgefertigte Sammlungen")
 def load_data_preloaded():
     keys = ["baugesetz", "normen", "richtlinien", "produkte"]
     for key in keys:
