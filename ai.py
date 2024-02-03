@@ -253,7 +253,7 @@ def submit_upload(stream):
     if st.session_state["preload_active"] == True:
         st.write("Streams: ", stream )
 
-
+@st.cache_data(ttl=60)
 def merge_faiss_stores(store_list):
     vector_store = store_list.pop(0)
     for store in store_list:  

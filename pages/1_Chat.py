@@ -3,14 +3,12 @@ import streamlit as st
 from streamlit_extras.app_logo import add_logo 
 
 import funcy
-import ai
 import display
+import ai
 import configuration
 import db
-import faiss
 
 st.session_state.update(st.session_state)
-VectorStore = None
 
 add_logo("gallery/bauchat_logo.png", height=200)
 
@@ -21,7 +19,7 @@ configuration.conf_session_state()
 #    titel_text += ' im Gespräch mit ' + st.session_state.username
 #st.subheader(titel_text)
 
-
+VectorStore = None
 if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == True:
 
     if st.session_state.docs_to_load != []:
