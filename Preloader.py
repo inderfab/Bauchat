@@ -40,6 +40,8 @@ if "exctraction_problem_files" not in st.session_state:
     st.session_state["exctraction_problem_files"] = []
 if "submitted" not in st.session_state:
     st.session_state["submitted"] = False
+if "firmas" not in st.session_state:
+    st.session_state["firmas"] = None
         
 keys = ["baugesetz", "normen", "richtlinien", "produkte"]
 
@@ -52,9 +54,10 @@ st.session_state["username"] = key
 stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", type='pdf',accept_multiple_files=True, label_visibility="hidden")
 
 
-db.fetch_all_firmas()
-if st.session_state["firmas"] != None:
-    pass
+
+if st.session_state["firmas"] == None:
+    db.fetch_all_firmas()
+
 
 c1,c2 = st.columns(2)
 with c1:
@@ -91,6 +94,7 @@ with c2:
 
     if st.button("Firma speichern"):
         st.write(db.insert_firma(firma))
+        st.session_state["firmas"] == None
         db.fetch_all_firmas()
 
 
