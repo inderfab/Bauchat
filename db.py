@@ -302,7 +302,7 @@ def load_data_user(user=None):
     return folders
 
 
-@st.cache_data(ttl=0.1, show_spinner="Lädt vorgefertigte Sammlungen")
+#@st.cache_data(ttl=0.1, show_spinner="Lädt vorgefertigte Sammlungen")
 def load_data_preloaded():
     keys = ["baugesetz", "normen", "richtlinien", "produkte"]
     for key in keys:
