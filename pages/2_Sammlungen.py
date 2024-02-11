@@ -27,7 +27,7 @@ for key in keys:
                                        "titel": "Dokumentenname",
                                         "sprache": "Sprache",
                                         "num_pages": "Seitenzahl",
-                                        "link": "Link",
+                                        "link": st.column_config.LinkColumn("Link", display_text="Link zur Quelle"),
                                         "herausgabedatum": "Herausgabedatum",
                                         "up_date": "Hochgeladen am"
                                         },
