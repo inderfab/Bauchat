@@ -132,7 +132,7 @@ with st.container():
             new_df = []
             for entry in df:
                 if entry.get(name) is not None:
-                    entry.update({"name":None})
+                    entry.update({"name":"hallo"})
                 new_df.append(entry)
             st.write(new_df)
             # edited_df = st.experimental_data_editor(df,
