@@ -129,15 +129,7 @@ with st.container():
             
             tag = [] 
             tags = collection.get("tags", []) 
-            st.write("tags: ", tags)
-            tag_update = st.text_input("Tags eingeben mit Komma, gleicher Name zum löschen")
-            
-            if st.button("Tags aktualisieren"):
-                if tag_update is not None or tag_update != "":
-                    if tag_update in tag:
-                        tag.remove(tag_update)
-                    else:
-                        tag.append(tag_update)
+            tag_updater = st.experimental_data_editor(tags, num_rows="dynamic")
             
             df = collection["filenames"]
             new_df = []
@@ -162,7 +154,7 @@ with st.container():
         
             updated_collection = {"collection":collection["collection"],
                                   "filenames": edited_df,
-                                  "tags":tag
+                                  "tags":tag_updater
                                   }
             edited_data.append(updated_collection)
 
