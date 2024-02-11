@@ -51,7 +51,7 @@ st.session_state["username"] = key
 
 stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", type='pdf',accept_multiple_files=True, label_visibility="hidden")
 
-st.session_state["firmas"] = db.fetch_all_firmas()
+db.fetch_all_firmas()
 
 c1,c2 = st.columns(2)
 with c1:
