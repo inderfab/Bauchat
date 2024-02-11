@@ -162,7 +162,7 @@ with st.container():
                                   "filenames": edited_df,
                                   "tags":tag
                                   }
-            edited_data.append(update_collection)
+            edited_data.append(updated_collection)
 
         if st.button("Speichern von "+ key):
             update = db.db_data.put({"collections" : edited_data}, key=key)
