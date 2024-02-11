@@ -325,5 +325,6 @@ def get_firma(firma_id):
 def fetch_all_firmas():
     firmas = db_firma.fetch()
     st.session_state["firmas"] = firmas
+    st.write("FFF",firmas)
     return firmas
     
