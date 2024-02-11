@@ -26,7 +26,12 @@ def insert_user(user_dict):
 def fetch_all_users():
     """Returns a dict of all users"""
     res = db_users.fetch()
-    return res.items
+    all_items = res.items
+    while res.last:
+        res = db_users.fetch(last=res.last)
+        all_items += res.items
+    
+    return all_items
 
 
 def get_user(username):
