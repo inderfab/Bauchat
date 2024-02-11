@@ -121,14 +121,6 @@ if stream != []:
 with st.container():
     db.load_data_preloaded()
 
-   
-
-
-
-    key = "baugesetz2"
-    st.session_state[key] = db.db_data.get(key)
-
-
     with st.expander(label=key.upper()):
         
         for collection in st.session_state[key]["collections"]:
@@ -141,7 +133,7 @@ with st.container():
             new_df = []
             for entry in df:
                 if entry.get(name) is None:
-                    entry.update({"name":"hallo"})
+                    entry.update({"name":"---"})
                 new_df.append(entry)
             
             edited_df = st.experimental_data_editor(new_df,
