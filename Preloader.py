@@ -134,9 +134,9 @@ with st.container():
             st.write(collection["collection"].upper())
             
             tag = [] 
-            tags = collection.get("tags", []) 
+            tags = collection.get("tags", [""]) 
             if tags == None:
-                tags = []
+                tags = [""]
             tag_updater = st.data_editor(tags, num_rows="dynamic")
             
             df = collection["filenames"]
