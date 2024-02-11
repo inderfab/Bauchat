@@ -94,7 +94,8 @@ def conf_session_state():
         st.session_state.token_usage = 0
     if "chat_references" not in st.session_state:
         st.session_state.chat_references = None
-
+    if "vector_store" not in st.session_state:
+        st.session_state.vector_store = None
     #db.login_fast()
 
 

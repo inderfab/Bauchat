@@ -113,6 +113,7 @@ def read_s3_contents_with_buffer(key) -> str :
     return bytes.getvalue()
 
 
+@st.cache_data(ttl=0.1)
 def s3_download_files(path) :
     client = s3_boto_client()
     bucket = "bauchatstorage"
@@ -203,11 +204,13 @@ def file_uploader_container_user(stream):
                 st.session_state["empty_stream"] = True
                 sammlung_empty.empty()
                 st.session_state.reload_store = True
+                st.session_state.vector_store = None
 
             st.session_state["temp_upload"] = False 
             st.session_state["Temp_Stream"] = None
             st.session_state["Temp_Stream_IMG"] = None
             st.session_state["option5value"] = False
+            st.session_state.vector_store = None
 
 
 
@@ -218,17 +221,19 @@ def file_uploader_container_temp(stream):
             stream = stream[0]
             st.write("Das erste Dokument wurden zwischengespeichert")
 
-            st.write("Ihr hochgeladenes Dokument wurde zwischengespeichert, auf laden klicken um mit dem Dokument zu chatten")
+            #st.write("Ihr hochgeladenes Dokument wurde zwischengespeichert, auf laden klicken um mit dem Dokument zu chatten")
             st.session_state["temp_upload"] = True 
             st.session_state["Temp_Stream"] = stream
             st.session_state["Temp_Stream_IMG"] = stream.read()
             st.session_state["option5value"] = True
+            st.session_state.vector_store = None
         
         else:
             st.session_state["temp_upload"] = False 
             st.session_state["Temp_Stream"] = None
             st.session_state["Temp_Stream_IMG"] = None
             st.session_state["option5value"] = False
+            st.session_state.vector_store = None
 
 
 

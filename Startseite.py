@@ -157,7 +157,7 @@ if st.session_state.show_chat == True:
     query = st.chat_input("Verzeichnisse wählen und hier die Frage stellen")
     chat_container = st.container(border=True)
     with chat_container:
-        VectorStore = None
+        
         if docs_to_load != [] or st.session_state["temp_upload"] == True:
 
             if docs_to_load != []:
@@ -168,32 +168,27 @@ if st.session_state.show_chat == True:
                     st.write("Geladene Dokumente:")
                     st.markdown(chat_docs)
 
-            stores = ai.load_store(docs_to_load)
-            #if st.session_state.reload_store == True:
-            #    stores = ai.load_store(docs_to_load)
-            #    st.session_state.reload_store = False
-            #else:
-            #    stores = ai.load_store_cache(docs_to_load)
+            if st.session_state.vector_store == None:
+                stores = ai.load_store(docs_to_load)
+        
+                if st.session_state["temp_upload"] == True:
+                    temp_store = ai.store_temp(st.session_state["Temp_Stream"])
+                    if temp_store is not None:
+                        stores.append(temp_store)
 
-
-            if st.session_state["temp_upload"] == True:
-                temp_store = ai.store_temp(st.session_state["Temp_Stream"])
-                if temp_store is not None:
-                    stores.append(temp_store)
-
-            store_list = funcy.lflatten(stores)
-            
-            if len(store_list)>1:
-                VectorStore = ai.merge_faiss_stores(store_list)
-            else:
-                VectorStore = store_list[0]
-            
+                store_list = funcy.lflatten(stores)
+                
+                if len(store_list)>1:
+                    st.session_state.vector_store = ai.merge_faiss_stores(store_list)
+                else:
+                    st.session_state.vector_store = store_list[0]
+                
             if st.checkbox(label="Ausführliche Antwort", value=False):
                 st.session_state.long_answer = True
 
             if query:
                 with st.spinner("Die Dokumente werden durchsucht"):
-                    message = ai.bauchat_query(query, VectorStore)
+                    message = ai.bauchat_query(query, st.session_state.vector_store)
                     if st.session_state.username != 'temp':
                         db.user_update_message_and_tokens(message)
 
