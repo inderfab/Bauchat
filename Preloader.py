@@ -150,6 +150,7 @@ with st.container():
                                        "up_date": "Hochgeladen am"
                                        },
                         hide_index=False,
+                        num_rows="dynamic",
                         )
         
             updated_collection = {"collection":collection["collection"],
