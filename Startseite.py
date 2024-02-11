@@ -168,7 +168,7 @@ if st.session_state.show_chat == True:
                     st.write("Geladene Dokumente:")
                     st.markdown(chat_docs)
 
-            if st.session_state.vector_store == None:
+            if st.session_state.vector_store == None and query != None:
                 stores = ai.load_store(docs_to_load)
         
                 if st.session_state["temp_upload"] == True:

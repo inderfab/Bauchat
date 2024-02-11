@@ -113,7 +113,7 @@ def read_s3_contents_with_buffer(key) -> str :
     return bytes.getvalue()
 
 
-@st.cache_data(ttl=0.1)
+@st.cache_data(ttl=0.1, show_spinner = False)
 def s3_download_files(path) :
     client = s3_boto_client()
     bucket = "bauchatstorage"
