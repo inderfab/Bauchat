@@ -121,17 +121,17 @@ if stream != []:
 with st.container():
     db.load_data_preloaded()
 
+   
 
 
 
+    key = "baugesetz2"
+    st.session_state[key] = db.db_data.get(key)
 
-    st.session_state["preload_key"] = "baugesetz2"
 
-
-
-    with st.expander(label=st.session_state["preload_key"].upper()):
+    with st.expander(label=key.upper()):
         
-        for collection in st.session_state[st.session_state["preload_key"]]["collections"]:
+        for collection in st.session_state[key]["collections"]:
             #try:
             #    tags =  " | ".join(collection["tags"])
             #except:
