@@ -30,8 +30,8 @@ def pdf_display(references, id):
     with src_col:
         img_src = st.radio(label="Relevante Quellen", options=keys, key=id)
         full_pdf_key = "".join(keys[img_src].split("-")[:-1])
-        if keys[img_src] != 'temporary': 
-            store.download_button_full_pdf(full_pdf_key)
+        #if keys[img_src] != 'temporary': 
+        #    store.download_button_full_pdf(full_pdf_key)
 
     with img_col:
         if keys[img_src] != 'temporary': 

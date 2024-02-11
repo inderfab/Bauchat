@@ -55,6 +55,7 @@ st.session_state["firmas"] = db.fetch_all_firmas()
 
 c1,c2 = st.columns(2)
 with c1:
+    name = st.text_input("Name")
     sprache = st.text_input("Sprache")
     herausgabedatum = st.text_input("Herausgabedatum")
     st.write("Seite neu laden nach dem einfügen von neuen Firmen")
@@ -64,7 +65,8 @@ with c1:
     link = st.text_input("link")
     tags = st.text_input("tags")
 
-    st.session_state["metadata_preloaded"] = {"language":sprache,
+    st.session_state["metadata_preloaded"] = {"name":name,
+                                              "language":sprache,
                                               "printdate":herausgabedatum,
                                               "firma_id":firma_id,
                                               "link":link,
@@ -114,5 +116,29 @@ if stream != []:
         if st.button(label="Dokument speichern"):
             ai.submit_upload(stream)
             #st.form_submit_button("Speichern", on_click=ai.submit_upload, args=[stream])
-        
-  
+
+
+with st.container():
+    db.load_data_preloaded()
+
+    with st.expander(label=st.session_state["preload_key"].upper()):
+        for collection in st.session_state[st.session_state["preload_key"]]["collections"]:
+            #try:
+            #    tags =  " | ".join(collection["tags"])
+            #except:
+            #    tags = ""
+            st.write(collection["collection"].upper()) #, "      Tags: ",tags
+            edited_df = st.experimental_data_editor(collection["filenames"],
+                        use_container_width = True,
+                        column_order=("name","titel","sprache","num_pages","link","herausgabedatum","up_date"),
+                        column_config={"name":"Name",
+                                       "titel": "Titel",
+                                        "sprache": "Sprache",
+                                        "num_pages": "Seitenzahl",
+                                        "link": "Link",
+                                        "herausgabedatum": "Herausgabedatum",
+                                        "up_date": "Hochgeladen am"
+                                        },
+                        hide_index=True,
+                        )
+            
