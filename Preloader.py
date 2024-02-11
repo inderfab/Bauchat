@@ -129,7 +129,7 @@ with st.container():
             
             tag = [] 
             tags = collection.get("tags", []) 
-            tag_updater = st.experimental_data_editor(tags, num_rows="dynamic")
+            tag_updater = st.data_editor(tags, num_rows="dynamic")
             
             df = collection["filenames"]
             new_df = []
@@ -138,7 +138,7 @@ with st.container():
                     entry.update({"name":"---"})
                 new_df.append(entry)
             
-            edited_df = st.experimental_data_editor(new_df,
+            edited_df = st.data_editor(new_df,
                         use_container_width = True,
                         column_order=("titel","name","herausgabedatum","link","sprache","num_pages","up_date"),
                         column_config={"name":"Name",

@@ -10,8 +10,6 @@ add_logo("gallery/bauchat_logo.png", height=200)
 configuration.conf_session_state()
 
 
-
-
 if st.session_state["preload_data_loaded"] == False:
     db.load_data_preloaded()
 
