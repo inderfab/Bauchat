@@ -323,8 +323,11 @@ def get_firma(firma_id):
 
 #@st.cache_data(ttl=0.1, show_spinner="Lädt Firmennamen")
 def fetch_all_firmas():
-    firmas = db_firma.fetch()
-    st.session_state["firmas"] = firmas
-    st.write("FFF",firmas)
-    return firmas
+    res = db_firma.fetch()
+    all_items = res.items
+    while res.last:
+        res = db_firma.fetch(last=res.last)
+        all_items += res.items
+
+    st.session_state["firmas"] = all_items
     
