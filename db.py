@@ -252,6 +252,7 @@ def update_data_db(metadata):
     file = {"titel": metadata["title"],
                   "typ": metadata["type"],
                   "up_date": date,
+                  "name": metadata.get("name",None),
                   "sprache": metadata.get("language",None),
                   "herausgabedatum": metadata.get("printdate",None),
                   "firma_id":metadata.get("firma_id",None),

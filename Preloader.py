@@ -121,7 +121,16 @@ if stream != []:
 with st.container():
     db.load_data_preloaded()
 
+
+
+
+
+    st.session_state["preload_key"] = "baugesetz2"
+
+
+
     with st.expander(label=st.session_state["preload_key"].upper()):
+        
         for collection in st.session_state[st.session_state["preload_key"]]["collections"]:
             #try:
             #    tags =  " | ".join(collection["tags"])
@@ -148,4 +157,5 @@ with st.container():
                                         },
                         hide_index=True,
                         )
-            st.write("edited:", edited_df)
+            if st.button("Speichern von "+ st.session_state["preload_key"]):
+                db.db_data.put({"collections":edited_df}, key=st.session_state["preload_key"])
