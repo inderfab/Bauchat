@@ -321,8 +321,8 @@ def get_firma(firma_id):
     return db_data.get(firma_id)
 
 
-#@st.cache_data(ttl=0.1, show_spinner="Lädt Firmennamen")
+@st.cache_data(ttl=0.1, show_spinner="Lädt Firmennamen")
 def fetch_all_firmas():
-    """Returns a dict of all users"""
-    st.session_state["firmas"] = db_firma.fetch()
+    firmas = db_firma.fetch()
+    st.session_state["firmas"] = firmas
     
