@@ -95,7 +95,7 @@ with c2:
 if stream != []:
     st.session_state["Files_Saved"] == False
     st.write("Key: ",st.session_state["preload_key"])
-    st.session_state["u_folders"] = db.load_data_user(st.session_state["preload_key"])
+    db.load_data_user(st.session_state["preload_key"])
 
     st.session_state["speicher_expander"] = True
     
@@ -120,11 +120,11 @@ if stream != []:
 
 with st.container():
     db.load_data_preloaded()
-    key = st.session_state["preload_key"]
-    with st.expander(label=key.upper()):
+    key2 = st.session_state["preload_key"]
+    with st.expander(label=key2.upper()):
         
         edited_data = []
-        for collection in st.session_state[key]["collections"]:
+        for collection in st.session_state[key2]["collections"]:
             st.write(collection["collection"].upper())
             
             tag = [] 
@@ -158,5 +158,5 @@ with st.container():
                                   }
             edited_data.append(updated_collection)
 
-        if st.button("Speichern von "+ key):
-            update = db.db_data.put({"collections" : edited_data}, key=key)
+        if st.button("Speichern von "+ key2):
+            update = db.db_data.put({"collections" : edited_data}, key=key2)
