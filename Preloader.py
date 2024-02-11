@@ -130,11 +130,11 @@ with st.container():
                 tags =  " | ".join(collection["tags"])
                 tag = tag + collection["tags"]
             except:
-                tags = ""
-            st.write(collection["collection"].upper(), "      Tags: ",tags)
+                pass
+            st.write(collection["collection"].upper())
             tag_update = st.text_input("Tags eingeben mit Komma")
             
-            if tag_update is not None:
+            if tag_update is not None or tag_update == "":
                 tag.append(tag_update)
             
             df = collection["filenames"]
