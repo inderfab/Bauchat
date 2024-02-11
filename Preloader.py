@@ -131,7 +131,7 @@ with st.container():
             df = collection["filenames"]
             new_df = []
             for entry in df:
-                if entry.get(name) is not None:
+                if entry.get(name) is None:
                     entry.update({"name":"hallo"})
                 new_df.append(entry)
             st.write(new_df)
