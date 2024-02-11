@@ -129,9 +129,12 @@ with st.container():
             #    tags = ""
             st.write(collection["collection"].upper()) #, "      Tags: ",tags
             df = collection["filenames"]
+            new_df = []
             for entry in df:
                 if entry.get(name) is not None:
                     entry.update({"name":None})
+                #new_df.append(entry)
+            st.write(df)
             # edited_df = st.experimental_data_editor(df,
             #             use_container_width = True,
             #             column_order=("name","titel","sprache","num_pages","link","herausgabedatum","up_date"),
