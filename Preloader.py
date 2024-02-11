@@ -149,7 +149,7 @@ with st.container():
                                        "num_pages": "Seitenzahl",
                                        "up_date": "Hochgeladen am"
                                        },
-                        hide_index=True,
+                        hide_index=False,
                         )
         
             updated_collection = {"collection":collection["collection"],

@@ -19,15 +19,14 @@ keys = ["baugesetz", "normen", "richtlinien", "produkte"]
 for key in keys:
     with st.expander(label=key.upper()):
         for collection in st.session_state[key]["collections"]:
-            try:
-                tags =  " | ".join(collection["tags"])
-            except:
-                tags = ""
+            tags =  " | ".join(collection.get("tags",""))
+                               
             st.write(collection["collection"].upper(), "      Tags: ",tags)
             st.dataframe(collection["filenames"],
                         use_container_width = True,
-                        column_order=("titel","sprache","num_pages","link","herausgabedatum","up_date"),
-                        column_config={"titel": "Titel",
+                        column_order=("name","link","herausgabedatum","titel","sprache","num_pages","up_date"),
+                        column_config={"name": "Titel",
+                                       "titel": "Dokumentenname",
                                         "sprache": "Sprache",
                                         "num_pages": "Seitenzahl",
                                         "link": "Link",
