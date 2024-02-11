@@ -120,15 +120,23 @@ if stream != []:
 
 with st.container():
     db.load_data_preloaded()
-
+    key = st.session_state["preload_key"]
     with st.expander(label=key.upper()):
         
+        edited_data = []
         for collection in st.session_state[key]["collections"]:
-            #try:
-            #    tags =  " | ".join(collection["tags"])
-            #except:
-            #    tags = ""
-            st.write(collection["collection"].upper()) #, "      Tags: ",tags
+            tag = []
+            try:
+                tags =  " | ".join(collection["tags"])
+                tag.append(collection["tags"])
+            except:
+                tags = ""
+            st.write(collection["collection"].upper(), "      Tags: ",tags)
+            tag_update = st.text_input("Tags eingeben mit Komma")
+            
+            if tag_update is not None:
+                tag.append(tag_update)
+            
             df = collection["filenames"]
             new_df = []
             for entry in df:
@@ -149,5 +157,12 @@ with st.container():
                                         },
                         hide_index=True,
                         )
-            if st.button("Speichern von "+ key):
-                db.db_data.put({"collections":edited_df}, key=key)
+        
+            updated_collection = {"collection":collection["collection"],
+                                  "filenames": edited_df,
+                                  "tags":tag
+                                  }
+            edited_data.append(update_collection)
+
+        if st.button("Speichern von "+ key):
+            update = db.db_data.put({"collections" : edited_data}, key=key)
