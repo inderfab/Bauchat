@@ -146,7 +146,7 @@ with st.container():
             
             edited_df = st.experimental_data_editor(new_df,
                         use_container_width = True,
-                        column_order=("name","titel","sprache","num_pages","link","herausgabedatum","up_date"),
+                        column_order=("titel","name","herausgabedatum","link","sprache","num_pages","up_date"),
                         column_config={"name":"Name",
                                        "titel": "Titel",
                                        "herausgabedatum": "Herausgabedatum",
