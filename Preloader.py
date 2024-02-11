@@ -134,18 +134,18 @@ with st.container():
                 if entry.get(name) is None:
                     entry.update({"name":"hallo"})
                 new_df.append(entry)
-            st.write(new_df)
-            # edited_df = st.experimental_data_editor(df,
-            #             use_container_width = True,
-            #             column_order=("name","titel","sprache","num_pages","link","herausgabedatum","up_date"),
-            #             column_config={"name":"Name",
-            #                            "titel": "Titel",
-            #                             "sprache": "Sprache",
-            #                             "num_pages": "Seitenzahl",
-            #                             "link": "Link",
-            #                             "herausgabedatum": "Herausgabedatum",
-            #                             "up_date": "Hochgeladen am"
-            #                             },
-            #             hide_index=True,
-            #             )
             
+            edited_df = st.experimental_data_editor(new_df,
+                        use_container_width = True,
+                        column_order=("name","titel","sprache","num_pages","link","herausgabedatum","up_date"),
+                        column_config={"name":"Name",
+                                       "titel": "Titel",
+                                        "sprache": "Sprache",
+                                        "num_pages": "Seitenzahl",
+                                        "link": "Link",
+                                        "herausgabedatum": "Herausgabedatum",
+                                        "up_date": "Hochgeladen am"
+                                        },
+                        hide_index=True,
+                        )
+            st.write("edited:", edited_df)
