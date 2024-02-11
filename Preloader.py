@@ -57,6 +57,7 @@ stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den V
 
 if st.session_state["firmas"] == None:
     db.fetch_all_firmas()
+    st.write(st.session_state["firmas"])
 
 
 c1,c2 = st.columns(2)
