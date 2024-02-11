@@ -149,12 +149,12 @@ with st.container():
                         column_order=("name","titel","sprache","num_pages","link","herausgabedatum","up_date"),
                         column_config={"name":"Name",
                                        "titel": "Titel",
-                                        "sprache": "Sprache",
-                                        "num_pages": "Seitenzahl",
-                                        "link": "Link",
-                                        "herausgabedatum": "Herausgabedatum",
-                                        "up_date": "Hochgeladen am"
-                                        },
+                                       "herausgabedatum": "Herausgabedatum",
+                                       "link": "Link",
+                                       "sprache": "Sprache",
+                                       "num_pages": "Seitenzahl",
+                                       "up_date": "Hochgeladen am"
+                                       },
                         hide_index=True,
                         )
         
