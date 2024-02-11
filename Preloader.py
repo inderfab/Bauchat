@@ -125,17 +125,21 @@ with st.container():
         
         edited_data = []
         for collection in st.session_state[key]["collections"]:
-            tag = []
+            st.write(collection["collection"].upper())
+            
+            tag = []    
             try:
-                tags =  " | ".join(collection["tags"])
                 tag = tag + collection["tags"]
+                st.write("tags: ", tags)
             except:
                 pass
-            st.write(collection["collection"].upper())
-            tag_update = st.text_input("Tags eingeben mit Komma")
+            tag_update = st.text_input("Tags eingeben mit Komma, gleicher Name zum löschen")
             
-            if tag_update is not None or tag_update == "":
-                tag.append(tag_update)
+            if tag_update is not None or tag_update != "":
+                if tag_update in tag:
+                    tag.remove(tag_update)
+                else:
+                    tag.append(tag_update)
             
             df = collection["filenames"]
             new_df = []
