@@ -140,7 +140,7 @@ with st.container():
             df = collection["filenames"]
             new_df = []
             for entry in df:
-                if entry.get(name) is None:
+                if entry.get("name") is None:
                     entry.update({"name":"---"})
                 new_df.append(entry)
             
