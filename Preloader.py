@@ -157,5 +157,5 @@ with st.container():
                                         },
                         hide_index=True,
                         )
-            if st.button("Speichern von "+ st.session_state["preload_key"]):
-                db.db_data.put({"collections":edited_df}, key=st.session_state["preload_key"])
+            if st.button("Speichern von "+ key):
+                db.db_data.put({"collections":edited_df}, key=key)
