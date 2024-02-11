@@ -128,7 +128,7 @@ with st.container():
             tag = []
             try:
                 tags =  " | ".join(collection["tags"])
-                tag.append(collection["tags"])
+                tag + collection["tags"]
             except:
                 tags = ""
             st.write(collection["collection"].upper(), "      Tags: ",tags)
