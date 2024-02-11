@@ -130,7 +130,7 @@ with st.container():
             st.write(collection["collection"].upper()) #, "      Tags: ",tags
             df = collection["filenames"]
             for entry in df:
-                if df.get(name) is not None:
+                if entry.get(name) is not None:
                     entry.update({"name":None})
             # edited_df = st.experimental_data_editor(df,
             #             use_container_width = True,
