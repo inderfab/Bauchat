@@ -88,7 +88,7 @@ with c2:
 
     if st.button("Firma speichern"):
         st.write(db.insert_firma(firma))
-        st.session_state["firmas"] = db.fetch_all_firmas()
+        db.fetch_all_firmas()
 
 
 

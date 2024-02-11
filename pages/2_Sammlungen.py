@@ -13,6 +13,7 @@ configuration.conf_session_state()
 if st.session_state["preload_data_loaded"] == False:
     db.load_data_preloaded()
 
+st.write("Übersicht der Dokumente in den Sammlungen")
 keys = ["baugesetz", "normen", "richtlinien", "produkte"]
 for key in keys:
     with st.expander(label=key.upper()):
