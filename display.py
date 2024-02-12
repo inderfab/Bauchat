@@ -81,7 +81,7 @@ def pdf_temp_to_iframe(pagenr):
     file = st.session_state["Temp_Stream_IMG"]
     base64_pdf = base64.b64encode(file).decode('utf-8')
 
-    pdf_iframe = f'<iframe src="data:application/pdf;base64,{base64_pdf}#page={1}" view="fit" frameBorder="0" width="700" height="950" type="application/pdf"></iframe>'
+    pdf_iframe = f'<iframe src="data:application/pdf;base64,{base64_pdf}" view="fit" frameBorder="0" width="700" height="950" type="application/pdf"></iframe>'
     st.markdown(pdf_iframe, unsafe_allow_html=True)
 
 
