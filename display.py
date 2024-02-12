@@ -75,7 +75,7 @@ def pdf_temp_to_img(pagenr):
     st.image(img)    
 
 
-#@st.cache_data
+@st.cache_data(ttl=.1)
 def pdf_temp_to_iframe(pagenr):
     #Downloads PDF Page from AWS S3 and outputs in iFrame as PDF
     file = st.session_state["Temp_Stream_IMG"]
