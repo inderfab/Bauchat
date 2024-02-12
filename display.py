@@ -39,8 +39,8 @@ def pdf_display(references, id):
             #pdf_s3_to_iframe(keys[img_src])
         else:
             pagenr = int(img_src.split(":")[-1])
-            pdf_temp_to_img(pagenr=pagenr)
-            #pdf_temp_to_iframe()
+            #pdf_temp_to_img(pagenr=pagenr)
+            pdf_temp_to_iframe(pagenr=pagenr)
         
         #display_PDF_HTML_S3(key)
 
@@ -51,7 +51,7 @@ def pdf_s3_to_img(key):
     #Downloads PDF Page from AWS S3 and outputs as IMG in st.image
     size = None
     file = store.read_s3_contents_with_buffer(key)
-    img = pdf2image.convert_from_bytes(file,first_page= 0,last_page=1,size=size)
+    img = pdf2image.convert_from_bytes(file,first_page= 0,last_page=0,size=size)
     st.image(img,use_column_width=True)    
     
 
@@ -71,17 +71,17 @@ def pdf_s3_to_iframe(key):
 def pdf_temp_to_img(pagenr):
     #Displays the Stream.read() file
     file = st.session_state["Temp_Stream_IMG"]
-    img = pdf2image.convert_from_bytes(file,first_page= pagenr,last_page=pagenr+1)
+    img = pdf2image.convert_from_bytes(file,first_page= pagenr,last_page=pagenr)
     st.image(img)    
 
 
 #@st.cache_data
-def pdf_temp_to_iframe():
+def pdf_temp_to_iframe(pagenr):
     #Downloads PDF Page from AWS S3 and outputs in iFrame as PDF
     file = st.session_state["Temp_Stream_IMG"]
     base64_pdf = base64.b64encode(file).decode('utf-8')
 
-    pdf_iframe = F'<iframe src="data:application/pdf;base64,{base64_pdf}" view="fit" frameBorder="0" width="700" height="950" type="application/pdf"></iframe>'
+    pdf_iframe = f'<iframe src="data:application/pdf;base64,{base64_pdf}#page={pagenr}" view="fit" frameBorder="0" width="700" height="950" type="application/pdf"></iframe>'
     st.markdown(pdf_iframe, unsafe_allow_html=True)
 
 
