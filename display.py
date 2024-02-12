@@ -46,7 +46,7 @@ def pdf_display(references, id):
 
 
 
-@st.cache_data
+@st.cache_data(ttl=.1)
 def pdf_s3_to_img(key):
     #Downloads PDF Page from AWS S3 and outputs as IMG in st.image
     size = None
@@ -55,7 +55,7 @@ def pdf_s3_to_img(key):
     st.image(img,use_column_width=True)    
     
 
-@st.cache_data
+@st.cache_data(ttl=.1)
 def pdf_s3_to_iframe(key):
     #Downloads PDF Page from AWS S3 and outputs in iFrame as PDF
     file = store.read_s3_contents_with_buffer(key)
@@ -67,7 +67,7 @@ def pdf_s3_to_iframe(key):
     st.markdown(pdf_iframe, unsafe_allow_html=True)
 
 
-@st.cache_data
+@st.cache_data(ttl=.1)
 def pdf_temp_to_img(pagenr):
     #Displays the Stream.read() file
     file = st.session_state["Temp_Stream_IMG"]
