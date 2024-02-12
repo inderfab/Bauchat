@@ -39,8 +39,8 @@ def pdf_display(references, id):
             #pdf_s3_to_iframe(keys[img_src])
         else:
             pagenr = int(img_src.split(":")[-1])
-            #pdf_temp_to_img(pagenr=pagenr)
-            pdf_temp_to_iframe(pagenr=pagenr)
+            pdf_temp_to_img(pagenr=pagenr)
+            #pdf_temp_to_iframe(pagenr=pagenr)
         
         #display_PDF_HTML_S3(key)
 
