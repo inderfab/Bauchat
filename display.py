@@ -38,7 +38,8 @@ def pdf_display(references, id):
             pdf_s3_to_img(keys[img_src])
             #pdf_s3_to_iframe(keys[img_src])
         else:
-            pdf_temp_to_img()
+            pagenr = int(img_src.split(":")[-1])
+            pdf_temp_to_img(pagenr=pagenr)
             #pdf_temp_to_iframe()
         
         #display_PDF_HTML_S3(key)
@@ -67,10 +68,10 @@ def pdf_s3_to_iframe(key):
 
 
 @st.cache_data
-def pdf_temp_to_img():
+def pdf_temp_to_img(pagenr):
     #Displays the Stream.read() file
     file = st.session_state["Temp_Stream_IMG"]
-    img = pdf2image.convert_from_bytes(file)
+    img = pdf2image.convert_from_bytes(file,first_page= pagenr,last_page=pagenr+1)
     st.image(img)    
 
 
