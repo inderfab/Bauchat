@@ -25,7 +25,8 @@ configuration.conf_menu()
 
 add_logo("gallery/bauchat_logo.png", height=200)
 
-db.load_data_preloaded()
+if st.session_state["preload_data_loaded"] != True:
+    db.load_data_preloaded()
 
 #st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
