@@ -26,7 +26,6 @@ configuration.conf_menu()
 add_logo("gallery/bauchat_logo.png", height=200)
 
 db.load_data_preloaded()
-st.session_state["empty_stream"] == True
 
 #st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
@@ -51,10 +50,11 @@ with upload_container:
         stream = store.uploader()
         if st.session_state["empty_stream"] == False:
             store.file_uploader_container_user(stream)
-        
+        try:
             db.load_data_user()
             st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
-
+        except:
+            pass
     
 
 #st.write("Alle angewählten Verzeichnisse werden gleichzeitig durchsucht. Wählen Sie die Gewünschten und klicken Sie auf laden.")
