@@ -50,8 +50,8 @@ with upload_container:
         stream = store.uploader()
         if st.session_state["empty_stream"] == False:
             store.file_uploader_container_user(stream)
-        db.load_data_user()
-        if st.session_state["u_folders"] != None or st.session_state["u_folders"] != []:
+        
+            db.load_data_user()
             st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
 
     
