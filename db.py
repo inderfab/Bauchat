@@ -201,7 +201,7 @@ def login_user(user,pwd):
     pwd = make_hashes(pwd)
     u_data = get_user(user)
     
-    if u_data != None and u_data["verifikation"] == True:
+    if u_data != None: # and u_data["verifikation"] == True:
         if u_data["password_reset"] == True:
             new_pwd = st.text_input(label="Neues Passwort eingeben")
 
