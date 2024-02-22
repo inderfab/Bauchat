@@ -171,7 +171,7 @@ def uploader():
                             type='pdf',
                             accept_multiple_files=True, 
                             label_visibility="collapsed",
-                            help="Ncht angemeldete Nutzer können nur 1 Dokument hochladen. Angemeldete Nutzer können bis zu 15 Dokumente gleichzeitig hochladen und in einer Sammlung speichern.")
+                            help="Ncht angemeldete Nutzer können nur 1 Dokument hochladen. Angemeldete Nutzer können bis zu 50 Dokumente gleichzeitig hochladen und in einer Sammlung speichern.")
 
 
 def file_uploader_container_user(stream):
@@ -179,13 +179,13 @@ def file_uploader_container_user(stream):
     with sammlung_empty.container():
         if stream != []:
             #st.session_state["speicher_expander"] = True
-            
-            stream = stream[:15]
+            limit = 50
+            stream = stream[:limit]
 
             sc1, sc2 = st.columns(2)
             
             with sc1:
-                collection = st.text_input("Neue Sammlung anlegen:", max_chars=25, help="maximal 25 Buchstaben", value=None)                        
+                collection = st.text_input("Neue Sammlung anlegen:", max_chars=25, help="maximal 30 Buchstaben", value=None)                        
                 if collection is not None:
                     st.session_state["collection"] = collection
 
