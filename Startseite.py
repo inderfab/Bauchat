@@ -26,7 +26,8 @@ configuration.conf_menu()
 add_logo("gallery/bauchat_logo.png", height=200)
 
 db.load_data_preloaded()
-st.session_state["empty_stream"] == False
+st.session_state["empty_stream"] == True
+
 #st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
 upload_container = st.container(border=True)
