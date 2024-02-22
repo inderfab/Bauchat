@@ -51,7 +51,7 @@ def pdf_s3_to_img(key):
     #Downloads PDF Page from AWS S3 and outputs as IMG in st.image
     size = None
     file = store.read_s3_contents_with_buffer(key)
-    img = pdf2image.convert_from_bytes(file,first_page= 0,last_page=0,size=size)
+    img = pdf2image.convert_from_bytes(file,first_page= 0,last_page=1,size=size)
     st.image(img,use_column_width=True)    
     
 
