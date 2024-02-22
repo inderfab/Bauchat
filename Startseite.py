@@ -150,9 +150,7 @@ with sammlung_container:
 
          
     if any([option_1,option_2,option_3,option_4,option_5]) or st.session_state["temp_upload"] == True:
-        loaded_docs = [option_1,option_2,option_3,option_4,option_5, st.session_state["temp_upload"]]
         #if st.button("Verzeichnisse jetzt laden",type="primary"): 
-        #st.session_state["docs_to_load"] = docs_to_load
         st.session_state.show_chat = True
     else:
         show_chat=False
@@ -172,7 +170,8 @@ if st.session_state.show_chat == True:
                     st.write("Geladene Dokumente:")
                     st.markdown(chat_docs)
 
-            if st.session_state.loaded_docs != loaded_docs and query != None or st.session_state.vector_store == None:
+            if query != None or st.session_state.vector_store == None or docs_to_load != st.session_state["docs_to_load"]:
+                st.session_state["docs_to_load"] = docs_to_load
                 stores = ai.load_store(docs_to_load)
         
                 if st.session_state["temp_upload"] == True:
