@@ -33,7 +33,7 @@ def fetch_all_users():
     
     return all_items
 
-
+@st.cache_data(ttl=0.1)
 def get_user(username):
     """If not found, the function will return None"""
     return db_users.get(username)
