@@ -190,14 +190,16 @@ def file_uploader_container_user(stream):
                     st.session_state["collection"] = collection
 
             db.load_data_user(st.session_state.username)
-            if st.session_state["u_folders"] != None or st.session_state["u_folders"] != []:
+            try:
                 user_l = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
                 if st.session_state["u_folders"] is not None:# and st.session_state["u_data_exists"] == True:
                     with sc2:
                         update_collection = st.selectbox('Sammlung aktualisieren',user_l, index=None)
                         if update_collection != None:
                                 st.session_state["collection"] = update_collection
-            
+            except:
+                pass
+                
             if st.button("Speichern"):
                 #st.session_state["u_collections"].append(st.session_state["collection"])
                 ai.submit_upload(stream)
