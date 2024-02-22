@@ -49,8 +49,9 @@ else:
     st.subheader("Sammlungsübersicht")
     with st.expander("Sammlungen"):
         
-        db.load_data_user()
+        
         try:
+            db.load_data_user()
             for collection in st.session_state["u_folders"]["collections"]:
                 #tags =  " | ".join(collection["tags"])
                 st.write(collection["collection"].upper()) #, "      Tags: ",tags
