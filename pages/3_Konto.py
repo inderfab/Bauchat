@@ -50,7 +50,7 @@ else:
     with st.expander("Sammlungen"):
         
         db.load_data_user()
-        if st.session_state.u_folders != [] or st.session_state.u_folders != None:
+        try:
             for collection in st.session_state["u_folders"]["collections"]:
                 #tags =  " | ".join(collection["tags"])
                 st.write(collection["collection"].upper()) #, "      Tags: ",tags
@@ -63,7 +63,7 @@ else:
                                             },
                             hide_index=True,
                             )
-        else:
+        except:
             st.write("Noch keine Eigene Sammlung")
             
     st.subheader("Chatverlauf")
