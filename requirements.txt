@@ -41,3 +41,4 @@ streamlit-vertical-slider==1.0.2
 streamlit-autorefresh
 
 tiktoken==0.5.1
+validators
