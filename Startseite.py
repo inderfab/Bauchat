@@ -23,12 +23,12 @@ st.set_page_config(page_title = page_title,layout="wide") #
 configuration.conf_session_state()
 configuration.conf_menu()
 
-add_logo("gallery/bauchat_logo.png", height=200)
+add_logo("gallery/bauchat_logo.png", height=100)
 
 if st.session_state["preload_data_loaded"] != True:
     db.load_data_preloaded()
 
-#st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
+st.subheader("Finden Sie eine Antwort auf ihre Baurechtsfrage")
 
 upload_container = st.container(border=True)
 with upload_container:
