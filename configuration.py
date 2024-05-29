@@ -11,6 +11,7 @@ def conf_session_state():
     #    st.session_state.sidebar_state = 'expanded'
     if "username" not in st.session_state:
         st.session_state.username = 'temp'
+    st.session_state.ip = None
     if "ip" not in st.session_state:
         st.session_state.ip = store.get_remote_ip()
     if "loader_state" not in st.session_state:
