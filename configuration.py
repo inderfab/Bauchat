@@ -1,6 +1,7 @@
 
 import streamlit as st
 from pathlib import Path
+import store
 
 st.session_state.update(st.session_state)
 
@@ -10,6 +11,8 @@ def conf_session_state():
     #    st.session_state.sidebar_state = 'expanded'
     if "username" not in st.session_state:
         st.session_state.username = 'temp'
+    if "ip" not in st.session_state:
+        st.session_state.ip = store.get_remote_ip
     if "loader_state" not in st.session_state:
         st.session_state["loader_state"] = True
     if "speicher_expander" not in st.session_state:   

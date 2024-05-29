@@ -31,8 +31,8 @@ if st.session_state["preload_data_loaded"] != True:
 st.subheader("Finden Sie eine Antwort auf ihre Baurechtsfrage")
 st.write("Kategorien auswählen oder Dokumente hochladen")
 
-ip = store.get_remote_ip()
-st.write("ip: ", ip)
+
+st.write("ip: ", st.session_state.ip)
 
 upload_container = st.container(border=True)
 with upload_container:
