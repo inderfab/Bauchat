@@ -38,3 +38,10 @@ def send_pwd_reset(to,temp_pwd):
     subject = "Bauchat - Passwort zurückgesetzt"
     msg = "Melden Sie sich mit dem folgenden Passwort an, um ihr Passwort zu ändern\n"+str(temp_pwd)
     send_mail(to,subject,msg)
+
+def send_welcome(to, user):
+    subject = "Willkomen bei Bauchat"
+    msg = f"""Hallo{user} , 
+    \nSchön schaust du bei Bauchat vorbei. Bei Wünschen oder Anregungen antworte gerne auf diese Mail.\n"
+    "Gruss, Fabio von Bauchat"""
+    send_mail(to,subject,msg)

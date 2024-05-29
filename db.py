@@ -181,9 +181,10 @@ def registration():
             if email_filled and pwd_filled and username_free == True:
                 hashed_pwd = make_hashes(pwd)
                 verification_code = randint(100000,999999)
+                # Verifikation ist ausgeschalten!
                 data = {"username":user, "vorname":vorname, "nachname":nachname, "email":email, 
                         "password":hashed_pwd, "password_reset":False,
-                        "verifikation":False,"verification_code":verification_code,
+                        "verifikation":True,"verification_code":verification_code,
                         "history":[],
                         "token_month":{},"token_total":0, "token_available":100000,
                         "full_access":False, 
@@ -191,7 +192,8 @@ def registration():
                         "pages":0, 
                         }
                 
-                mail.send_registration(email, verification_code)
+                #mail.send_registration(email, verification_code)
+                mail.send_welcome(email, vorname)
                 insert_user(data)
                 st.session_state["registration_expandend"] = False
                     
@@ -201,7 +203,7 @@ def login_user(user,pwd):
     pwd = make_hashes(pwd)
     u_data = get_user(user)
     
-    if u_data != None: # and u_data["verifikation"] == True:
+    if u_data != None  and u_data["verifikation"] == True:
         if u_data["password_reset"] == True:
             new_pwd = st.text_input(label="Neues Passwort eingeben")
 

@@ -29,6 +29,10 @@ if st.session_state["preload_data_loaded"] != True:
     db.load_data_preloaded()
 
 st.subheader("Finden Sie eine Antwort auf ihre Baurechtsfrage")
+st.write("Kategorien auswählen oder Dokumente hochladen")
+
+ip = store.get_remote_ip()
+st.write("ip: ", ip)
 
 upload_container = st.container(border=True)
 with upload_container:

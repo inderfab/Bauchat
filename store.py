@@ -13,6 +13,10 @@ import random
 import ai
 import uuid
 
+from streamlit import runtime
+from streamlit.runtime.scriptrunner import get_script_run_ctx
+
+
 st.session_state.update(st.session_state)
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
@@ -222,7 +226,7 @@ def file_uploader_container_temp(stream):
     with sammlung_empty.container():
         if stream != []:
             stream = stream[0]
-            st.write("Das erste Dokument wurden zwischengespeichert")
+            st.write("Das erste Dokument wurden zwischengespeichert, anmelden für mehrere")
 
             #st.write("Ihr hochgeladenes Dokument wurde zwischengespeichert, auf laden klicken um mit dem Dokument zu chatten")
             st.session_state["temp_upload"] = True 
@@ -240,4 +244,18 @@ def file_uploader_container_temp(stream):
 
 
 
-                
+def get_remote_ip() -> str:
+    """Get remote ip."""
+
+    try:
+        ctx = get_script_run_ctx()
+        if ctx is None:
+            return None
+
+        session_info = runtime.get_instance().get_client(ctx.session_id)
+        if session_info is None:
+            return None
+    except Exception as e:
+        return None
+
+    return session_info.request.remote_ip             
