@@ -31,13 +31,14 @@ if st.session_state["preload_data_loaded"] != True:
 st.subheader("Finden Sie eine Antwort auf ihre Baurechtsfrage")
 st.write("Kategorien auswählen oder Dokumente hochladen")
 
-ip = store.get_remote_ip()
-st.write("ip: ", ip)
 
 upload_container = st.container(border=True)
 with upload_container:
     #st.write("Eigene Dokumente hochladen")
     if st.session_state.username == 'temp':
+        
+        st.session_state.username = store.get_remote_ip()
+        """ 
         temp_col1,temp_col2 = st.columns([3,1])
         with temp_col1:
             stream = store.uploader()
@@ -50,17 +51,18 @@ with upload_container:
             zu_anleitung = st.button("Anleitung", 
                                         help="Kurzanleitung wie man diese Webseite benutzen kann")
             if zu_anleitung:
-                st.switch_page("pages/4_Info.py")
-    else:
-        stream = store.uploader()
-        if st.session_state["empty_stream"] == False:
-            store.file_uploader_container_user(stream)
-        try:
-            db.load_data_user()
-            st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
-        except:
-            pass
-    
+                 st.switch_page("pages/4_Info.py")
+                 """
+
+    stream = store.uploader()
+    if st.session_state["empty_stream"] == False:
+        store.file_uploader_container_user(stream)
+    try:
+        db.load_data_user()
+        st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
+    except:
+        pass
+
 
 #st.write("Alle angewählten Verzeichnisse werden gleichzeitig durchsucht. Wählen Sie die Gewünschten und klicken Sie auf laden.")
 
