@@ -12,7 +12,7 @@ def conf_session_state():
     if "username" not in st.session_state:
         st.session_state.username = 'temp'
     if "ip" not in st.session_state:
-        st.session_state.ip = store.get_remote_ip
+        st.session_state.ip = store.get_remote_ip()
     if "loader_state" not in st.session_state:
         st.session_state["loader_state"] = True
     if "speicher_expander" not in st.session_state:   
