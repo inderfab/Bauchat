@@ -42,3 +42,4 @@ streamlit-autorefresh
 
 tiktoken==0.5.1
 validators
+tenacity==8.3.0
