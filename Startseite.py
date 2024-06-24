@@ -186,8 +186,10 @@ if st.session_state.show_chat == True:
                 else:
                     st.session_state.vector_store = store_list[0]
                 
-            if st.checkbox(label="Ausführliche Antwort", value=False):
+            if st.checkbox(label="Ausführliche Antwort", value=True):
                 st.session_state.long_answer = True
+            else:
+                st.session_state.long_answer = False
 
             if query:
                 with st.spinner("Die Dokumente werden durchsucht"):
