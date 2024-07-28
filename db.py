@@ -326,7 +326,7 @@ def get_firma(firma_id):
     return db_data.get(firma_id)
 
 
-#@st.cache_data(ttl=0.1, show_spinner="Lädt Firmennamen")
+@st.cache_data(ttl=0.1, show_spinner="Lädt Firmennamen")
 def fetch_all_firmas():
     res = db_firma.fetch()
     all_items = res.items
