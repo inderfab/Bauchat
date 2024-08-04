@@ -12,10 +12,7 @@ import random
 
 st.session_state.update(st.session_state)
 
-
-def pdf_display(references, id):
-    #generates tab with Radio Button to choose page to display
-
+def generate_key_dict(references):
     keys = {}
     for i, ref in enumerate(references):
         pagenr = ref["page"]
@@ -25,13 +22,21 @@ def pdf_display(references, id):
         else:
             key = "temporary"
         keys.update({name:key})
+        return keys
+
+
+
+def pdf_display(references, id):
+    #generates tab with Radio Button to choose page to display
+    keys = generate_key_dict(references)
     
     img_col, src_col = st.columns([3,1])
+    
     with src_col:
         img_src = st.radio(label="Relevante Quellen", options=keys, key=id)
         full_pdf_key = "".join(keys[img_src].split("-")[:-1])
-        #if keys[img_src] != 'temporary': 
-        #    store.download_button_full_pdf(full_pdf_key)
+        if keys[img_src] != 'temporary': 
+            store.download_button_full_pdf(full_pdf_key)
 
     with img_col:
         if keys[img_src] != 'temporary': 
@@ -40,7 +45,7 @@ def pdf_display(references, id):
         else:
             pagenr = int(img_src.split(":")[-1])
             pdf_temp_to_img(pagenr=pagenr)
-            #pdf_temp_to_iframe(pagenr=pagenr)
+            pdf_temp_to_iframe(pagenr=pagenr)
         
         #display_PDF_HTML_S3(key)
 
@@ -99,13 +104,22 @@ def chat_display(messages):
 
         with st.expander(label=message["user"]["content"], expanded=expand_newest[i]):
 
-            chat_tab, pdf_tab = st.tabs(["Chat", "Quellen"])
-            with chat_tab:
-                with st.chat_message("user"):
-                    st.write(message["user"]["content"])
+            with st.chat_message("user"):
+                st.write(message["user"]["content"])
 
-                with st.chat_message("ai"):
-                    st.write(message["ai"]["content"])
-
-            with pdf_tab:
+            with st.chat_message("ai"):
+                st.write(message["ai"]["content"])
                 pdf_display(references = message["references"], id = message["id"])
+
+
+            #chat_tab, pdf_tab = st.tabs(["Chat", "Quellen"])
+            #with chat_tab:
+                #with st.chat_message("user"):
+                 #   st.write(message["user"]["content"])
+
+                #with st.chat_message("ai"):
+                #    st.write(message["ai"]["content"])
+                #    pdf_display_links(references, id)
+
+            #with pdf_tab:
+                #pdf_display(references = message["references"], id = message["id"])
