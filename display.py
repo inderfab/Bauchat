@@ -103,23 +103,14 @@ def chat_display(messages):
         # message_dict = {"user":m_user, "ai": m_ai, "references":references_list, "usage":usage}
 
         with st.expander(label=message["user"]["content"], expanded=expand_newest[i]):
+            chat_tab, pdf_tab = st.tabs(["Chat", "Quellen"])
+            with chat_tab:
+                with st.chat_message("user"):
+                    st.write(message["user"]["content"])
 
-            with st.chat_message("user"):
-                st.write(message["user"]["content"])
+                with st.chat_message("ai"):
+                    st.write(message["ai"]["content"])
+                    pdf_display_links(references, id)
 
-            with st.chat_message("ai"):
-                st.write(message["ai"]["content"])
+            with pdf_tab:
                 pdf_display(references = message["references"], id = message["id"])
-
-
-            #chat_tab, pdf_tab = st.tabs(["Chat", "Quellen"])
-            #with chat_tab:
-                #with st.chat_message("user"):
-                 #   st.write(message["user"]["content"])
-
-                #with st.chat_message("ai"):
-                #    st.write(message["ai"]["content"])
-                #    pdf_display_links(references, id)
-
-            #with pdf_tab:
-                #pdf_display(references = message["references"], id = message["id"])
