@@ -42,7 +42,7 @@ def pdf_display(references, id):
             pdf_temp_to_img(pagenr=pagenr)
             #pdf_temp_to_iframe(pagenr=pagenr)
         
-        display_PDF_HTML_S3(key)
+        #display_PDF_HTML_S3(key)
 
 
 
