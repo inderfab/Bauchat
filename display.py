@@ -12,7 +12,9 @@ import random
 
 st.session_state.update(st.session_state)
 
-def generate_key_dict(references):
+
+def pdf_display(references, id):
+    #generates tab with Radio Button to choose page to display
     keys = {}
     for i, ref in enumerate(references):
         pagenr = ref["page"]
@@ -22,13 +24,6 @@ def generate_key_dict(references):
         else:
             key = "temporary"
         keys.update({name:key})
-        return keys
-
-
-
-def pdf_display(references, id):
-    #generates tab with Radio Button to choose page to display
-    keys = generate_key_dict(references)
     
     img_col, src_col = st.columns([3,1])
     
@@ -45,9 +40,9 @@ def pdf_display(references, id):
         else:
             pagenr = int(img_src.split(":")[-1])
             pdf_temp_to_img(pagenr=pagenr)
-            pdf_temp_to_iframe(pagenr=pagenr)
+            #pdf_temp_to_iframe(pagenr=pagenr)
         
-        #display_PDF_HTML_S3(key)
+        display_PDF_HTML_S3(key)
 
 
 
