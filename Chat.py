@@ -10,7 +10,7 @@ import db
 
 st.session_state.update(st.session_state)
 
-add_logo("gallery/bauchat_logo.png", height=200)
+add_logo("gallery/bauchat_logo.png", height=300)
 
 configuration.conf_session_state()
 
