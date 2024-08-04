@@ -110,7 +110,7 @@ def chat_display(messages):
 
                 with st.chat_message("ai"):
                     st.write(message["ai"]["content"])
-                    pdf_display_links(references, id)
+                    pdf_display(references = message["references"], id = message["id"])
 
             with pdf_tab:
                 pdf_display(references = message["references"], id = message["id"])
