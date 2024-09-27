@@ -12,7 +12,7 @@ import string
 st.session_state.update(st.session_state)
 
 dotenv.load_dotenv()
-deta = Deta(os.getenv('DETA_KEY'))
+deta = Deta(os.getenv(DETA_KEY))
 db_users = deta.Base("users")
 db_data = deta.Base("data")
 db_firma = deta.Base("firma")
