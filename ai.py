@@ -26,7 +26,7 @@ import dotenv
 dotenv.load_dotenv()
 
 from langchain.document_loaders import PyPDFLoader
-openai.api_key = os.getenv('OPENAI_API_KEY')
+openai.api_key = os.getenv(OPENAI_API_KEY)
 st.session_state.update(st.session_state)
 
 
