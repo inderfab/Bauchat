@@ -10,11 +10,11 @@ st.session_state.update(st.session_state)
 
 
 def send_mail(to,subject,msg):
-    dotenv.load_dotenv()
+    #dotenv.load_dotenv()
 
     MAIL_USER = os.getenv('MAIL_USER')
-    MAIL_PWD = os.getenv("MAIL_PWD")
-    SMTP_ADDRESS = os.getenv("SMTP_ADDRESS")
+    MAIL_PWD = os.getenv('MAIL_PWD')
+    SMTP_ADDRESS = os.getenv('SMTP_ADDRESS')
 
     smtpserver = smtplib.SMTP(SMTP_ADDRESS,587)
     smtpserver.ehlo()
