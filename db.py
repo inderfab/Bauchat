@@ -256,7 +256,7 @@ def get_data(username):
     except:
         user = None
         print('kein User mit dem Namen {} gefunden'.format(username))
-    return data
+    return data[0]
 
 
 def insert_data(username, data_dict):
@@ -345,7 +345,6 @@ def load_data_user(user=None):
     if user == None:
         user = st.session_state.username
     folders = get_data(user)
-    print("Folders",folders)
     st.session_state["u_folders"] = folders
     return folders
 
