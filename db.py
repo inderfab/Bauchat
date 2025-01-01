@@ -253,7 +253,8 @@ def get_data(username):
     try: 
         data = store.s3_download_pkl(username+'/collections')
         print('user data heruntergeladen')
-        print(data)
+        if isinstance(data, tuple):
+            data = data[0]
     except:
         user = None
         print('kein User mit dem Namen {} gefunden'.format(username))
