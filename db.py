@@ -256,7 +256,7 @@ def get_data(username):
     except:
         user = None
         print('kein User mit dem Namen {} gefunden'.format(username))
-    return data[0]
+    return data
 
 
 def insert_data(username, data_dict):
@@ -344,7 +344,7 @@ def load_data_user(user=None):
     #streamlit cloud macht automatisch cache, deshalb muss man es steuern
     if user == None:
         user = st.session_state.username
-    folders = get_data(user)
+    folders = get_data(user)[0]
     st.session_state["u_folders"] = folders
     return folders
 
@@ -353,7 +353,7 @@ def load_data_user(user=None):
 def load_data_preloaded():
     keys = ["baugesetz", "normen", "richtlinien", "produkte"]
     for key in keys:
-        st.session_state[key] = get_data(key)
+        st.session_state[key] = get_data(key)[0]
     st.session_state["preload_data_loaded"] = True
 
 
