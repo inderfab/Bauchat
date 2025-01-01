@@ -252,11 +252,12 @@ def get_data(username):
     """If not found, the function will return None"""
     try: 
         data = store.s3_download_pkl(username+'/collections')
-        print('user collections heruntergeladen')
+        print('user data heruntergeladen')
+        print(data)
     except:
         user = None
         print('kein User mit dem Namen {} gefunden'.format(username))
-    return data[0]
+    return data
 
 
 def insert_data(username, data_dict):
