@@ -13,12 +13,21 @@ import random
 import ai
 import uuid
 
+
+
 st.session_state.update(st.session_state)
 
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_DEFAULT_REGION = os.getenv("AWS_DEFAULT_REGION")
-AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
+try:
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_DEFAULT_REGION = os.getenv("AWS_DEFAULT_REGION")
+    AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
+except:
+    dotenv.load_dotenv()
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+    AWS_DEFAULT_REGION = os.environ.get("AWS_DEFAULT_REGION")
+    AWS_BUCKET_NAME = os.environ.get("AWS_BUCKET_NAME")
 
 # @st.cache_data
 # def load_data_preloaded():
@@ -65,6 +74,8 @@ def s3_reader(filepath):
 
 
 
+
+
 # def s3_get_subfolders(path):
 #     client = s3_boto_client()
 #     bucket = "bauchatstorage"
@@ -87,6 +98,8 @@ def s3_reader(filepath):
 #             subfolders.append([foldername,sf])
     
 #     return subfolders
+
+
 def s3_upload_pkl(key, data):
     
     data_pkl = pickle.dumps(data)

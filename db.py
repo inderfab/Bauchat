@@ -8,44 +8,54 @@ import mail
 from random import randint, sample
 import time
 import string
+import store
 
 st.session_state.update(st.session_state)
 
 dotenv.load_dotenv()
-deta = Deta(os.getenv('DETA_KEY'))
-db_users = deta.Base("users")
-db_data = deta.Base("data")
-db_firma = deta.Base("firma")
 
 
 def insert_user(user_dict):
-    """Returns the user on a successful user creation, otherwise raises and error"""
-    return db_users.put(data=user_dict, key= user_dict["username"])
+    """Inserts the user into the bucket"""
 
+    filepath = user_dict["username"] + '/userdata'
+    file = user_dict
+    store.s3_upload_pkl(filepath, file)
+    print("User wurde hinzugefügt")
+    return user_dict 
 
-def fetch_all_users():
-    """Returns a dict of all users"""
-    res = db_users.fetch()
-    all_items = res.items
-    while res.last:
-        res = db_users.fetch(last=res.last)
-        all_items += res.items
-    
-    return all_items
 
 @st.cache_data(ttl=0.1)
 def get_user(username):
     """If not found, the function will return None"""
-    return db_users.get(username)
+    try: 
+        user = store.s3_download_pkl(username+'/userdata')
+        print('userdaten heruntergeladen')
+    except:
+        user = None
+        print('kein User mit dem Namen {} gefunden'.format(username))
+    return user
+
+    #TODO Userdata in Session State schreiben
 
 
 def update_user(username, updates):
-    """If the item is updated, returns None. Otherwise, an exception is raised"""
-    return db_users.update(updates, username)
+
+    filepath = username + '/userdata'
+    userdata = get_user(username) #st.session_state.username
+    
+    for key in updates.keys():
+        if key in userdata:
+            userdata[key] = updates[key]
+
+    store.s3_upload_pkl(filepath, userdata)
+    print("Update wurde hochgeladen")
+    
+    #TODO Userdata in Session State schreiben
+
 
 
 def user_update_message_and_tokens(updates):
-    """If the item is updated, returns None. Otherwise, an exception is raised"""
     user_data = get_user(st.session_state.username)
 
     history = user_data["history"]
@@ -55,15 +65,15 @@ def user_update_message_and_tokens(updates):
     token = update_user_tokens(user_data, updates["usage"]["total_tokens"] ) #{"prompt_tokens":2357"completion_tokens":121"total_tokens":2478}
     update.update(token)
 
-    db_users.update(update, st.session_state.username)
+    update_user(st.session_state.username,update)
 
 
-def user_update_embedding_tokens(username):
-    user_data = get_user(username)
-    usage = st.session_state.token_usage
-    st.session_state.token_usage = 0
-    token = update_user_tokens(user_data, usage)
-    db_users.update(token,username)
+# def user_update_embedding_tokens(username):
+#     user_data = get_user(username)
+#     usage = st.session_state.token_usage
+#     st.session_state.token_usage = 0
+#     token = update_user_tokens(user_data, usage)
+#     db_users.update(token,username)
 
 
 def update_user_tokens(user_data, token_update):
@@ -97,14 +107,14 @@ def update_user_byte_size():
 
         bytes_total = user_data["bytes_total"] + filesize_update
 
-        db_users.update({"bytes_month":bytes_month,"bytes_total":bytes_total}, st.session_state.username)
+        update_user(st.session_state.username, {"bytes_month":bytes_month,"bytes_total":bytes_total})
         st.session_state["bytes_update"] = 0
 
 
 
-def delete_user(username):
-    """Always returns None, even if the key does not exist"""
-    return db_users.delete(username)
+# def delete_user(username):
+#     """Always returns None, even if the key does not exist"""
+#     return db_users.delete(username)
 
 
 def make_hashes(password):
@@ -237,12 +247,44 @@ def login_user(user,pwd):
 
 ### Data DB
 
+@st.cache_data(ttl=0.1)
+def get_data(username):
+    """If not found, the function will return None"""
+    try: 
+        data = store.s3_download_pkl(username+'/collections')
+        print('user collections heruntergeladen')
+    except:
+        user = None
+        print('kein User mit dem Namen {} gefunden'.format(username))
+    return data
 
-def collections_data_db(key):
-    return db_data.get(key)
+
+def insert_data(username, data_dict):
+    """Inserts the data into the user bucket"""
+
+    filepath = username + '/collections'
+    file = data_dict
+    store.s3_upload_pkl(filepath, file)
+    print("User Collections wurde hinzugefügt")
+    return data_dict 
+
+def update_data(username, updates):
+
+    filepath = username + '/collections'
+    userdata = get_data(username) #st.session_state.username
+    
+    for key in updates.keys():
+        if key in userdata:
+            userdata[key] = updates[key]
+
+    store.s3_upload_pkl(filepath, userdata)
+    print("Update Collection wurde hochgeladen")
+    
+    #TODO Userdata in Session State schreiben
 
 
-def update_data_db(metadata):
+
+def update_collection(metadata):
     if st.session_state.preload_active:
         key = st.session_state.preload_key
     else:
@@ -251,7 +293,7 @@ def update_data_db(metadata):
     if st.session_state["metadata_preloaded"] != None:
         metadata.update(st.session_state["metadata_preloaded"])
 
-    data = db_data.get(key)
+    data = get_data(key)
     date = time.strftime("%Y-%m-%d")
 
     file = {"titel": metadata["title"],
@@ -276,7 +318,7 @@ def update_data_db(metadata):
 
     if data is None:
         #wird als Liste in DB geschrieben
-        return db_data.put({"collections":[update]}, key=key)
+        return get_data(key,{"collections":[update]})
     
     else:
         data = data["collections"]
@@ -288,10 +330,10 @@ def update_data_db(metadata):
                 existing_collection = True
                 break
         if existing_collection == True:
-            return db_data.update({"collections":data}, key=key)
+            return update_data(key,{"collections":data})
         else:
             data.append(update)
-            return db_data.update({"collections":data}, key=key)
+            return update_data(key,{"collections":data})
     
     #metadata von ai pickle store = {"collection":collection,"save_loc":save_loc,"title":title}
 
@@ -302,7 +344,7 @@ def load_data_user(user=None):
     #streamlit cloud macht automatisch cache, deshalb muss man es steuern
     if user == None:
         user = st.session_state.username
-    folders = db_data.get(user)
+    folders = get_data(user)
     st.session_state["u_folders"] = folders
     return folders
 
@@ -311,28 +353,59 @@ def load_data_user(user=None):
 def load_data_preloaded():
     keys = ["baugesetz", "normen", "richtlinien", "produkte"]
     for key in keys:
-        st.session_state[key] = db_data.get(key)
+        st.session_state[key] = get_data(key)
     st.session_state["preload_data_loaded"] = True
 
 
-### Firma DB
+# ### Firma DB
+
+@st.cache_data(ttl=0.1)
+def get_firmas():
+    """If not found, the function will return None"""
+    data = store.s3_download_pkl('firma')
+    print('Alle Firmen heruntergeladen')    
+    return data
+
 
 def insert_firma(firma_dict):
-    """Returns the user on a successful user creation, otherwise raises and error"""
-    return db_firma.put(data=firma_dict)
+    """Inserts the data into the firma bucket"""
+    firmas = get_firmas() 
+    firmas[firma_dict['key']] = firma_dict
+    upload_firmas(firmas)
 
 
-def get_firma(firma_id):
-    return db_data.get(firma_id)
+def upload_firmas(firmas):
+    filepath = 'firma'
+    store.s3_upload_pkl(filepath, firmas)
+    print("Firmas wurden hochgeladen")
 
+def update_firma(firma_id, updates):
+
+    firmas = get_firmas() 
+    firma = firmas[firma_id]
+
+    for key in updates.keys():
+        firma[key] = updates[key]
+    
+    firmas.update({'id':firma})
+    upload_firmas(firmas)
+    
+    #TODO Userdata in Session State schreiben
+
+def remove_firma(firma_id):
+    """Inserts the data into the firma bucket"""
+    firmas = get_firmas() 
+    del firmas[firma_id]
+    upload_firmas(firmas)
+    
 
 #@st.cache_data(ttl=0.1, show_spinner="Lädt Firmennamen")
 def fetch_all_firmas():
-    res = db_firma.fetch()
-    all_items = res.items
-    while res.last:
-        res = db_firma.fetch(last=res.last)
-        all_items += res.items
-
-    st.session_state["firmas"] = all_items
+    firmas = get_firmas()
+    firmenliste = []
+    for key in firmas:
+        firmenliste.append(firmas[key]['firma_name'])
+    st.session_state["firmas"] = firmenliste
+    print(firmenliste)
     
+

@@ -218,7 +218,7 @@ def pickle_store(stream, collection):
                 metadata.update({"num_pages":documents["num_pages"], 
                                     "file_size":documents["file_size"]})
                 create_Store(documents)
-                db.update_data_db(metadata)
+                db.update_collection(metadata)
             progress += 1
             progress_bar.progress(progress/stream_len, text=progress_text)
 
