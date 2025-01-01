@@ -353,7 +353,7 @@ def load_data_user(user=None):
 def load_data_preloaded():
     keys = ["baugesetz", "normen", "richtlinien", "produkte"]
     for key in keys:
-        st.session_state[key] = get_data(key)[0]
+        st.session_state[key] = get_data(key)
     st.session_state["preload_data_loaded"] = True
 
 
