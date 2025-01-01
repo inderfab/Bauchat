@@ -140,6 +140,7 @@ def download_button_full_pdf(key):
             )
 
 
+@st.cache_data(ttl=0.1)
 def uploader():
     return st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", 
                             type='pdf',
@@ -152,7 +153,7 @@ def file_uploader_container_user(stream):
     sammlung_empty = st.empty()
     with sammlung_empty.container():
         if stream != []:
-            st.write(stream)
+
             #st.session_state["speicher_expander"] = True
             limit = 50
             stream = stream[:limit]
