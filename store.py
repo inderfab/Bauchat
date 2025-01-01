@@ -151,45 +151,46 @@ def uploader():
 def file_uploader_container_user(stream):
     sammlung_empty = st.empty()
     with sammlung_empty.container():
-        #if stream != []:
+        st.write("Hallo")
+        if stream != []:
 
-        #st.session_state["speicher_expander"] = True
-        limit = 50
-        stream = stream[:limit]
+            #st.session_state["speicher_expander"] = True
+            limit = 50
+            stream = stream[:limit]
 
-        sc1, sc2 = st.columns(2)
-        
-        with sc1:
-            collection = st.text_input("Neue Sammlung anlegen:", max_chars=25, help="maximal 30 Buchstaben", value=None)                        
-            if collection is not None:
-                st.session_state["collection"] = collection
-
-        db.load_data_user(st.session_state.username)
-        try:
-            user_l = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
-            if st.session_state["u_folders"] is not None:# and st.session_state["u_data_exists"] == True:
-                with sc2:
-                    update_collection = st.selectbox('Sammlung aktualisieren',user_l, index=None)
-                    if update_collection != None:
-                            st.session_state["collection"] = update_collection
-        except:
-            pass
+            sc1, sc2 = st.columns(2)
             
-        if st.button("Speichern"):
-            #st.session_state["u_collections"].append(st.session_state["collection"])
-            ai.submit_upload(stream)
-            st.session_state["submitted"] = None
-            st.session_state["empty_stream"] = True
-            sammlung_empty = st.empty()
-            st.session_state.reload_store = True
-            st.session_state.vector_store = None
-            stream = []
+            with sc1:
+                collection = st.text_input("Neue Sammlung anlegen:", max_chars=25, help="maximal 30 Buchstaben", value=None)                        
+                if collection is not None:
+                    st.session_state["collection"] = collection
 
-        st.session_state["temp_upload"] = False 
-        st.session_state["Temp_Stream"] = None
-        st.session_state["Temp_Stream_IMG"] = None
-        st.session_state["option5value"] = False
-        st.session_state.vector_store = None
+            db.load_data_user(st.session_state.username)
+            try:
+                user_l = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
+                if st.session_state["u_folders"] is not None:# and st.session_state["u_data_exists"] == True:
+                    with sc2:
+                        update_collection = st.selectbox('Sammlung aktualisieren',user_l, index=None)
+                        if update_collection != None:
+                                st.session_state["collection"] = update_collection
+            except:
+                pass
+                
+            if st.button("Speichern"):
+                #st.session_state["u_collections"].append(st.session_state["collection"])
+                ai.submit_upload(stream)
+                st.session_state["submitted"] = None
+                st.session_state["empty_stream"] = True
+                #sammlung_empty = st.empty()
+                st.session_state.reload_store = True
+                st.session_state.vector_store = None
+                stream = []
+
+            st.session_state["temp_upload"] = False 
+            st.session_state["Temp_Stream"] = None
+            st.session_state["Temp_Stream_IMG"] = None
+            st.session_state["option5value"] = False
+            st.session_state.vector_store = None
 
 
 def file_uploader_container_temp(stream):
