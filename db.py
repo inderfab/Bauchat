@@ -344,7 +344,8 @@ def load_data_user(user=None):
     #streamlit cloud macht automatisch cache, deshalb muss man es steuern
     if user == None:
         user = st.session_state.username
-    folders = get_data(user)[0]
+    folders = get_data(user)
+    print("Folders",folders)
     st.session_state["u_folders"] = folders
     return folders
 
