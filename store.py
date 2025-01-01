@@ -151,7 +151,6 @@ def uploader():
 def file_uploader_container_user(stream):
     sammlung_empty = st.empty()
     with sammlung_empty.container():
-        st.write("Hallo")
         if stream != []:
 
             #st.session_state["speicher_expander"] = True
@@ -181,7 +180,7 @@ def file_uploader_container_user(stream):
                 ai.submit_upload(stream)
                 st.session_state["submitted"] = None
                 st.session_state["empty_stream"] = True
-                #sammlung_empty = st.empty()
+                sammlung_empty = st.empty()
                 st.session_state.reload_store = True
                 st.session_state.vector_store = None
                 stream = []
