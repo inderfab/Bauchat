@@ -30,7 +30,7 @@ if st.session_state["preload_data_loaded"] != True:
 
 #st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
-st.write("EmptyStream: ",st.session_state["empty_stream"])
+#st.write("EmptyStream: ",st.session_state["empty_stream"])
 
 upload_container = st.container(border=True)
 option_5 = None 
@@ -52,7 +52,7 @@ with upload_container:
                 st.switch_page("pages/4_Info.py")
     else:
         stream = store.uploader()
-        if st.session_state["empty_stream"] == False:
+        if stream != []:
             store.file_uploader_container_user(stream)
             option_5 = True 
         try:
