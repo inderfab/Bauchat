@@ -182,6 +182,7 @@ def file_uploader_container_user(stream):
                 sammlung_empty = st.empty()
                 st.session_state.reload_store = True
                 st.session_state.vector_store = None
+                stream = []
 
             st.session_state["temp_upload"] = False 
             st.session_state["Temp_Stream"] = None
