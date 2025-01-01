@@ -68,12 +68,12 @@ def user_update_message_and_tokens(updates):
     update_user(st.session_state.username,update)
 
 
-# def user_update_embedding_tokens(username):
-#     user_data = get_user(username)
-#     usage = st.session_state.token_usage
-#     st.session_state.token_usage = 0
-#     token = update_user_tokens(user_data, usage)
-#     db_users.update(token,username)
+def user_update_embedding_tokens(username):
+    user_data = get_user(username)
+    usage = st.session_state.token_usage
+    st.session_state.token_usage = 0
+    token = update_user_tokens(user_data, usage)
+    update_user(username,token)
 
 
 def update_user_tokens(user_data, token_update):
@@ -185,7 +185,7 @@ def registration():
 
 
         if st.button("Registrieren"):
-            if get_user(user) != None:
+            if get_user(user) != None: #Stimmt das?
                     st.write("Benutzername bereits vergeben")
                     username_free = False
             if email_filled and pwd_filled and username_free == True:
@@ -203,6 +203,7 @@ def registration():
                 
                 mail.send_registration(email, verification_code)
                 insert_user(data)
+                insert_data(user,{'collections': []})
                 st.session_state["registration_expandend"] = False
                     
 
