@@ -152,7 +152,7 @@ def file_uploader_container_user(stream):
     sammlung_empty = st.empty()
     with sammlung_empty.container():
         if stream != []:
-            #st.session_state["speicher_expander"] = True
+            st.session_state["speicher_expander"] = True
             limit = 50
             stream = stream[:limit]
 
