@@ -29,20 +29,6 @@ except:
     AWS_DEFAULT_REGION = os.environ.get("AWS_DEFAULT_REGION")
     AWS_BUCKET_NAME = os.environ.get("AWS_BUCKET_NAME")
 
-# @st.cache_data
-# def load_data_preloaded():
-#     filepath = "data_preloaded-folders.pkl"
-#     path = "data_preloaded/"
-
-#     try:
-#         folders = s3_download_pkl(filepath)
-#     except:
-#         folders = get_subfolders(path)
-
-#         s3_upload_pkl(filepath, folders)
-
-#     return path, folders
-
 
 @st.cache_data(ttl=3600)
 def load_data_temp():
@@ -73,31 +59,6 @@ def s3_reader(filepath):
     return file
 
 
-
-
-
-# def s3_get_subfolders(path):
-#     client = s3_boto_client()
-#     bucket = "bauchatstorage"
-#     response = client.list_objects_v2(Bucket = bucket, Delimiter='/',Prefix =path) 
-#     subfolders = []
-
-#     files = []
-#     if response.get("Contents"):
-#         for key in response.get("Contents"):
-#             f_name = key.get("Key").split("/")[-1]
-#             files.append(f_name)
-#         return files
-
-#     else:
-#         #st.write(path)
-#         for folder in response.get('CommonPrefixes'):
-#             subpath = folder.get('Prefix')
-#             foldername = folder.get('Prefix').rstrip('/').split("/")[-1]  
-#             sf = s3_get_subfolders(subpath)
-#             subfolders.append([foldername,sf])
-    
-#     return subfolders
 
 
 def s3_upload_pkl(key, data):
@@ -227,7 +188,7 @@ def file_uploader_container_user(stream):
             st.session_state["Temp_Stream_IMG"] = None
             st.session_state["option5value"] = False
             st.session_state.vector_store = None
-
+    st.button("Speichern") = False
 
 
 def file_uploader_container_temp(stream):
