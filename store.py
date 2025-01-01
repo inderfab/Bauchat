@@ -147,12 +147,12 @@ def uploader():
                             label_visibility="collapsed",
                             help="Ncht angemeldete Nutzer können nur 1 Dokument hochladen. Angemeldete Nutzer können bis zu 50 Dokumente gleichzeitig hochladen und in einer Sammlung speichern.")
 
-
+@st.cache_data(ttl=0.1)
 def file_uploader_container_user(stream):
     sammlung_empty = st.empty()
     with sammlung_empty.container():
         if stream != []:
-            st.session_state["speicher_expander"] = True
+            #st.session_state["speicher_expander"] = True
             limit = 50
             stream = stream[:limit]
 
@@ -190,7 +190,7 @@ def file_uploader_container_user(stream):
             st.session_state["option5value"] = False
             st.session_state.vector_store = None
 
-
+@st.cache_data(ttl=0.1)
 def file_uploader_container_temp(stream):
     sammlung_empty = st.empty()
     with sammlung_empty.container():
