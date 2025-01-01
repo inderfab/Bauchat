@@ -51,6 +51,7 @@ with upload_container:
         stream = store.uploader()
         if st.session_state["empty_stream"] == False:
             store.file_uploader_container_user(stream)
+            option_5 = True 
         try:
             db.load_data_user()
             st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
@@ -127,7 +128,7 @@ with sammlung_container:
             sammlung_checkbox = "Eigene Sammlungen"
         else:
             sammlung_checkbox = "Hochgeladenes Dokument"
-        option_5 = None 
+        
 
         opt_5 = st.checkbox(sammlung_checkbox,value=st.session_state["option5value"])
         if opt_5 == True and st.session_state.username != 'temp':
