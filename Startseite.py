@@ -31,6 +31,7 @@ if st.session_state["preload_data_loaded"] != True:
 #st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
 upload_container = st.container(border=True)
+option_5 = None 
 with upload_container:
     #st.write("Eigene Dokumente hochladen")
     if st.session_state.username == 'temp':
