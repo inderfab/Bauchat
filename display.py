@@ -57,7 +57,7 @@ def pdf_s3_to_img(key):
     size = None
     file = store.read_s3_contents_with_buffer(key)
     img = pdf2image.convert_from_bytes(file,first_page= 0,last_page=1,size=size)
-    st.image(img,use_column_width=True)    
+    st.image(img,use_container_width=True)    
     
 
 @st.cache_data(ttl=.1)
