@@ -168,6 +168,7 @@ def create_Store(docs):
 
 @st.cache_data(ttl=0.1, show_spinner="Lädt die Sammlungen")
 def load_store(paths):
+    print("Stores to download", paths)
     stores = []
     if paths != []:
         progress_text = "Dokumente laden"
@@ -186,7 +187,7 @@ def load_store(paths):
     return stores
 
 
-@st.cache_data(show_spinner="Das Zwischengespeicherte Dokument wird verarbeitet")
+@st.cache_data(show_spinner="Das zwischengespeicherte Dokument wird verarbeitet")
 def store_temp(stream):
     title = stream.name.strip(".pdf")
     metadata = {"collection":None, "title":title}
@@ -292,7 +293,7 @@ def prompt(query, results, k=1):
 
 def bauchat_query(query, VectorStore, k=3):
     with st.spinner("Dokumente durchsuchen"):
-        result = search(VectorStore,query,k=7)
+        result = search(VectorStore,query,k=4)
     
     references_list = []
 
