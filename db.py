@@ -256,7 +256,7 @@ def get_data(username):
     except:
         user = None
         print('kein User mit dem Namen {} gefunden'.format(username))
-    return data
+    return data[0]
 
 
 def insert_data(username, data_dict):
