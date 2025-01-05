@@ -325,6 +325,7 @@ def update_collection(metadata):
     
     # else:
     data = data["collections"]
+    st.write("data: ", data)
     for col in data:
         if col["collection"] == metadata["collection"]:
             filenames = col["filenames"]
