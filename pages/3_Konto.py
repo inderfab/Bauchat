@@ -48,8 +48,6 @@ else:
 
     st.subheader("Sammlungsübersicht")
     with st.expander("Sammlungen"):
-        
-        
         try:
             db.load_data_user()
             for collection in st.session_state["u_folders"]["collections"]:

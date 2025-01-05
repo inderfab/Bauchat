@@ -257,7 +257,7 @@ def get_data(username):
         if isinstance(data, tuple):
             data = data[0]
     except:
-        user = None
+        data = {"collections":{}}
         print('kein User mit dem Namen {} gefunden'.format(username))
     return data
 

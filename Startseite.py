@@ -28,9 +28,9 @@ add_logo("gallery/bauchat_logo.png", height=300)
 if st.session_state["preload_data_loaded"] != True:
     db.load_data_preloaded()
 
-#st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
+st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
-st.write("Mail User: ",os.environ['MAIL_USER'])
+#st.write("Mail User: ",os.environ['MAIL_USER'])
 
 upload_container = st.container(border=True)
 option_5 = None 
