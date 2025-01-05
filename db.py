@@ -257,7 +257,7 @@ def get_data(username):
         if isinstance(data, tuple):
             data = data[0]
     except:
-        data = {"collections":{}}
+        data = {"collections":[]}
         print('kein User mit dem Namen {} gefunden'.format(username))
     return data
 
@@ -319,24 +319,24 @@ def update_collection(metadata):
 
     existing_collection = False
 
-    if data is None:
-        #wird als Liste in DB geschrieben
-        return get_data(key,{"collections":[update]})
+    # if data is None:
+    #     #wird als Liste in DB geschrieben
+    #     return update_data(key,{"collections":[update]})
     
+    # else:
+    data = data["collections"]
+    for col in data:
+        if col["collection"] == metadata["collection"]:
+            filenames = col["filenames"]
+            filenames.append(file)
+            col["filenames"] = filenames
+            existing_collection = True
+            break
+    if existing_collection == True:
+        return update_data(key,{"collections":data})
     else:
-        data = data["collections"]
-        for col in data:
-            if col["collection"] == metadata["collection"]:
-                filenames = col["filenames"]
-                filenames.append(file)
-                col["filenames"] = filenames
-                existing_collection = True
-                break
-        if existing_collection == True:
-            return update_data(key,{"collections":data})
-        else:
-            data.append(update)
-            return update_data(key,{"collections":data})
+        data.append(update)
+        return update_data(key,{"collections":data})
     
     #metadata von ai pickle store = {"collection":collection,"save_loc":save_loc,"title":title}
 
