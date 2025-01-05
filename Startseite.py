@@ -30,7 +30,7 @@ if st.session_state["preload_data_loaded"] != True:
 
 #st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
-#st.write("EmptyStream: ",st.session_state["empty_stream"])
+st.write("Mail User: ",os.environ['MAIL_USER'])
 
 upload_container = st.container(border=True)
 option_5 = None 
