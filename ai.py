@@ -166,28 +166,18 @@ def create_Store(docs):
     return None
 
 
-@st.cache_data(ttl=0.1, show_spinner="Lädt die Sammlungen")
+#@st.cache_data(ttl=0.1, show_spinner="Lädt die Sammlungen")
 def load_store(paths):
     print("Stores to download", paths)
     stores = []
     if paths != []:
-        progress_text = "Dokumente laden"
-        progress_max = len(paths)
-        progress_bar = st.progress(0,progress_text)
-        progress = 0
-
         for p in paths:
             file = store.s3_download_files(p)
             stores.append(file)
-            
-            progress += 1
-            progress_bar.progress(progress/progress_max, text=progress_text)
-        
-        progress_bar.empty()
     return stores
 
 
-@st.cache_data(show_spinner="Das zwischengespeicherte Dokument wird verarbeitet")
+#@st.cache_data(show_spinner="Das zwischengespeicherte Dokument wird verarbeitet")
 def store_temp(stream):
     title = stream.name.strip(".pdf")
     metadata = {"collection":None, "title":title}
@@ -292,8 +282,7 @@ def prompt(query, results, k=1):
 
 
 def bauchat_query(query, VectorStore, k=3):
-    with st.spinner("Dokumente durchsuchen"):
-        result = search(VectorStore,query,k=4)
+    result = search(VectorStore,query,k=4)
     
     references_list = []
 

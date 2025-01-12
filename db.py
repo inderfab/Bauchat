@@ -25,7 +25,7 @@ def insert_user(user_dict):
     return user_dict 
 
 
-@st.cache_data(ttl=0.1)
+#@st.cache_data(ttl=0.1)
 def get_user(username):
     """If not found, the function will return None"""
     try: 
@@ -248,7 +248,7 @@ def login_user(user,pwd):
 
 ### Data DB
 
-@st.cache_data(ttl=0.1)
+#@st.cache_data(ttl=0.1)
 def get_data(username):
     """If not found, the function will return None"""
     try: 
@@ -342,7 +342,7 @@ def update_collection(metadata):
     #metadata von ai pickle store = {"collection":collection,"save_loc":save_loc,"title":title}
 
 
-@st.cache_data(ttl=0.1, show_spinner="Lädt Benutzerdaten")
+#@st.cache_data(ttl=0.1, show_spinner="Lädt Benutzerdaten")
 def load_data_user(user=None):
     #alle 10 sek cache löschen um immer aktuell zu sein, 
     #streamlit cloud macht automatisch cache, deshalb muss man es steuern

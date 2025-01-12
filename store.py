@@ -1,4 +1,3 @@
-import boto3
 import os
 from st_files_connection import FilesConnection
 import streamlit as st
@@ -12,6 +11,7 @@ import db
 import random
 import ai
 import uuid
+import boto3
 
 
 
@@ -30,7 +30,7 @@ except:
     AWS_BUCKET_NAME = os.environ.get("AWS_BUCKET_NAME")
 
 
-@st.cache_data(ttl=3600)
+#@st.cache_data(ttl=3600)
 def load_data_temp():
     if st.session_state["u_folders"] == None: 
         
@@ -87,23 +87,22 @@ def read_s3_contents_with_buffer(key) -> str :
     return bytes.getvalue()
 
 
-@st.cache_data(ttl=0.1, show_spinner = False)
+#@st.cache_data(ttl=0.1, show_spinner = False)
 def s3_download_files(path) :
     client = s3_boto_client()
     bucket = "bauchatstorage"
     path = os.path.join(path,"docs/")
+    #st.write('path: ',path)
     response=client.list_objects_v2(Bucket=bucket,Prefix  = path)['Contents']
-    #st.write("Response", response)
+    #st.write('response:',response)
     files = []
     for f in response:
         key = f["Key"]
         if key.endswith(".pkl"):
-            #st.write("Key: ", key)
             file = client.get_object(Bucket=bucket,Key=key)
             file = file['Body'].read()
             file = pickle.loads(file)
             files.append(file)
-    #st.write("Files", files)
     return files
 
 

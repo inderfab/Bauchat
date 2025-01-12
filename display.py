@@ -33,12 +33,14 @@ def pdf_display(references, id):
     img_col, src_col = st.columns([3,1])
     
     with src_col:
+        st.write(keys)
         img_src = st.radio(label="Relevante Quellen", options=keys, key=id)
-        full_pdf_key = "".join(keys[img_src].split("-")[:-1])
-        if keys[img_src] != 'temporary': 
-            store.download_button_full_pdf(full_pdf_key)
+        #full_pdf_key = "".join(keys[img_src].split("-")[:-1])
+        # if keys[img_src] != 'temporary': 
+        #     store.download_button_full_pdf(full_pdf_key)
 
     with img_col:
+        st.write("keys[img_src]:",keys[img_src])
         if keys[img_src] != 'temporary': 
             pdf_s3_to_img(keys[img_src])
             #pdf_s3_to_iframe(keys[img_src])
@@ -51,7 +53,7 @@ def pdf_display(references, id):
 
 
 
-@st.cache_data(ttl=.1)
+#@st.cache_data(ttl=.1)
 def pdf_s3_to_img(key):
     #Downloads PDF Page from AWS S3 and outputs as IMG in st.image
     size = None
@@ -60,7 +62,7 @@ def pdf_s3_to_img(key):
     st.image(img,use_container_width=True)    
     
 
-@st.cache_data(ttl=.1)
+#@st.cache_data(ttl=.1)
 def pdf_s3_to_iframe(key):
     #Downloads PDF Page from AWS S3 and outputs in iFrame as PDF
     file = store.read_s3_contents_with_buffer(key)
@@ -72,7 +74,7 @@ def pdf_s3_to_iframe(key):
     st.markdown(pdf_iframe, unsafe_allow_html=True)
 
 
-@st.cache_data(ttl=.1)
+#@st.cache_data(ttl=.1)
 def pdf_temp_to_img(pagenr):
     #Displays the Stream.read() file
     file = st.session_state["Temp_Stream_IMG"]
@@ -80,7 +82,7 @@ def pdf_temp_to_img(pagenr):
     st.image(img)    
 
 
-@st.cache_data(ttl=.1)
+#@st.cache_data(ttl=.1)
 def pdf_temp_to_iframe(pagenr):
     #Downloads PDF Page from AWS S3 and outputs in iFrame as PDF
     file = st.session_state["Temp_Stream_IMG"]
@@ -96,6 +98,7 @@ def chat_display(messages):
     expand_newest = [False] * expand_newest_len
     expand_newest[-1] = True
 
+    st.write("messages: ",messages)
     for i,message in enumerate(messages):
 
         # m_user = {"role": "user", "content": query, "date":date}
