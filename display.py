@@ -33,14 +33,12 @@ def pdf_display(references, id):
     img_col, src_col = st.columns([3,1])
     
     with src_col:
-        st.write(keys)
         img_src = st.radio(label="Relevante Quellen", options=keys, key=id)
         #full_pdf_key = "".join(keys[img_src].split("-")[:-1])
         # if keys[img_src] != 'temporary': 
         #     store.download_button_full_pdf(full_pdf_key)
 
     with img_col:
-        st.write("keys[img_src]:",keys[img_src])
         if keys[img_src] != 'temporary': 
             pdf_s3_to_img(keys[img_src])
             #pdf_s3_to_iframe(keys[img_src])
@@ -98,7 +96,7 @@ def chat_display(messages):
     expand_newest = [False] * expand_newest_len
     expand_newest[-1] = True
 
-    st.write("messages: ",messages)
+    #st.write("messages: ",messages)
     for i,message in enumerate(messages):
 
         # m_user = {"role": "user", "content": query, "date":date}
@@ -112,17 +110,5 @@ def chat_display(messages):
 
             with st.chat_message("ai"):
                 st.write(message["ai"]["content"])
+                st.write('Ref:' ,message["references"])
                 pdf_display(references = message["references"], id = message["id"])
-
-
-            #chat_tab, pdf_tab = st.tabs(["Chat", "Quellen"])
-            #with chat_tab:
-                #with st.chat_message("user"):
-                 #   st.write(message["user"]["content"])
-
-                #with st.chat_message("ai"):
-                #    st.write(message["ai"]["content"])
-                #    pdf_display_links(references, id)
-
-            #with pdf_tab:
-                #pdf_display(references = message["references"], id = message["id"])
