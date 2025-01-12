@@ -22,7 +22,7 @@ def generate_key_dict(references):
         else:
             key = "temporary"
         keys.update({name:key})
-        return keys
+    return keys
 
 
 
