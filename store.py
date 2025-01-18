@@ -12,6 +12,8 @@ import random
 import ai
 import uuid
 import boto3
+from streamlit_extras.no_default_selectbox import selectbox
+import funcy
 
 
 
@@ -213,9 +215,13 @@ def file_uploader_container_temp(stream):
 
 
 def stream_uploader():
-        
+    # Lädt die Dokumente die in den Upload Container abgelegt wurden
+    # in die Ablage auf dem Server des Users 
+
+    st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
+
     upload_container = st.container(border=True)
-    option_5 = None 
+    option_upload = None 
     with upload_container:
         #st.write("Eigene Dokumente hochladen")
         if st.session_state.username == 'temp':
@@ -235,11 +241,126 @@ def stream_uploader():
             stream = uploader()
             if stream != []:
                 file_uploader_container_user(stream)
-                option_5 = True 
+                option_upload = True 
             try:
                 db.load_data_user()
                 st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
             except:
                 pass
     
-    return option_5
+    return option_upload
+
+
+
+def user_choice():
+
+    sammlung_container = st.container(border=True)
+    with sammlung_container:
+
+        col1, col2, col3, col4, col5 = st.columns(5)
+        docs_to_load = []
+
+        #if st.session_state["preload_data_loaded"] == True:
+        ### Baugesetz
+        with col1:
+            option_1 = st.checkbox("Baugesetz", value=False)
+            if option_1 == True:
+                kanton_liste = [n["collection"] for n in st.session_state["baugesetz"]["collections"]]
+                kanton_titel = "Kanton und Gemeinde wählen"
+                kanton_sel = selectbox(kanton_titel, kanton_liste)
+                if kanton_sel is not None:
+                    docs_to_load.append( os.path.join("baugesetz",kanton_sel,"") )
+
+        ### Normen
+        with col2:
+            option_2 = st.checkbox("Normen", value=False)
+            if option_2 == True:
+                if st.session_state["u_data"] is not None:
+                    if st.session_state["u_data"].get("full_access", None):
+                    
+                        normen_liste = [n["collection"] for n in st.session_state["normen"]["collections"]]
+                        st.write("N Liste", normen_liste)
+                        normen_title = "Normen wählen"
+                        norm_sel = st.multiselect(normen_title, normen_liste)
+                        if norm_sel != []:
+                            for u_sel in norm_sel:
+                                docs_to_load.append( os.path.join("normen",u_sel,"") )
+                    else:
+                        st.write("Normen sind aus rechtlichen Gründen zur Zeit noch nicht freigeschaltet")
+                else:
+                    st.write("Normen sind aus rechtlichen Gründen zur Zeit noch nicht freigeschaltet")
+                    
+        ### Richtlinien
+        with col3:
+            option_3 = st.checkbox("Richtlinien", value=False)
+            if option_3 == True:
+                richtlinie_liste = [n["collection"] for n in st.session_state["richtlinien"]["collections"]]
+                richtlinie_title = "Richtlinien wählen"
+                richtlinie_sel = st.multiselect(richtlinie_title, richtlinie_liste)
+
+                if richtlinie_sel != []:
+                    for u_sel in richtlinie_sel:
+                        docs_to_load.append( os.path.join("richtlinien",u_sel,"") )
+
+        ### Produkte
+        with col4:
+            option_4 = st.checkbox("Produkte", value=False)
+            
+            if option_4 == True:
+                
+                unternehmen_liste = [n["collection"] for n in st.session_state["produkte"]["collections"]]
+                unternehmen_title = "Unternehmerprodukte wählen"
+                unternehmen_sel = st.multiselect(unternehmen_title, unternehmen_liste)
+
+                if unternehmen_sel != []:
+                    for u_sel in unternehmen_sel:
+                        docs_to_load.append( os.path.join("produkte",u_sel,"") )
+
+        ### Benutzer
+        with col5:
+            if st.session_state.username != 'temp':
+                sammlung_checkbox = "Eigene Sammlungen"
+            else:
+                sammlung_checkbox = "Hochgeladenes Dokument"
+
+            opt_5 = st.checkbox(sammlung_checkbox,value=st.session_state["option5value"])
+            if opt_5 == True and st.session_state.username != 'temp':
+                
+                if st.session_state["u_collections"] != []:
+
+                    option_upload = True
+                    
+                    user_choice = st.multiselect('Sammlungen',st.session_state["u_collections"], default=st.session_state["user_choice_default"])
+                    if user_choice != []:
+                        for c in user_choice:
+                            docs_to_load.append(f"{st.session_state.username}/{c}/")
+
+            if opt_5 == True and st.session_state.username == 'temp' and st.session_state["Temp_Stream"]:
+                option_upload = True
+
+
+            
+        if any([option_1,option_2,option_3,option_4,option_upload]) or st.session_state["temp_upload"] == True:
+            st.session_state.show_chat = True
+        else:
+            show_chat=False
+
+    return show_chat, docs_to_load
+
+
+def load_merge_store(docs_to_load):
+    st.session_state["docs_to_load"] = docs_to_load
+    stores = ai.load_store(docs_to_load)
+
+    if st.session_state["temp_upload"] == True:
+        temp_store = ai.store_temp(st.session_state["Temp_Stream"])
+        if temp_store is not None:
+            stores.append(temp_store)
+
+    store_list = funcy.lflatten(stores)
+    
+    if len(store_list)>1:
+        st.session_state.vector_store = ai.merge_faiss_stores(store_list)
+    else:
+        st.session_state.vector_store = store_list[0]
+    

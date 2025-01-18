@@ -112,3 +112,14 @@ def chat_display(messages):
                 st.write(message["ai"]["content"])
                 #st.write('Ref:' ,message["references"])
                 pdf_display(references = message["references"], id = message["id"])
+
+
+
+def show_sidebar():
+    if st.session_state["docs_to_load"] != []:
+        with st.sidebar:
+            chat_docs = ''
+            for i in st.session_state["docs_to_load"]:
+                chat_docs += "- " + i.split("/")[-2] + "\n"
+            st.write("Geladene Dokumente:")
+            st.markdown(chat_docs)
