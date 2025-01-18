@@ -190,9 +190,9 @@ def store_temp(stream):
 def pickle_store(stream, collection):
 
     stream_len = len(stream)
-    progress_text = "Dokumente speichern"
-    progress_bar = st.progress(0,progress_text)
-    progress = 0
+    #progress_text = "Dokumente speichern"
+    #progress_bar = st.progress(0,progress_text)
+    #progress = 0
     
     if  stream_len >= 1:
         for s in stream:
@@ -210,10 +210,10 @@ def pickle_store(stream, collection):
                                     "file_size":documents["file_size"]})
                 create_Store(documents)
                 db.update_collection(metadata)
-            progress += 1
-            progress_bar.progress(progress/stream_len, text=progress_text)
+            #progress += 1
+            #progress_bar.progress(progress/stream_len, text=progress_text)
 
-    progress_bar.empty()
+    #progress_bar.empty()
 
 
 
