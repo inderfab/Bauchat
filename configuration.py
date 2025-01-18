@@ -89,8 +89,6 @@ def conf_session_state():
     #Chat
     if "messages" not in st.session_state:
         st.session_state.messages = []
-    if "show_chat" not in st.session_state:
-        st.session_state.show_chat = False
     if "long_answer" not in st.session_state:
             st.session_state.long_answer = False
     if "token_usage" not in st.session_state:

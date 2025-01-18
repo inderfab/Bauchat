@@ -340,9 +340,9 @@ def user_choice():
         if any([option_1,option_2,option_3,option_4]) or st.session_state["temp_upload"] == True or st.session_state.option_upload==True:
             st.session_state.show_chat = True
         else:
-            show_chat=False
+            st.session_state.show_chat=False
 
-    return show_chat, docs_to_load
+    return docs_to_load
 
 
 def load_merge_store(docs_to_load):

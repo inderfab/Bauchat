@@ -26,7 +26,7 @@ if st.session_state["preload_data_loaded"] != True:
 
 
 store.stream_uploader()
-show_chat,docs_to_load = store.user_choice()
+docs_to_load = store.user_choice()
 
      
 if st.session_state.show_chat == True:
