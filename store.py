@@ -59,8 +59,6 @@ def s3_reader(filepath):
     return file
 
 
-
-
 def s3_upload_pkl(key, data):
     
     data_pkl = pickle.dumps(data)
@@ -214,4 +212,34 @@ def file_uploader_container_temp(stream):
 
 
 
-                
+def stream_uploader():
+        
+    upload_container = st.container(border=True)
+    option_5 = None 
+    with upload_container:
+        #st.write("Eigene Dokumente hochladen")
+        if st.session_state.username == 'temp':
+            temp_col1,temp_col2 = st.columns([3,1])
+            with temp_col1:
+                stream = uploader()
+                file_uploader_container_temp(stream)
+            
+            with temp_col2:
+                zu_anmeldung = st.button("Anmelden / Registrieren", help="Anmelden um bis zu 15 Dokumente gleichzeitig hochzuladen. Sonst nur in einem eigenen Dokument gesucht werden.")
+                if zu_anmeldung:
+                    st.switch_page("pages/3_Konto.py")
+                zu_anleitung = st.button("Anleitung", help="Kurzanleitung wie man diese Webseite benutzen kann")
+                if zu_anleitung:
+                    st.switch_page("pages/4_Info.py")
+        else:
+            stream = uploader()
+            if stream != []:
+                file_uploader_container_user(stream)
+                option_5 = True 
+            try:
+                db.load_data_user()
+                st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
+            except:
+                pass
+    
+    return option_5

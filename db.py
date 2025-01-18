@@ -9,6 +9,7 @@ from random import randint, sample
 import time
 import string
 import store
+import ai
 
 st.session_state.update(st.session_state)
 
@@ -249,7 +250,7 @@ def login_user(user,pwd):
 ### Data DB
 
 #@st.cache_data(ttl=0.1)
-def get_data(username):
+def get_data_collection(username):
     """If not found, the function will return None"""
     try: 
         data = store.s3_download_pkl(username+'/collections')
@@ -277,7 +278,7 @@ def insert_data(username, data_dict):
 def update_data(username, updates):
 
     filepath = username + '/collections'
-    userdata = get_data(username) #st.session_state.username
+    userdata = get_data_collection(username) #st.session_state.username
     
     for key in updates.keys():
         if key in userdata:
@@ -299,7 +300,7 @@ def update_collection(metadata):
     if st.session_state["metadata_preloaded"] != None:
         metadata.update(st.session_state["metadata_preloaded"])
 
-    data = get_data(key)
+    data = get_data_collection(key)
     date = time.strftime("%Y-%m-%d")
 
     file = {"titel": metadata["title"],
@@ -351,7 +352,7 @@ def load_data_user(user=None):
     #streamlit cloud macht automatisch cache, deshalb muss man es steuern
     if user == None:
         user = st.session_state.username
-    folders = get_data(user)
+    folders = get_data_collection(user)
     st.session_state["u_folders"] = folders
     return folders
 
@@ -360,8 +361,18 @@ def load_data_user(user=None):
 def load_data_preloaded():
     keys = ["baugesetz", "normen", "richtlinien", "produkte"]
     for key in keys:
-        st.session_state[key] = get_data(key)
+        st.session_state[key] = get_data_collection(key)
     st.session_state["preload_data_loaded"] = True
+
+
+def group_folder(key):
+    #data = {"collections":[]}
+    collection = get_data_collection(key)
+    st.write("Collection: ", collection)
+    
+
+    #docs_to_load
+    #stores = ai.load_store(docs_to_load)
 
 
 # ### Firma DB

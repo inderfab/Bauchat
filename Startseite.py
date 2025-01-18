@@ -15,52 +15,22 @@ import funcy
 import dotenv
 dotenv.load_dotenv()
 st.session_state.update(st.session_state)
-
 page_title = "bauCHAT"
-
 st.set_page_config(page_title = page_title,layout="wide") #
 
 configuration.conf_session_state()
 configuration.conf_menu()
-
 add_logo("gallery/bauchat_logo.png", height=300)
+
 
 if st.session_state["preload_data_loaded"] != True:
     db.load_data_preloaded()
 
 st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
-#st.write("Mail User: ",os.environ['MAIL_USER'])
 
-upload_container = st.container(border=True)
-option_5 = None 
-with upload_container:
-    #st.write("Eigene Dokumente hochladen")
-    if st.session_state.username == 'temp':
-        temp_col1,temp_col2 = st.columns([3,1])
-        with temp_col1:
-            stream = store.uploader()
-            store.file_uploader_container_temp(stream)
-        with temp_col2:
-            zu_anmeldung = st.button("Anmelden / Registrieren", 
-                                        help="Anmelden um bis zu 15 Dokumente gleichzeitig hochzuladen. Sonst nur in einem eigenen Dokument gesucht werden.")
-            if zu_anmeldung:
-                st.switch_page("pages/3_Konto.py")
-            zu_anleitung = st.button("Anleitung", 
-                                        help="Kurzanleitung wie man diese Webseite benutzen kann")
-            if zu_anleitung:
-                st.switch_page("pages/4_Info.py")
-    else:
-        stream = store.uploader()
-        if stream != []:
-            store.file_uploader_container_user(stream)
-            option_5 = True 
-        try:
-            db.load_data_user()
-            st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
-        except:
-            pass
-    
+option_5 = store.stream_uploader()
+
 
 #st.write("Alle angewählten Verzeichnisse werden gleichzeitig durchsucht. Wählen Sie die Gewünschten und klicken Sie auf laden.")
 
