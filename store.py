@@ -180,12 +180,11 @@ def file_uploader_container_user(stream):
             ai.submit_upload(stream)
             st.session_state["submitted"] = None
             #st.session_state["empty_stream"] = True
-            sammlung_empty = st.empty()
+            sammlung_empty.empty()
             st.session_state.reload_store = True
             st.session_state.vector_store = None
             stream = []
             st.session_state["option5value"] = True
-            sammlung_empty = st.empty()
             
         st.session_state["temp_upload"] = False 
         st.session_state["Temp_Stream"] = None

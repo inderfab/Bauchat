@@ -189,11 +189,7 @@ def store_temp(stream):
 
 def pickle_store(stream, collection):
 
-    stream_len = len(stream)
-    #progress_text = "Dokumente speichern"
-    #progress_bar = st.progress(0,progress_text)
-    #progress = 0
-    
+    stream_len = len(stream)    
     if  stream_len >= 1:
         for s in stream:
             st.session_state["ocr_needed"] = False
@@ -210,15 +206,10 @@ def pickle_store(stream, collection):
                                     "file_size":documents["file_size"]})
                 create_Store(documents)
                 db.update_collection(metadata)
-            #progress += 1
-            #progress_bar.progress(progress/stream_len, text=progress_text)
-
-    #progress_bar.empty()
-
 
 
 def submit_upload(stream):
-    with st.spinner("Dokumente zwischenspeichern"):
+    with st.spinner("Dokumente werden in die Cloud hochladen"):
         if st.session_state["collection"] != None:
             pickle_store(stream=stream, collection = st.session_state["collection"] )
             st.session_state["user_choice_default"] = st.session_state["collection"]
