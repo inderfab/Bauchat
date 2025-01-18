@@ -38,6 +38,9 @@ def conf_session_state():
         #st.session_state["empty_stream"] =  True
     if "reload_store" not in st.session_state:
         st.session_state.reload_store = False
+    if "option_upload" not in st.session_state:
+        st.session_state.option_upload = None
+
 
     # Storage
     if "Files_Saved" not in st.session_state:

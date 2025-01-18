@@ -221,7 +221,6 @@ def stream_uploader():
     st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
 
     upload_container = st.container(border=True)
-    option_upload = None 
     with upload_container:
         #st.write("Eigene Dokumente hochladen")
         if st.session_state.username == 'temp':
@@ -241,15 +240,13 @@ def stream_uploader():
             stream = uploader()
             if stream != []:
                 file_uploader_container_user(stream)
-                option_upload = True 
+                st.session_state.option_upload = True 
             try:
                 db.load_data_user()
                 st.session_state["u_collections"] = [n["collection"] for n in st.session_state["u_folders"]["collections"]]
             except:
                 pass
     
-    return option_upload
-
 
 
 def user_choice():
@@ -328,7 +325,7 @@ def user_choice():
                 
                 if st.session_state["u_collections"] != []:
 
-                    option_upload = True
+                    st.session_state.option_upload = True
                     
                     user_choice = st.multiselect('Sammlungen',st.session_state["u_collections"], default=st.session_state["user_choice_default"])
                     if user_choice != []:
@@ -336,11 +333,11 @@ def user_choice():
                             docs_to_load.append(f"{st.session_state.username}/{c}/")
 
             if opt_5 == True and st.session_state.username == 'temp' and st.session_state["Temp_Stream"]:
-                option_upload = True
+                st.session_state.option_upload = True
 
 
             
-        if any([option_1,option_2,option_3,option_4,option_upload]) or st.session_state["temp_upload"] == True:
+        if any([option_1,option_2,option_3,option_4]) or st.session_state["temp_upload"] == True or st.session_state.option_upload==True:
             st.session_state.show_chat = True
         else:
             show_chat=False
