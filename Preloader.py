@@ -96,7 +96,7 @@ with c2:
     firma.update(contact)
 
     if st.button("Firma speichern"):
-        st.write(db.insert_firma(firma))
+        db.insert_firma(firma)
         st.session_state["firmas"] == None
         st.session_state["firmas"] = None
         db.get_firmas()
