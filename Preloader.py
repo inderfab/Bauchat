@@ -66,7 +66,7 @@ with c1:
     herausgabedatum = st.text_input("Herausgabedatum")
     st.write("Seite neu laden nach dem einfügen von neuen Firmen")
     
-    #st.write("Firmas: ", st.session_state["firmas"])
+    st.write("Firmas: ", st.session_state["firmas"])
 
     firma_id = st.selectbox(label="Firma wählen",options=[f["firma_name"]+" | "+f["key"] for f in st.session_state["firmas"]], index=None)
     if firma_id is not None:
