@@ -399,8 +399,9 @@ def insert_firma(firma_dict):
     new_key = {"key":generated_key}
     firma_dict.update(new_key)
 
-    firmas[firma_dict['key']] = firma_dict
+    firmas.append(firma_dict)
     upload_firmas(firmas)
+    return "Firma hochgeladen"
 
 
 def upload_firmas(firmas):
