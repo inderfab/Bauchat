@@ -16,7 +16,9 @@ def generate_key_dict(references):
     keys = {}
     for i, ref in enumerate(references):
         pagenr = ref["page"]
-        name = f'{str(i+1)}: {ref["title"]} Seite: {str(ref["page"])}'
+        fullname = ref.get("name",ref["title"])
+
+        name = f'{str(i+1)}: {fullname} Seite: {str(ref["page"])}'
         if ref.get("save_loc") != 'temp':
             key = os.path.join(ref["save_loc"],ref["title"]) + "-" + str(pagenr) +".pdf"
         else:
