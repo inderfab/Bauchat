@@ -10,6 +10,8 @@ import time
 import string
 import store
 import ai
+import random
+import string
 
 st.session_state.update(st.session_state)
 
@@ -386,9 +388,17 @@ def get_firmas():
     return data
 
 
+
 def insert_firma(firma_dict):
     """Inserts the data into the firma bucket"""
-    firmas = get_firmas() 
+
+    firmas = get_firmas()
+    existing_keys = {entry['key'] for entry in firmas}
+    generated_key = unique_key(existing_keys)
+
+    new_key = {"key":generated_key}
+    firma_dict.update(new_key)
+
     firmas[firma_dict['key']] = firma_dict
     upload_firmas(firmas)
 
@@ -418,6 +428,21 @@ def remove_firma(firma_id):
     del firmas[firma_id]
     upload_firmas(firmas)
     
+
+
+def generate_id():
+    # Define the characters to choose from (lowercase letters + digits)
+    length=12
+    characters = string.ascii_lowercase + string.digits
+    # Generate a random string of the specified length
+    return ''.join(random.choice(characters) for _ in range(length))
+
+def unique_key(existing_keys):
+    while True:
+            new_key = generate_id()
+            if new_key not in existing_keys:
+                return new_key
+
 
 #@st.cache_data(ttl=0.1, show_spinner="Lädt Firmennamen")
 # def fetch_all_firmas():
