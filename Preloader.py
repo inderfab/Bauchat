@@ -56,73 +56,75 @@ stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den V
 if st.session_state["firmas"] == None:
     db.fetch_all_firmas()
 
-c1,c2 = st.columns(2)
-with c1:
-    name = st.text_input("Name")
-    sprache = st.text_input("Sprache")
-    herausgabedatum = st.text_input("Herausgabedatum")
-    st.write("Seite neu laden nach dem einfügen von neuen Firmen")
-    st.write("Firmas: ", st.session_state["firmas"])
-    firma_id = st.selectbox(label="Firma wählen",options=[f["firma_name"]+" | "+f["key"] for f in st.session_state["firmas"]], index=None)
-    if firma_id is not None:
-        firma_id = firma_id.split(" | ")[1]
-    link = st.text_input("link")
-    tags = st.text_input("tags")
-
-    st.session_state["metadata_preloaded"] = {"name":name,
-                                              "language":sprache,
-                                              "printdate":herausgabedatum,
-                                              "firma_id":firma_id,
-                                              "link":link,
-                                              "tags":[t.strip()for t in tags.split(",")]
-                                              }
-
-with c2:
-    firma_name = st.text_input("Firma Namen")
-    firma_strasse = st.text_input("Firma Strasse")
-    firma_plz = st.text_input("Firma PLZ")
-    firma_ort = st.text_input("Firma Ort")
-    firma_tel = st.text_input("Firma Tel")
-    firma = {"firma_name":firma_name,"strasse":firma_strasse,"plz":firma_plz,"ort":firma_ort,"firma_tel":firma_tel}
-    c_name= st.text_input("Kontakt Name")
-    c_email = st.text_input("Kontakt Mail")
-    c_tel = st.text_input("Kontakt Telefon")
-    contact = {"contact_name:":c_name,"contact_email":c_email,"contact_tel":c_tel}
-    firma.update(contact)
-
-    if st.button("Firma speichern"):
-        st.write(db.insert_firma(firma))
-        st.session_state["firmas"] == None
-        st.session_state["firmas"] = None
-        db.fetch_all_firmas()
-
-
-
-
-if stream != []:
-    st.session_state["Files_Saved"] == False
-    st.write("Key: ",st.session_state["preload_key"])
-    db.load_data_user(st.session_state["preload_key"])
-
-    st.session_state["speicher_expander"] = True
+# c1,c2 = st.columns(2)
+# with c1:
+#     name = st.text_input("Name")
+#     sprache = st.text_input("Sprache")
+#     herausgabedatum = st.text_input("Herausgabedatum")
+#     st.write("Seite neu laden nach dem einfügen von neuen Firmen")
     
-    with st.expander("Sammlung erstellen", expanded=True):
-            
-        sc1, sc2 = st.columns(2)
-        
-        with sc1:
-            collection = st.text_input("Neue Sammlung anlegen:", max_chars=30, help="maximal 25 Buchstaben", value=None)                        
-            if collection is not None:
-                st.session_state["collection"] = collection
+#     st.write("Firmas: ", st.session_state["firmas"])
 
-        with sc2:
-            update_collection = st.selectbox('Sammlung aktualisieren',[n["collection"] for n in st.session_state["u_folders"]["collections"]], index=None)
-            if update_collection is not None:
-                st.session_state["collection"] = update_collection
+#     firma_id = st.selectbox(label="Firma wählen",options=[f["firma_name"]+" | "+f["key"] for f in st.session_state["firmas"]], index=None)
+#     if firma_id is not None:
+#         firma_id = firma_id.split(" | ")[1]
+#     link = st.text_input("link")
+#     tags = st.text_input("tags")
+
+#     st.session_state["metadata_preloaded"] = {"name":name,
+#                                               "language":sprache,
+#                                               "printdate":herausgabedatum,
+#                                               "firma_id":firma_id,
+#                                               "link":link,
+#                                               "tags":[t.strip()for t in tags.split(",")]
+#                                               }
+
+# with c2:
+#     firma_name = st.text_input("Firma Namen")
+#     firma_strasse = st.text_input("Firma Strasse")
+#     firma_plz = st.text_input("Firma PLZ")
+#     firma_ort = st.text_input("Firma Ort")
+#     firma_tel = st.text_input("Firma Tel")
+#     firma = {"firma_name":firma_name,"strasse":firma_strasse,"plz":firma_plz,"ort":firma_ort,"firma_tel":firma_tel}
+#     c_name= st.text_input("Kontakt Name")
+#     c_email = st.text_input("Kontakt Mail")
+#     c_tel = st.text_input("Kontakt Telefon")
+#     contact = {"contact_name:":c_name,"contact_email":c_email,"contact_tel":c_tel}
+#     firma.update(contact)
+
+#     if st.button("Firma speichern"):
+#         st.write(db.insert_firma(firma))
+#         st.session_state["firmas"] == None
+#         st.session_state["firmas"] = None
+#         db.fetch_all_firmas()
+
+
+
+
+# if stream != []:
+#     st.session_state["Files_Saved"] == False
+#     st.write("Key: ",st.session_state["preload_key"])
+#     db.load_data_user(st.session_state["preload_key"])
+
+#     st.session_state["speicher_expander"] = True
+    
+#     with st.expander("Sammlung erstellen", expanded=True):
+            
+#         sc1, sc2 = st.columns(2)
         
-        if st.button(label="Dokument speichern"):
-            ai.submit_upload(stream)
-            #st.form_submit_button("Speichern", on_click=ai.submit_upload, args=[stream])
+#         with sc1:
+#             collection = st.text_input("Neue Sammlung anlegen:", max_chars=30, help="maximal 25 Buchstaben", value=None)                        
+#             if collection is not None:
+#                 st.session_state["collection"] = collection
+
+#         with sc2:
+#             update_collection = st.selectbox('Sammlung aktualisieren',[n["collection"] for n in st.session_state["u_folders"]["collections"]], index=None)
+#             if update_collection is not None:
+#                 st.session_state["collection"] = update_collection
+        
+#         if st.button(label="Dokument speichern"):
+#             ai.submit_upload(stream)
+#             #st.form_submit_button("Speichern", on_click=ai.submit_upload, args=[stream])
 
 
 with st.container():
@@ -147,14 +149,15 @@ with st.container():
             
             edited_df = st.data_editor(new_df,
                         use_container_width = True,
-                        column_order=("titel","name","herausgabedatum","link","sprache","num_pages","up_date"),
+                        column_order=("titel","name","herausgabedatum","link","sprache","num_pages","up_date","firma_id"),
                         column_config={"name":"Name",
                                        "titel": "Titel",
                                        "herausgabedatum": "Herausgabedatum",
                                        "link": "Link",
                                        "sprache": "Sprache",
                                        "num_pages": "Seitenzahl",
-                                       "up_date": "Hochgeladen am"
+                                       "up_date": "Hochgeladen am",
+                                       "firma_id":"Firma ID",
                                        },
                         hide_index=False,
                         num_rows="dynamic",
