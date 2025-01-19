@@ -381,7 +381,8 @@ def group_folder(key):
 def get_firmas():
     """If not found, the function will return None"""
     data = store.s3_download_pkl('firma')
-    print('Alle Firmen heruntergeladen')    
+    print('Alle Firmen heruntergeladen')  
+    st.session_state["firmas"] = data  
     return data
 
 
@@ -419,12 +420,12 @@ def remove_firma(firma_id):
     
 
 #@st.cache_data(ttl=0.1, show_spinner="Lädt Firmennamen")
-def fetch_all_firmas():
-    firmas = get_firmas()
-    firmenliste = []
-    for key in firmas:
-        firmenliste.append(firmas[key]['firma_name'])
-    st.session_state["firmas"] = firmenliste
-    print(firmenliste)
+# def fetch_all_firmas():
+#     firmas = get_firmas()
+#     firmenliste = []
+#     for key in firmas:
+#         firmenliste.append(firmas[key]['firma_name'])
+#     st.session_state["firmas"] = firmenliste
+#     print(firmenliste)
     
 
