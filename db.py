@@ -423,12 +423,11 @@ def update_firma(firma_id, updates):
     #TODO Userdata in Session State schreiben
 
 def remove_firma(firma_id):
-    """Inserts the data into the firma bucket"""
+    """Delets dict with key and updates to bucket"""
     firmas = get_firmas() 
-    del firmas[firma_id]
+    firmas =[item for item in firmas if item.get("key") != firma_id]
     upload_firmas(firmas)
     
-
 
 def generate_id():
     # Define the characters to choose from (lowercase letters + digits)

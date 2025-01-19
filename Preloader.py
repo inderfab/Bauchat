@@ -129,7 +129,9 @@ if stream != []:
             ai.submit_upload(stream)
             #st.form_submit_button("Speichern", on_click=ai.submit_upload, args=[stream])
 
-
+del_key = st.text_input('Key der löschenden Firma')
+if st.button(f"Firma löschen: {del_key}"):
+    db.remove_firma(del_key)
 
 with st.container():
     db.load_data_preloaded()
