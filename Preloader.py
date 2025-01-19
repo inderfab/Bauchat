@@ -42,7 +42,19 @@ if "submitted" not in st.session_state:
     st.session_state["submitted"] = False
 if "firmas" not in st.session_state:
     st.session_state["firmas"] = None
-        
+
+import random
+import string
+
+def generate_id(length=12):
+    # Define the characters to choose from (lowercase letters + digits)
+    characters = string.ascii_lowercase + string.digits
+    # Generate a random string of the specified length
+    return ''.join(random.choice(characters) for _ in range(length))
+
+
+
+
 keys = ["baugesetz", "normen", "richtlinien", "produkte"]
 
 
@@ -56,14 +68,14 @@ stream = st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den V
 if st.session_state["firmas"] == None:
     db.fetch_all_firmas()
 
-# c1,c2 = st.columns(2)
-# with c1:
-#     name = st.text_input("Name")
-#     sprache = st.text_input("Sprache")
-#     herausgabedatum = st.text_input("Herausgabedatum")
-#     st.write("Seite neu laden nach dem einfügen von neuen Firmen")
+c1,c2 = st.columns(2)
+with c1:
+    name = st.text_input("Name")
+    sprache = st.text_input("Sprache")
+    herausgabedatum = st.text_input("Herausgabedatum")
+    st.write("Seite neu laden nach dem einfügen von neuen Firmen")
     
-#     st.write("Firmas: ", st.session_state["firmas"])
+    st.write("Firmas: ", st.session_state["firmas"])
 
 #     firma_id = st.selectbox(label="Firma wählen",options=[f["firma_name"]+" | "+f["key"] for f in st.session_state["firmas"]], index=None)
 #     if firma_id is not None:
@@ -126,6 +138,9 @@ if st.session_state["firmas"] == None:
 #             ai.submit_upload(stream)
 #             #st.form_submit_button("Speichern", on_click=ai.submit_upload, args=[stream])
 
+## Example usage:
+##random_id = generate_id()
+##print(random_id)
 
 with st.container():
     db.load_data_preloaded()
