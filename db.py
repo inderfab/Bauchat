@@ -397,6 +397,7 @@ def upload_firmas(firmas):
     store.s3_upload_pkl(filepath, firmas)
     print("Firmas wurden hochgeladen")
 
+
 def update_firma(firma_id, updates):
 
     firmas = get_firmas() 
