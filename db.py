@@ -210,6 +210,13 @@ def registration():
                 st.session_state["registration_expandend"] = False
                     
 
+def verification_button(u_data):
+    if u_data["verifikation"] == False:
+        code = st.text_input("Verifikationscode")
+        if code and code == u_data["verification_code"]:
+            update_user(u_data["username"], {"verifikation":True})
+            st.write("Verfizierung erfolgreich")
+
 
 def login_user(user,pwd):         
     pwd = make_hashes(pwd)
