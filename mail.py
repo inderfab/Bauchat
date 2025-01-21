@@ -2,11 +2,11 @@ import streamlit as st
 import os
 
 import smtplib
- 
+from email.mime.text import MIMEText
+
 import dotenv
 
 st.session_state.update(st.session_state)
-
 
 
 def send_mail(to,subject,msg):
@@ -16,13 +16,54 @@ def send_mail(to,subject,msg):
     MAIL_PWD = os.getenv("MAIL_PWD")
     SMTP_ADDRESS = os.getenv("SMTP_ADDRESS")
 
-    smtpserver = smtplib.SMTP(SMTP_ADDRESS,587)
+    smtpserver = smtplib.SMTP()
+    smtpserver.connect(SMTP_ADDRESS,587)
     smtpserver.ehlo()
     smtpserver.starttls()
     smtpserver.ehlo()
     smtpserver.login(MAIL_USER, MAIL_PWD)
-    header = 'To:' + to + '\n' + 'From: ' + MAIL_USER + '\n' +  'Subject:' + subject
-    msg = "{header} \n\n {msg} \n\n".format(header=header,msg=msg).encode('utf-8')
+
+
+    text_type = 'plain' # or 'html'
+    msg = MIMEText(msg, text_type, 'utf-8')
+
+    msg['Subject'] = subject
+    msg['From'] = MAIL_USER
+    msg['To'] = to
+
+    smtpserver.sendmail(msg['From'], msg['To'], msg.as_string())
+    smtpserver.quit()
+
+    smtpserver.sendmail(MAIL_USER, to, msg)
+    st.write('Mail verschickt an ', to)
+    smtpserver.quit()
+
+
+def send_mail_new(to,subject,msg):
+    dotenv.load_dotenv()
+
+    MAIL_USER = os.getenv('MAIL_USER')
+    MAIL_PWD = os.getenv("MAIL_PWD")
+    SMTP_ADDRESS = os.getenv("SMTP_ADDRESS")
+
+    smtpserver = smtplib.SMTP()
+    smtpserver.connect(SMTP_ADDRESS,587)
+    smtpserver.ehlo()
+    smtpserver.starttls()
+    smtpserver.ehlo()
+    smtpserver.login(MAIL_USER, MAIL_PWD)
+
+
+    text_type = 'plain' # or 'html'
+    msg = MIMEText(msg, text_type, 'utf-8')
+
+    msg['Subject'] = subject
+    msg['From'] = MAIL_USER
+    msg['To'] = to
+
+    smtpserver.sendmail(msg['From'], msg['To'], msg.as_string())
+    smtpserver.quit()
+
     smtpserver.sendmail(MAIL_USER, to, msg)
     st.write('Mail verschickt an ', to)
     smtpserver.quit()
