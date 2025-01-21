@@ -185,6 +185,7 @@ def file_uploader_container_user(stream):
             st.session_state.vector_store = None
             stream = []
             st.session_state["option5value"] = True
+            st.rerun()
             
         st.session_state["temp_upload"] = False 
         st.session_state["Temp_Stream"] = None
