@@ -52,10 +52,7 @@ def update_user(username, updates):
             userdata[key] = updates[key]
 
     store.s3_upload_pkl(filepath, userdata)
-    print("Update wurde hochgeladen")
-    
-    #TODO Userdata in Session State schreiben
-
+    st.session_state["u_data"] = userdata
 
 
 def user_update_message_and_tokens(updates):

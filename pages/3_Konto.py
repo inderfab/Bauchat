@@ -14,7 +14,7 @@ configuration.conf_session_state()
 def clear_user_and_to_start_page():
     st.session_state.username = 'temp'
     st.session_state.messages = []
-    st.switch_page("Startseite.py") 
+    #st.switch_page("Startseite.py") 
 
 if st.session_state.username == 'temp':
     db.login()
