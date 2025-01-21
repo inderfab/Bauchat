@@ -212,7 +212,7 @@ def registration():
 
 def verification_button(u_data):
     if u_data["verifikation"] == False:
-        code = st.text_input("Verifikationscode")
+        code = st.number_input(label="Per Mail erhaltene Nummer eingeben",step=1,value=None,placeholder=" Nummer eingeben...")
         if code and code == u_data["verification_code"]:
             update_user(u_data["username"], {"verifikation":True})
             st.write("Verfizierung erfolgreich")

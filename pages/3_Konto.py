@@ -24,9 +24,11 @@ if st.session_state.username == 'temp':
 else:
     st.write("Benutzername: ", st.session_state.username )
     
+    db.verification_button(st.session_state["u_data"])
+
     st.button("Abmelden", on_click=clear_user_and_to_start_page)
 
-    st.subheader("Nutzung")
+    #st.subheader("Nutzung")
     with st.expander("Verfügbare Einheiten"):
         if st.session_state.token_change == True:
             st.session_state["u_data"] = db.get_user(st.session_state.username)
