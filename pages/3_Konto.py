@@ -11,6 +11,11 @@ add_logo("gallery/bauchat_logo.png", height=300)
 
 configuration.conf_session_state()
 
+def clear_user_and_to_start_page():
+    st.session_state.username = 'temp'
+    st.session_state.messages = []
+    st.switch_page("Startseite.py") 
+
 if st.session_state.username == 'temp':
     db.login()
     db.registration()
@@ -19,15 +24,7 @@ if st.session_state.username == 'temp':
 else:
     st.write("Benutzername: ", st.session_state.username )
     
-    abmelden = False
-    if st.button("Abmelden"):
-        st.session_state.username = 'temp'
-        st.session_state.messages = []
-        abmelden = True
-    else:
-        pass
-
-    if abmelden == True: st.switch_page("Startseite.py") 
+    st.button("Abmelden", on_click=clear_user_and_to_start_page)
 
     st.subheader("Nutzung")
     with st.expander("Verfügbare Einheiten"):
