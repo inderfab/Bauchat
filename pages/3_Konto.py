@@ -5,6 +5,7 @@ import configuration
 import time
 import display
 from random import randint
+import os
 st.session_state.update(st.session_state)
 
 add_logo("gallery/bauchat_logo.png", height=300)
@@ -20,6 +21,7 @@ if st.session_state.username == 'temp':
     db.login()
     db.registration()
     db.forget_pwd()
+
 
 else:
     st.write("Benutzername: ", st.session_state.username )

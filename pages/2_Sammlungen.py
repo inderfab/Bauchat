@@ -16,6 +16,8 @@ if st.session_state["preload_data_loaded"] == False:
 st.write("Übersicht der Dokumente in den Sammlungen")
 keys = ["baugesetz", "normen", "richtlinien", "produkte"]
 for key in keys:
+
+
     with st.expander(label=key.upper()):
         for collection in st.session_state[key]["collections"]:
             tags =  " | ".join(collection.get("tags",""))

@@ -2,7 +2,6 @@ import os
 from st_files_connection import FilesConnection
 import streamlit as st
 import dotenv
-dotenv.load_dotenv()
 import os
 import io
 import datetime
@@ -16,21 +15,33 @@ from streamlit_extras.no_default_selectbox import selectbox
 import funcy
 import display as d
 
-
+dotenv.load_dotenv()
 
 st.session_state.update(st.session_state)
 
-try:
-    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-    AWS_DEFAULT_REGION = os.getenv("AWS_DEFAULT_REGION")
-    AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
-except:
-    dotenv.load_dotenv()
-    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
-    AWS_DEFAULT_REGION = os.environ.get("AWS_DEFAULT_REGION")
-    AWS_BUCKET_NAME = os.environ.get("AWS_BUCKET_NAME")
+# Standardmodus: cloud
+MODE = os.getenv("STORAGE_MODE", "cloud")
+LOCAL_STORAGE_PATH = os.getenv("LOCAL_STORAGE_PATH", "./local_storage")
+
+def use_local():
+    return os.getenv("STORAGE_MODE", "local") == "local"
+    
+
+if MODE == "cloud":
+    try:
+        AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+        AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+        AWS_DEFAULT_REGION = os.getenv("AWS_DEFAULT_REGION")
+        AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
+    except:
+        dotenv.load_dotenv()
+        AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+        AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+        AWS_DEFAULT_REGION = os.environ.get("AWS_DEFAULT_REGION")
+        AWS_BUCKET_NAME = os.environ.get("AWS_BUCKET_NAME")
+
+
+
 
 
 #@st.cache_data(ttl=3600)
@@ -43,84 +54,122 @@ def load_data_temp():
         st.session_state["u_folders"] = timenow
 
 
-# ----- S3 Storage
+# ----- S3 Storage und Lokal ---
+
+
 def s3_boto_client():
     return boto3.client("s3")
 
 
-def s3_uploader(filepath, file):
-    # Binary Mode File
-    client = s3_boto_client()
-    bucket = "bauchatstorage"
-    success = client.upload_fileobj(io.BytesIO(file), bucket,filepath)
-    return success
+def upload_file(filepath, file_bytes, is_pickle=False):
+    if is_pickle and not filepath.endswith(".pkl"):
+        filepath += ".pkl"
+
+    if use_local():
+        full_path = os.path.join(LOCAL_STORAGE_PATH, filepath)
+        os.makedirs(os.path.dirname(full_path), exist_ok=True)
+        with open(full_path, "wb") as f:
+            f.write(file_bytes)
+    
+    else:
+        # Binary Mode File
+        client = s3_boto_client()
+        client.upload_fileobj(io.BytesIO(file_bytes), AWS_BUCKET_NAME,filepath)
 
 
-def s3_reader(filepath):
-    conn = st.experimental_connection('s3', type=FilesConnection)
-    file = conn.open("bauchatstorage/"+filepath,mode="rb")
-    return file
-
-
-def s3_upload_pkl(key, data):
+def upload_pickle(key, data):
     
     data_pkl = pickle.dumps(data)
-    success = s3_uploader(key, data_pkl)
-
-    return success
+    return upload_file(key, data_pkl, is_pickle = True)
 
 
-def s3_download_pkl(key): 
-    client = s3_boto_client()
-    bucket = "bauchatstorage"
-    
-    file = client.get_object(Bucket=bucket,Key=key)
-    file = file['Body'].read()
-    file = pickle.loads(file)
-    return file
+def download_pickle(key):
 
-
-def read_s3_contents_with_buffer(key) -> str :
-    client = s3_boto_client()
-    bucket = "bauchatstorage"
-    bytes = io.BytesIO()
-    client.download_fileobj(bucket, key, bytes)
-    return bytes.getvalue()
-
-
-#@st.cache_data(ttl=0.1, show_spinner = False)
-def s3_download_files(path) :
-    client = s3_boto_client()
-    bucket = "bauchatstorage"
-    path = os.path.join(path,"docs/")
-    #st.write('path: ',path)
-    response=client.list_objects_v2(Bucket=bucket,Prefix  = path)['Contents']
-    #st.write('response:',response)
-    files = []
-    for f in response:
-        key = f["Key"]
-        if key.endswith(".pkl"):
-            file = client.get_object(Bucket=bucket,Key=key)
-            file = file['Body'].read()
-            file = pickle.loads(file)
-            files.append(file)
-    return files
-
-
-def s3_get_files(path) :
-    client = s3_boto_client()
-    bucket = "bauchatstorage"
-    response = client.list_objects_v2(Bucket = bucket, Delimiter='/',Prefix =path)
-    st.write("s3_get_ ",response)
-
-    files = []
-    for file in response:
-        subpath = os.path.join(path,file)
+    if use_local():
+        full_path = os.path.join(LOCAL_STORAGE_PATH, key)
+        with open(full_path, "rb") as f:
+            return pickle.load(f)
+    else:
+        client = s3_boto_client()
+        file = client.get_object(Bucket=AWS_BUCKET_NAME, Key=key)['Body'].read()
+        return pickle.loads(file)
         
-        if os.path.isfile(subpath):
-            file_name = subpath.split("/")[-1]
-            files.append(file_name) 
+def read_contents_with_buffer(key):
+    if use_local():
+        full_path = os.path.join(LOCAL_STORAGE_PATH, key)
+        with open(full_path, "rb") as f:
+            return f.read()
+    else:
+        client = s3_boto_client()
+        bytes_io = io.BytesIO()
+        client.download_fileobj(AWS_BUCKET_NAME, key, bytes_io)
+        return bytes_io.getvalue()
+
+
+def download_all_pickles(path):
+    files = []
+
+    if use_local():
+        doc_path = os.path.join(LOCAL_STORAGE_PATH, path, "docs")
+        if not os.path.exists(doc_path):
+            return []
+        for file_name in os.listdir(doc_path):
+            if file_name.endswith(".pkl"):
+                full_path = os.path.join(doc_path, file_name)
+                with open(full_path, "rb") as f:
+                    files.append(pickle.load(f))
+    else:
+        client = s3_boto_client()
+        prefix = os.path.join(path, "docs/")
+        response = client.list_objects_v2(Bucket=AWS_BUCKET_NAME, Prefix=prefix).get('Contents', [])
+        for f in response:
+            key = f["Key"]
+            if key.endswith(".pkl"):
+                file = client.get_object(Bucket=AWS_BUCKET_NAME, Key=key)['Body'].read()
+                files.append(pickle.loads(file))
+    
     return files
+
+
+
+# Alte Funktionen für Debug
+
+def get_files(path):
+    files = []
+
+    if use_local():
+        local_path = os.path.join(LOCAL_STORAGE_PATH, path)
+        if not os.path.exists(local_path):
+            return []
+        for file_name in os.listdir(local_path):
+            full_path = os.path.join(local_path, file_name)
+            if os.path.isfile(full_path):
+                files.append(file_name)
+    else:
+        client = s3_boto_client()
+        response = client.list_objects_v2(Bucket=AWS_BUCKET_NAME, Delimiter='/', Prefix=path)
+        st.write("s3_get_ ",response)
+
+        for item in response.get("Contents", []):
+            file_name = item["Key"].split("/")[-1]
+            if file_name:  # nur echte Dateien, keine leeren Keys
+                files.append(file_name)
+
+    return files
+
+def s3_reader(filepath):
+   conn = st.experimental_connection('s3', type=FilesConnection)
+   file = conn.open("bauchatstorage/"+filepath,mode="rb")
+   return file
+
+
+#-------
+
+
+
+
+
+
 
 
 def download_button_full_pdf(key):   
@@ -129,7 +178,7 @@ def download_button_full_pdf(key):
     key += "-full.pdf" 
     if st.button(label="Ganzes PDF herunterladen", key=keynr):
         with st.spinner("Das PDF wird vom Server geladen"):
-            pdf = s3_download_pkl(key)
+            pdf = download_pickle(key)
         st.download_button(
             label="PDF speichern",
             data=pdf,

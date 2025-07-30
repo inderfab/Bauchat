@@ -23,23 +23,26 @@ def insert_user(user_dict):
 
     filepath = user_dict["username"] + '/userdata'
     file = user_dict
-    store.s3_upload_pkl(filepath, file)
+    store.upload_pickle(filepath, file)
     print("User wurde hinzugefügt")
     return user_dict 
 
 
 #@st.cache_data(ttl=0.1)
 def get_user(username):
-    """If not found, the function will return None"""
-    try: 
-        user = store.s3_download_pkl(username+'/userdata')
-        print('userdaten heruntergeladen')
-    except:
-        user = None
-        print('kein User mit dem Namen {} gefunden'.format(username))
-    return user
+    """Lädt userdata – versucht zuerst mit .pkl, dann ohne Endung (Altbestand)."""
+    possible_keys = [f"{username}/userdata.pkl", f"{username}/userdata"]
+    
+    for key in possible_keys:
+        try:
+            user = store.download_pickle(key)
+            print(f"userdaten heruntergeladen von: {key}")
+            return user
+        except Exception as e:
+            continue
 
-    #TODO Userdata in Session State schreiben
+    print(f"❌ kein User mit dem Namen '{username}' gefunden")
+    return None
 
 
 def update_user(username, updates):
@@ -51,7 +54,7 @@ def update_user(username, updates):
         if key in userdata:
             userdata[key] = updates[key]
 
-    store.s3_upload_pkl(filepath, userdata)
+    store.upload_pickle(filepath, userdata)
     st.session_state["u_data"] = userdata
 
 
@@ -183,7 +186,6 @@ def registration():
         else:
                 pwd_filled = True
 
-
         if st.button("Registrieren"):
             if get_user(user) != None: #Stimmt das?
                     st.write("Benutzername bereits vergeben")
@@ -200,8 +202,8 @@ def registration():
                         "bytes_month":{}, "bytes_total":0, "bytes_available":1000000000,
                         "pages":0, 
                         }
-                
-                mail.send_registration(email, verification_code)
+                print(data, user)
+                #mail.send_registration(email, verification_code)
                 insert_user(data)
                 insert_data(user,{'collections': []})
                 st.session_state["registration_expandend"] = False
@@ -259,7 +261,7 @@ def login_user(user,pwd):
 def get_data_collection(username):
     """If not found, the function will return None"""
     try: 
-        data = store.s3_download_pkl(username+'/collections')
+        data = store.download_pickle(username+'/collections.pkl')
         print('user data heruntergeladen')
         if isinstance(data, tuple):
             data = data[0]
@@ -277,7 +279,7 @@ def insert_data(username, data_dict):
 
     filepath = username + '/collections'
     file = data_dict
-    store.s3_upload_pkl(filepath, file)
+    store.upload_pickle(filepath, file)
     print("User Collections wurde hinzugefügt")
     return data_dict 
 
@@ -290,7 +292,7 @@ def update_data(username, updates):
         if key in userdata:
             userdata[key] = updates[key]
 
-    store.s3_upload_pkl(filepath, userdata)
+    store.upload_pickle(filepath, userdata)
     print("Update Collection wurde hochgeladen")
     
     #TODO Userdata in Session State schreiben
@@ -386,7 +388,7 @@ def group_folder(key):
 @st.cache_data(ttl=0.1)
 def get_firmas():
     """If not found, the function will return None"""
-    data = store.s3_download_pkl('firma')
+    data = store.download_pickle('firma')
     print('Alle Firmen heruntergeladen')  
     st.session_state["firmas"] = data  
     return data
@@ -409,7 +411,7 @@ def insert_firma(firma_dict):
 
 def upload_firmas(firmas):
     filepath = 'firma'
-    store.s3_upload_pkl(filepath, firmas)
+    store.upload_pickle(filepath, firmas)
     print("Firmas wurden hochgeladen")
 
 

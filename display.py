@@ -40,8 +40,8 @@ def pdf_display(references, id):
 
     with img_col:
         if keys[img_src] != 'temporary': 
-            pdf_s3_to_img(keys[img_src])
-            #pdf_s3_to_iframe(keys[img_src])
+            pdf_to_img(keys[img_src])
+            #pdf_to_iframe(keys[img_src])
         else:
             pagenr = int(img_src.split(":")[-1])
             pdf_temp_to_img(pagenr=pagenr)
@@ -52,18 +52,18 @@ def pdf_display(references, id):
 
 
 #@st.cache_data(ttl=.1)
-def pdf_s3_to_img(key):
+def pdf_to_img(key):
     #Downloads PDF Page from AWS S3 and outputs as IMG in st.image
     size = None
-    file = store.read_s3_contents_with_buffer(key)
+    file = store.read_contents_with_buffer(key)
     img = pdf2image.convert_from_bytes(file,first_page= 0,last_page=1,size=size)
     st.image(img,use_container_width=True)    
     
 
 #@st.cache_data(ttl=.1)
-def pdf_s3_to_iframe(key):
+def pdf_to_iframe(key):
     #Downloads PDF Page from AWS S3 and outputs in iFrame as PDF
-    file = store.read_s3_contents_with_buffer(key)
+    file = store.read_contents_with_buffer(key)
     base64_pdf = base64.b64encode(file).decode('utf-8')
 
     pdf_iframe = F'<iframe src="data:application/pdf;base64,{base64_pdf}" view="fit" frameBorder="0" width="700" height="950" type="application/pdf"></iframe>'

@@ -1,34 +1,105 @@
-from pypdf import PdfReader, PdfWriter
 import streamlit as st
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-import re
-import pickle
-from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.docstore.document import Document
 from langchain.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
 from langchain.callbacks import get_openai_callback
+
 import os
-import openai
+import re
+import pickle
 import store
 import io
 import time
 import tiktoken
 import db
-import io
-import numpy as np
-import faiss
-import numpy as np
-from langchain.vectorstores import FAISS
+from pypdf import PdfReader, PdfWriter
 
 import dotenv
 dotenv.load_dotenv()
 
-from langchain.document_loaders import PyPDFLoader
-openai.api_key = os.getenv('OPENAI_API_KEY')
 st.session_state.update(st.session_state)
 
+
+MODE = os.getenv("LLM_MODE", "cloud")
+MODEL_NAME = os.getenv("MODEL_NAME", "all-MiniLM-L6-v2")
+LOCAL_STORAGE_PATH = os.getenv("LOCAL_STORAGE_PATH", "./local_storage")
+
+if MODE ==  "cloud":
+    import openai
+    openai.api_key = os.getenv('OPENAI_API_KEY')
+
+
+def get_embedding_model():
+    MODE = os.getenv("LLM_MODE", "cloud")
+    
+    if MODE == "cloud":
+        import openai
+        openai.api_key = os.getenv("OPENAI_API_KEY")
+
+        from langchain.embeddings.openai import OpenAIEmbeddings
+        return OpenAIEmbeddings()
+    
+    else:
+        from langchain.embeddings import HuggingFaceEmbeddings
+        EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL")
+        return HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
+        
+
+
+def get_llm():
+    MODE = os.getenv("LLM_MODE", "cloud")
+    system_prompt = "Du bist ein Assistent, der sich mit Baurecht auskennt."
+
+    if MODE == "cloud":
+        import openai
+        openai.api_key = os.getenv("OPENAI_API_KEY")
+
+        def cloud_llm(prompt):
+            model = 'gpt-4-1106-preview'
+            temperature = 0.0
+            response = openai.ChatCompletion.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": prompt},
+                ],
+                temperature=temperature
+            )
+            answer = response['choices'][0]['message']['content']
+            usage = response['usage']
+            return answer, usage
+
+        return cloud_llm
+
+    else:
+        from ctransformers import AutoModelForCausalLM
+
+        def load_local_llm():
+            model_path = os.getenv("MODEL_PATH")
+            model_type = os.getenv("MODEL_TYPE", "mistral") 
+
+            llm = AutoModelForCausalLM.from_pretrained(
+                model_path,
+                model_type=model_type,
+                temperature=0.3,
+                top_k=40,
+                top_p=0.7,
+                repetition_penalty=1.1,
+                threads=6,
+                gpu_layers=0  # wichtig für M1 und Intel
+            )
+            #max_new_tokens=150,
+
+            def local_llm(prompt):
+                response = llm(prompt)
+                usage = {"total_tokens": len(prompt.split()) + len(response.split())}
+                return response, usage
+
+            return local_llm
+        
+        return load_local_llm()
 
 def pdf_preprocess(stream, metadata):
     text_pages = []
@@ -112,24 +183,31 @@ def clean_text(text):
 
 
 def embedd_FAISS(docs):
-    #embeddings = OpenAIEmbeddings()
-    encoding = tiktoken.encoding_for_model("gpt-4-1106-preview")
-    num_tokens = 0
+    MODE = os.getenv("LLM_MODE", "cloud")
     docs = docs["document"]
-    for doc in docs:
-        num_tokens += len(encoding.encode(doc.page_content))
-    
+
+    if MODE == "cloud":
+        try:
+            import tiktoken
+            encoding = tiktoken.encoding_for_model("gpt-4-1106-preview")
+            num_tokens = sum(len(encoding.encode(doc.page_content)) for doc in docs)
+        except ImportError:
+            num_tokens = 0
+    else:
+        num_tokens = 0
+
     if st.session_state["preload_active"] == False:
         st.session_state.token_usage += num_tokens
     return docs
 
 
+
+
 def store_from_docs(docs):
-    embeddings = OpenAIEmbeddings()
-    VectorStore = FAISS.from_documents(docs, embedding=embeddings)
-    return VectorStore
+    embeddings = get_embedding_model()
+    return FAISS.from_documents(docs, embedding=embeddings)
 
-
+### TODO
 def create_Store(docs):
     if st.session_state.preload_key != None or st.session_state.username != "temp":
         path = docs["document"][0].metadata["save_loc"]
@@ -140,18 +218,18 @@ def create_Store(docs):
         path_docs = os.path.join(path + "docs", title + ".pkl")
 
         pickle_byte_obj = pickle.dumps(vector_store)
-        store.s3_uploader(path_docs, pickle_byte_obj)
+        store.upload_file(path_docs, pickle_byte_obj)
 
         pickle_full_text = pickle.dumps(docs["full_text"])
-        store.s3_uploader(os.path.join(path,title) + ".txt", pickle_full_text)
+        store.upload_file(os.path.join(path,title) + ".txt", pickle_full_text)
 
 
         for index in range(len(docs["pdf_reader"].pages)):
             pdf_page = pdf_page_to_buffer(docs["pdf_reader"], index)
-            store.s3_uploader(os.path.join(path,title) + "-" + str(index+1) + ".pdf", pdf_page)
+            store.upload_file(os.path.join(path,title) + "-" + str(index+1) + ".pdf", pdf_page)
         
         full_pdf = pickle.dumps(docs["full_pdf"])
-        store.s3_uploader(os.path.join(path,title) + "-full.pdf", full_pdf)
+        store.upload_file(os.path.join(path,title) + "-full.pdf", full_pdf)
         
 
     if st.session_state.username == "temp":
@@ -172,7 +250,7 @@ def load_store(paths):
     stores = []
     if paths != []:
         for p in paths:
-            file = store.s3_download_files(p)
+            file = store.download_all_pickles(p)
             stores.append(file)
     return stores
 
@@ -248,8 +326,7 @@ def search(VectorStore, query,k=3):
 
 
 def prompt(query, results, k=1):
-    model = 'gpt-4-1106-preview'
-    temperature=0.0
+
     kontext = "\n".join([text.page_content + " Quelle= " + text.metadata["title"] + " Seite= " + str(text.metadata["page"]) for i,text in enumerate(results)])
     
     if st.session_state.long_answer == False:
@@ -257,17 +334,11 @@ def prompt(query, results, k=1):
     else:
         answerlength = "ausführlich mit bis zu 10 Sätzen"
     
-    prompt = f"Aufgabe: Frage {answerlength} mit einer oder mehreren Quellen beantworten, diese auch angeben (Quelle und Seite). Sie sind nach Relevanz sortiert. Quellen:{kontext}Frage: {query} Antwort:"
-    response = openai.ChatCompletion.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": "Du bist ein Assisten der sich mit Baurecht auskennt."},
-            {"role": "user", "content": prompt},
-            ],
-        temperature=temperature)
+    prompt_text = f"Aufgabe: Frage {answerlength} mit einer oder mehreren Quellen beantworten, diese auch angeben (Quelle und Seite). Sie sind nach Relevanz sortiert. Quellen:{kontext}Frage: {query} Antwort:"
     
-    answer = response['choices'][0]['message']['content']
-    usage = response['usage']
+    llm = get_llm()
+    answer, usage = llm(prompt_text)
+    
     return answer, usage
 
 

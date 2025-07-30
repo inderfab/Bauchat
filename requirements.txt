@@ -42,3 +42,12 @@ streamlit-autorefresh
 
 tiktoken==0.5.1
 validators
+
+#sentence-transformers
+#transformers
+#huggingface-hub
+#llama-cpp-python
+#ctransformers
+#CMAKE_ARGS="-DLLAMA_METAL=OFF" pip install llama-cpp-python --force-reinstall
+
+numpy<2.0.0
