@@ -8,3 +8,5 @@ Untitled.ipynb
 models/
 huggingface_models/
 *.gguf
+
+llama-cpp-python
