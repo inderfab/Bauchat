@@ -7,6 +7,7 @@ st.session_state.update(st.session_state)
 add_logo("gallery/bauchat_logo.png", height=300)
 
 configuration.conf_session_state()
+configuration.buy_coffee()
 
 col1, col2 = st.columns(2)
 with col1:

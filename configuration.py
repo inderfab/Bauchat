@@ -1,7 +1,7 @@
 
 import streamlit as st
 from pathlib import Path
-import os
+from streamlit_extras.buy_me_a_coffee import button
 
 st.session_state.update(st.session_state)
 
@@ -41,7 +41,8 @@ def conf_session_state():
         st.session_state.reload_store = False
     if "option_upload" not in st.session_state:
         st.session_state.option_upload = None
-
+    if "openai_key_user" not in st.session_state:
+        st.session_state.openai_key_user = ''
 
     # Storage
     if "Files_Saved" not in st.session_state:
@@ -52,7 +53,8 @@ def conf_session_state():
         st.session_state["Temp_Stream_IMG"] = None
     if "submitted" not in st.session_state:
         st.session_state["submitted"] = None
-
+    if "upload_limit" not in st.session_state:
+        st.session_state["upload_limit"] = 1
 
     # User-Folder
     if "u_path" not in st.session_state:
@@ -69,6 +71,7 @@ def conf_session_state():
         st.session_state["collection"] = None
     if "update_collection" not in st.session_state:
         st.session_state["update_collection"] = None
+  
     if "preload_data_loaded" not in st.session_state:
         st.session_state["preload_data_loaded"] = False
     if "preload_key" not in st.session_state:
@@ -85,6 +88,8 @@ def conf_session_state():
         st.session_state["ocr_needed"] = False
     if "exctraction_problem_files" not in st.session_state:
         st.session_state["exctraction_problem_files"] = []
+    if "chat_limit_reached" not in st.session_state:
+        st.session_state.chat_limit_reached = False
 
 
     #Chat
@@ -100,6 +105,9 @@ def conf_session_state():
         st.session_state.vector_store = None
     #db.login_fast()
 
+def buy_coffee():
+    with st.sidebar:
+        button(username="inderfab", floating=True, width=221)
 
 def conf_menu():
     css = """

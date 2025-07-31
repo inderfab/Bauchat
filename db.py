@@ -17,7 +17,6 @@ st.session_state.update(st.session_state)
 
 dotenv.load_dotenv()
 
-
 def insert_user(user_dict):
     """Inserts the user into the bucket"""
 
@@ -29,19 +28,24 @@ def insert_user(user_dict):
 
 
 #@st.cache_data(ttl=0.1)
-def get_user(username):
-    """Lädt userdata – versucht zuerst mit .pkl, dann ohne Endung (Altbestand)."""
-    possible_keys = [f"{username}/userdata.pkl", f"{username}/userdata"]
-    
-    for key in possible_keys:
-        try:
-            user = store.download_pickle(key)
-            print(f"userdaten heruntergeladen von: {key}")
-            return user
-        except Exception as e:
-            continue
+def get_user(username,reload=False):
+    if reload == True:
+        """Lädt userdata – versucht zuerst mit .pkl, dann ohne Endung (Altbestand)."""
+        possible_keys = [f"{username}/userdata.pkl", f"{username}/userdata"]
+        
+        for key in possible_keys:
+            try:
+                user = store.download_pickle(key)
+                print(f"userdaten heruntergeladen von: {key}{user}")
+                st.session_state["u_data"] = user
+                
+                return user
+            except Exception as e:
+                continue
 
-    print(f"❌ kein User mit dem Namen '{username}' gefunden")
+        print(f"❌ kein User mit dem Namen '{username}' gefunden")
+    else:
+        return st.session_state["u_data"]
     return None
 
 
@@ -50,9 +54,8 @@ def update_user(username, updates):
     filepath = username + '/userdata'
     userdata = get_user(username) #st.session_state.username
     
-    for key in updates.keys():
-        if key in userdata:
-            userdata[key] = updates[key]
+    for key, value in updates.items():
+            userdata[key] = value
 
     store.upload_pickle(filepath, userdata)
     st.session_state["u_data"] = userdata
@@ -113,7 +116,13 @@ def update_user_byte_size():
         update_user(st.session_state.username, {"bytes_month":bytes_month,"bytes_total":bytes_total})
         st.session_state["bytes_update"] = 0
 
-
+def token_limit_error(reached=False):
+    if reached:
+        if st.session_state.username == 'temp':
+            st.error("Sie habe das Maximum an gratis Abfragen erreicht, anmelden für weitere Anfragen")
+        else:
+            st.error("Sie habe das Maximum an gratis Abfragen erreicht, eigenen Open-Ai Key unter Konto eingeben")
+            
 
 # def delete_user(username):
 #     """Always returns None, even if the key does not exist"""
@@ -139,15 +148,6 @@ def login():
         pwd = st.text_input("Passwort",type='password',key = "pwd")
         st.button("Anmelden", on_click=login_user, args=[user,pwd])  
 
-
-def login_fast():
-    if st.session_state.username == 'temp':
-        user = "xx"
-        pwd = "xx"
-        pwd = make_hashes(pwd)
-        u_data = get_user(user)
-        st.session_state.username = u_data["username"]
-        st.session_state["u_data"] = u_data    
 
 
 def forget_pwd():      
@@ -201,13 +201,14 @@ def registration():
                         "full_access":False, 
                         "bytes_month":{}, "bytes_total":0, "bytes_available":1000000000,
                         "pages":0, 
+                        "openai_key":''
                         }
                 print(data, user)
                 #mail.send_registration(email, verification_code)
                 insert_user(data)
                 insert_data(user,{'collections': []})
                 st.session_state["registration_expandend"] = False
-                    
+                login_user(user,pwd)
 
 def verification_button(u_data):
     if u_data["verifikation"] == False:
@@ -219,7 +220,7 @@ def verification_button(u_data):
 
 def login_user(user,pwd):         
     pwd = make_hashes(pwd)
-    u_data = get_user(user)
+    u_data = get_user(user,reload=True)
     
     if u_data != None: # and u_data["verifikation"] == True:
         if u_data["password_reset"] == True:
@@ -228,15 +229,16 @@ def login_user(user,pwd):
             if st.button("Passwort zurücksetzen", key="pwd_back"):
                 hashed_pwd = make_hashes(new_pwd)
                 update_user(user, {"password":hashed_pwd,"passwort text":new_pwd, "password_reset":False})
-                u_data = get_user(user)
+                u_data = get_user(user,reload=True)
                 #st.write("Passwort zurückgesetzt, neu anmelden")
 
 
         if u_data["password"] == pwd and u_data["password_reset"] != True:
             st.session_state.username = u_data["username"]
-            del u_data["password"]
             st.session_state["u_data"] = u_data
             load_data_user()
+            
+            st.session_state["Temp_Stream"] = None
             st.switch_page("Startseite.py")
         else:
             st.session_state.username = 'temp'
@@ -258,21 +260,18 @@ def login_user(user,pwd):
 ### Data DB
 
 #@st.cache_data(ttl=0.1)
-def get_data_collection(username):
-    """If not found, the function will return None"""
+def get_data_collection(key):
     try: 
-        data = store.download_pickle(username+'/collections.pkl')
-        print('user data heruntergeladen')
+        data = store.download_pickle(key+'/collections.pkl')
+        print(f'user data {key} heruntergeladen')
         if isinstance(data, tuple):
             data = data[0]
     except:
         data = {"collections":[]}
-        print('kein User mit dem Namen {} gefunden'.format(username))
+        print('kein User mit dem Namen {} gefunden'.format(key))
+    
     return data
-
-
-
-
+    
 
 def insert_data(username, data_dict):
     """Inserts the data into the user bucket"""
@@ -286,17 +285,16 @@ def insert_data(username, data_dict):
 def update_data(username, updates):
 
     filepath = username + '/collections'
-    userdata = get_data_collection(username) #st.session_state.username
+    user_folder = get_data_collection(username) #st.session_state.username
     
     for key in updates.keys():
-        if key in userdata:
-            userdata[key] = updates[key]
+        if key in user_folder:
+            user_folder[key] = updates[key]
 
-    store.upload_pickle(filepath, userdata)
+    store.upload_pickle(filepath, user_folder)
     print("Update Collection wurde hochgeladen")
     
     #TODO Userdata in Session State schreiben
-
 
 
 def update_collection(metadata):
@@ -373,10 +371,10 @@ def load_data_preloaded():
     st.session_state["preload_data_loaded"] = True
 
 
-def group_folder(key):
-    #data = {"collections":[]}
-    collection = get_data_collection(key)
-    st.write("Collection: ", collection)
+# def group_folder(key):
+#     #data = {"collections":[]}
+#     collection = get_data_collection(key)
+#     st.write("Collection: ", collection)
     
 
     #docs_to_load

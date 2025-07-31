@@ -20,6 +20,7 @@ configuration.conf_session_state()
 #st.subheader(titel_text)
 
 VectorStore = None
+
 if st.session_state.docs_to_load != [] or st.session_state["temp_upload"] == True:
 
     if st.session_state.docs_to_load != []:

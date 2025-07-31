@@ -42,7 +42,7 @@ if "submitted" not in st.session_state:
     st.session_state["submitted"] = False
 if "firmas" not in st.session_state:
     st.session_state["firmas"] = None
-
+st.session_state.upload_limit = 50
 
 keys = ["baugesetz", "normen", "richtlinien", "produkte"]
 

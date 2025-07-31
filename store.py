@@ -9,7 +9,6 @@ import pickle
 import db
 import random
 import ai
-import uuid
 import boto3
 from streamlit_extras.no_default_selectbox import selectbox
 import funcy
@@ -39,9 +38,6 @@ if MODE == "cloud":
         AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
         AWS_DEFAULT_REGION = os.environ.get("AWS_DEFAULT_REGION")
         AWS_BUCKET_NAME = os.environ.get("AWS_BUCKET_NAME")
-
-
-
 
 
 #@st.cache_data(ttl=3600)
@@ -166,12 +162,6 @@ def s3_reader(filepath):
 #-------
 
 
-
-
-
-
-
-
 def download_button_full_pdf(key):   
     keynr = random.randint(100000,999999)
     #Key ist save_loc
@@ -185,16 +175,20 @@ def download_button_full_pdf(key):
             file_name=key,
             mime="application/octet-stream",
             help="Lade das gesamte PDF herunter", 
-            use_container_width=False,
+            use_container_width=False
             )
 
 
 def uploader():
-    return st.file_uploader(label="Laden sie ihr PDF hoch oder suchen Sie in den Verzeichnissen", 
+    if st.session_state.username == 'temp':
+        label = "Anmelden um mehr als ein füngseitiges Dokument zu durchsuchen"
+    else:
+        label = "Maximal 20 Dokumente gleichzeitig hochladen und in Sammlung speichern"
+
+    return st.file_uploader(label=label, 
                             type='pdf',
                             accept_multiple_files=True, 
-                            label_visibility="collapsed",
-                            help="Ncht angemeldete Nutzer können nur 1 Dokument hochladen. Angemeldete Nutzer können bis zu 50 Dokumente gleichzeitig hochladen und in einer Sammlung speichern.")
+                            label_visibility="visible")
 
 
 def file_uploader_container_user(stream):
@@ -203,8 +197,9 @@ def file_uploader_container_user(stream):
         #if stream != []:
 
         #st.session_state["speicher_expander"] = True
-        limit = 50
+        limit = st.session_state.upload_limit
         stream = stream[:limit]
+
 
         sc1, sc2 = st.columns(2)
         
@@ -247,9 +242,10 @@ def file_uploader_container_temp(stream):
     with sammlung_empty.container():
         if stream != []:
             stream = stream[0]
-            st.write("Das erste Dokument wurden zwischengespeichert")
+            
+            if len(stream) > st.session_state.upload_limit:
+                st.error(f"Dokumente: {len(stream)} / Max: {st.session_state.upload_limit} Nur das erste Dokument wurde verarbeitet, bitte anmelden")
 
-            #st.write("Ihr hochgeladenes Dokument wurde zwischengespeichert, auf laden klicken um mit dem Dokument zu chatten")
             st.session_state["temp_upload"] = True 
             st.session_state["Temp_Stream"] = stream
             st.session_state["Temp_Stream_IMG"] = stream.read()
@@ -264,12 +260,11 @@ def file_uploader_container_temp(stream):
             st.session_state.vector_store = None
 
 
-
 def stream_uploader():
     # Lädt die Dokumente die in den Upload Container abgelegt wurden
     # in die Ablage auf dem Server des Users 
 
-    st.subheader("Laden sie ihre PDF-Dokumente hoch oder suchen Sie in den Verzeichnissen")
+    st.subheader("PDF hochladen oder in Verzeichnissen suchen")
 
     upload_container = st.container(border=True)
     with upload_container:
@@ -400,7 +395,7 @@ def load_merge_store(docs_to_load):
     st.session_state["docs_to_load"] = docs_to_load
     stores = ai.load_store(docs_to_load)
 
-    if st.session_state["temp_upload"] == True:
+    if st.session_state["temp_upload"] == True and st.session_state.username == 'temp':
         temp_store = ai.store_temp(st.session_state["Temp_Stream"])
         if temp_store is not None:
             stores.append(temp_store)

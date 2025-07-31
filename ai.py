@@ -28,15 +28,23 @@ LOCAL_STORAGE_PATH = os.getenv("LOCAL_STORAGE_PATH", "./local_storage")
 
 if MODE ==  "cloud":
     import openai
-    openai.api_key = os.getenv('OPENAI_API_KEY')
+    try:
+        key =  st.session_state["u_data"]["openai_key_user"]
+    except:
+        key = ''
+    st.session_state.openai_key_user = key
+
+    if st.session_state.openai_key_user == '':
+        openai.api_key = os.getenv('OPENAI_API_KEY')
+    else:
+        openai.api_key =  st.session_state.openai_key_user
 
 
 def get_embedding_model():
     MODE = os.getenv("LLM_MODE", "cloud")
     
     if MODE == "cloud":
-        import openai
-        openai.api_key = os.getenv("OPENAI_API_KEY")
+        #openai.api_key = os.getenv("OPENAI_API_KEY")
 
         from langchain.embeddings.openai import OpenAIEmbeddings
         return OpenAIEmbeddings()
@@ -47,17 +55,15 @@ def get_embedding_model():
         return HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
         
 
-
 def get_llm():
     MODE = os.getenv("LLM_MODE", "cloud")
     system_prompt = "Du bist ein Assistent, der sich mit Baurecht auskennt."
 
     if MODE == "cloud":
         import openai
-        openai.api_key = os.getenv("OPENAI_API_KEY")
-
+     
         def cloud_llm(prompt):
-            model = 'gpt-4-1106-preview'
+            model = 'gpt-3.5-turbo-0125'
             temperature = 0.0
             response = openai.ChatCompletion.create(
                 model=model,
@@ -344,6 +350,7 @@ def prompt(query, results, k=1):
 
 
 def bauchat_query(query, VectorStore, k=3):
+
     result = search(VectorStore,query,k=4)
     
     references_list = []
