@@ -241,10 +241,11 @@ def file_uploader_container_temp(stream):
     sammlung_empty = st.empty()
     with sammlung_empty.container():
         if stream != []:
-            stream = stream[0]
-            
             if len(stream) > st.session_state.upload_limit:
                 st.error(f"Dokumente: {len(stream)} / Max: {st.session_state.upload_limit} Nur das erste Dokument wurde verarbeitet, bitte anmelden")
+            
+            stream = stream[0]
+            
 
             st.session_state["temp_upload"] = True 
             st.session_state["Temp_Stream"] = stream

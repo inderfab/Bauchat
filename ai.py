@@ -23,8 +23,6 @@ st.session_state.update(st.session_state)
 
 
 MODE = os.getenv("LLM_MODE", "cloud")
-MODEL_NAME = os.getenv("MODEL_NAME", "all-MiniLM-L6-v2")
-LOCAL_STORAGE_PATH = os.getenv("LOCAL_STORAGE_PATH", "./local_storage")
 
 if MODE ==  "cloud":
     import openai
